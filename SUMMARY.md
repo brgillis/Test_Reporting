@@ -3,4 +3,10 @@
 * [Introduction](README.md)
 * [Testing Datasets](Testing_Datasets.md)
   * [TD-SHE-000001-SHE-analysis](TD-SHE-000001-SHE-analysis.md)
-* [Software Problem Reports](Software_Problem_Reports.md)
+  * [TD-SHE-000002-PSF-lambda](TD-SHE-000002-PSF-lambda.md)
+  * [TD-SHE-000003-PSF-res-interp-star-pos](TD-SHE-000003-PSF-res-interp-star-pos.md)
+  * [TD-SHE-000004-PSF-model-err-propa](TD-SHE-000004-PSF-model-err-propa.md)
+  * [TD-SHE-000005-colgrad-emul](TD-SHE-000005-colgrad-emul.md)
+  * [TD-SHE-000006-global-validation](TD-SHE-000006-global-validation.md)
+  * [TD-SHE-000012-calibr-simul](TD-SHE-000012-calibr-simul.md)
+* [Software Problem Reports](Software_Problem_Reports.md)ghh

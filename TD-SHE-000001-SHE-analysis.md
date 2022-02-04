@@ -16,9 +16,9 @@ When the SHE Analysis pipeline is run, it performs the validation tests associat
 
 ## Data Details
 
-All data in this testing dataset is stored in the Euclid Archive Service (EAS), and can be viewed on the DBView web service (https://eas-dps-cus-ops.esac.esa.int/) or retrieved via the DataProductRetrieval.py script through querying it appropriately. The following sections lists the different types of data products required, plus the metadata values which can be used to query for them.
+All data in this testing dataset is stored in the Euclid Archive Service (EAS), and can be viewed on the DBView web service (https://eas-dps-cus-ops.esac.esa.int/) or retrieved via the DataProductRetrieval.py script through querying it appropriately.
 
-In addition to the metadata values listed below, all queries should include ``Header.ManualValidationStatus.ManualValidationStatus!="INVALID"`` to properly exclude any invalidated data.
+The following sections list the different types of data products required, plus the metadata values which can be used to query for them. In addition to the metadata values listed below, all queries should include ``Header.ManualValidationStatus.ManualValidationStatus!="INVALID"`` to properly exclude any invalidated data.
 
 ### Data from PF-VIS
 

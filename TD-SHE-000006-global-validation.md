@@ -8,7 +8,11 @@ When the SHE Global Validation pipeline is run, it performs the validation tests
 
 ## Relevant Tests and Test Cases
 
-* 
+* T-SHE-000006-shear-bias
+* T-SHE-000007-pdf-eps-s
+* TC-SHE-100009-PSF-res-interp-star-pos-epoch
+* TC-SHE-100027-CTI-PSF-epoch
+* TC-SHE-100032-CTI-gal-epoch
 
 ## Data Details
 

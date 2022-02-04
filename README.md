@@ -12,8 +12,8 @@ including Testing Dataset definitions and Software Problem Reports.
 
 **Table of Contents**
 
-* [Testing Datasets](Testing_Datasets)
-  * [TD-SHE-000001-SHE-analysis](TD-SHE-000001-SHE-analysis)
-* [Software Problem Reports](Software_Problem_Reports)
+* [Testing Datasets](Testing_Datasets.html)
+  * [TD-SHE-000001-SHE-analysis](TD-SHE-000001-SHE-analysis.html)
+* [Software Problem Reports](Software_Problem_Reports.html)
 
 

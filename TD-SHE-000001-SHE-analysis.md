@@ -22,33 +22,41 @@ All data in this testing dataset is stored in the Euclid Archive Service (EAS), 
 
 The following data products are used from PF-VIS:
 
-* DpdVisCalibratedFrame
-* DpdVisStackedFrame
+* `DpdVisCalibratedFrame`
+* `DpdVisStackedFrame`
 
 The specific products used for this test can be retrieved by querying for each of the above products with the specific metadata values:
 
-* Header.DataSetRelease = SC8_MAIN_V0
-* Data.ObservationSequence.ObservationId = 10351
+* `Header.DataSetRelease` = `SC8_MAIN_V0`
+* `Data.ObservationSequence.ObservationId` = `10351`
 
 ### Data from PF-MER
 
 The following data products are used from PF-MER:
 
-* DpdMerFinalCatalog
-* DpdMerSegmentationMap
+* `DpdMerFinalCatalog`
+* `DpdMerSegmentationMap`
 
 The specific products used for this test can be retrieved by querying for each of the above products with the specific metadata values:
 
-* Header.DataSetRelease = SC8_MAIN_V0
-* Data.TileIndex = Each of the following:
-  * 89671
-  * 90008
-  * 90009
-  * 90010
-  * 90346
-  * 90347
-  * 90348
-  * 90685
+* `Header.DataSetRelease` = `SC8_MAIN_V0`
+* `Data.TileIndex` = Each of the following:
+  * `89671`
+  * `90008`
+  * `90009`
+  * `90010`
+  * `90346`
+  * `90347`
+  * `90348`
+  * `90685`
 
 This comprises data for all MER tiles which spatially overlap the chosen VIS observation.
 
+### Data from PF-SHE
+
+The following data products are used, which are generated manually with PF-SHE to be used as input to this pipeline:
+
+* DpdSheKsbTraining
+* DpdSheLensMcTraining
+* DpdSheRegaussTraining
+* DpdSheAnalysisConfig

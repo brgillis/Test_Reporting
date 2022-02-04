@@ -16,3 +16,39 @@ When the SHE Analysis pipeline is run, it performs the validation tests associat
 
 ## Data Details
 
+All data in this testing dataset is stored in the Euclid Archive Service (EAS), and can be viewed on the DBView web service (https://eas-dps-cus-ops.esac.esa.int/) or retrieved via the DataProductRetrieval.py script through querying it appropriately.
+
+### Data from PF-VIS
+
+The following data products are used from PF-VIS:
+
+* DpdVisCalibratedFrame
+* DpdVisStackedFrame
+
+The specific products used for this test can be retrieved by querying for each of the above products with the specific metadata values:
+
+* Header.DataSetRelease = SC8_MAIN_V0
+* Data.ObservationSequence.ObservationId = 10351
+
+### Data from PF-MER
+
+The following data products are used from PF-MER:
+
+* DpdMerFinalCatalog
+* DpdMerSegmentationMap
+
+The specific products used for this test can be retrieved by querying for each of the above products with the specific metadata values:
+
+* Header.DataSetRelease = SC8_MAIN_V0
+* Data.TileIndex = Each of the following:
+  * 89671
+  * 90008
+  * 90009
+  * 90010
+  * 90346
+  * 90347
+  * 90348
+  * 90685
+
+This comprises data for all MER tiles which spatially overlap the chosen VIS observation.
+

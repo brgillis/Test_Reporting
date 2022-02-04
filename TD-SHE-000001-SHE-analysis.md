@@ -57,6 +57,12 @@ This comprises data for all MER tiles which spatially overlap the chosen VIS obs
 The following data products are used, which are generated manually with PF-SHE to be used as input to this pipeline:
 
 * DpdSheKsbTraining
+  * `Header.ProductId.ObjectId` = `2dba6df3-e4cb-4aad-b98a-e1126c7d431f`
 * DpdSheLensMcTraining
+  * `Header.ProductId.ObjectId` = `7b213d33-6c34-4a38-8523-e7ceba50411e`
 * DpdSheRegaussTraining
+  * `Header.ProductId.ObjectId` = `f97e9592-175d-4571-be14-a1eb783920d8`
 * DpdSheAnalysisConfig
+  * `Header.ProductId.ObjectId` = `she_analysis_rc_5`
+
+Each of these products can be retrieved with the corresponding `Header.ProductId.ObjectId` valued listed above.

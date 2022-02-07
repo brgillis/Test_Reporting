@@ -68,3 +68,14 @@ The following data products are used, which are generated manually with PF-SHE t
   * `Header.ProductId.ObjectId=she_analysis_rc_5`
 
 Each of these products can be retrieved with the corresponding `Header.ProductId.ObjectId` valued listed above.
+
+### Other Data
+
+This testing dataset also includes a Mission Database (MDB) file (data product type DpdMdbDataBase), which is used as input to the run of the SHE Analysis pipeline. The specific MDB used in this dataset is identified as:
+
+* `mdb.Header.ProductId.ObjectId=="EUC_MDB_MISSIONCONFIGURATION-DevSC8_2020-09-16T18:24:00.00Z_04"`
+
+Only the following data files associated with the MDB are used:
+
+* gain_params_sc8.fits
+* RON_params_BIAS02.fits

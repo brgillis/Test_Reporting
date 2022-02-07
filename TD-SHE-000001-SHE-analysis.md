@@ -56,7 +56,7 @@ This comprises data for all MER tiles which spatially overlap the chosen VIS obs
 
 ### Data from PF-SHE
 
-The following data products are used, which are generated manually with PF-SHE to be used as input to this pipeline:
+The following data products are used, which are generated manually with PF-SHE to be used as input to the SHE Analysis pipeline:
 
 * DpdSheKsbTraining
   * `Header.ProductId.ObjectId=2dba6df3-e4cb-4aad-b98a-e1126c7d431f`

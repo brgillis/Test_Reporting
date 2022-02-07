@@ -26,7 +26,7 @@ The following data products are used, which are generated manually with PF-SHE t
   * `Header.ProductId.ObjectId=f97e9592-175d-4571-be14-a1eb783920d8`
 * DpdSheBFDTraining
   * `Header.ProductId.ObjectId=1559052024.257727`
-  * **Note:* This product is now deprecated, and is no longer stored in the EAS as the instance used for this testing campaign is not compatible with the current datamodel. 
+  * **Note:** This product is now deprecated, and is no longer stored in the EAS as the instance used for this testing campaign is not compatible with the current datamodel. 
 
 Each of these products aside from DpdSheBFDTraining can be retrieved with the corresponding `Header.ProductId.ObjectId` valued listed above. Note that this testing campaign was performed on an older version of the Euclid Data model, and the versions now available on the EAS are migrated instances of the original products which contain the same scientific data.
 

@@ -30,7 +30,7 @@ The following data products are used from PF-VIS:
 The specific products used for this test can be retrieved by querying for each of the above products with the specific metadata values:
 
 * `Header.DataSetRelease=SC8_MAIN_V0`
-* `Data.ObservationSequence.ObservationId=10351`
+* `Data.ObservationSequence.ObservationId=25463`
 
 ### Data from PF-MER
 
@@ -43,14 +43,15 @@ The specific products used for this test can be retrieved by querying for each o
 
 * `Header.DataSetRelease=SC8_MAIN_V0`
 * `Data.TileIndex=` Each of the following (requiring a separate query for each):
-  * `89671`
-  * `90008`
-  * `90009`
-  * `90010`
-  * `90346`
-  * `90347`
-  * `90348`
-  * `90685`
+  * `78831`
+  * `78832`
+  * `78833`
+  * `79170`
+  * `79171`
+  * `79172`
+  * `79509`
+  * `79510`
+  * `79511`
 
 This comprises data for all MER tiles which spatially overlap the chosen VIS observation.
 

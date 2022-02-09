@@ -9,4 +9,5 @@
   * [TD-SHE-000005-colgrad-emul](TD-SHE-000005-colgrad-emul.md)
   * [TD-SHE-000006-global-validation](TD-SHE-000006-global-validation.md)
   * [TD-SHE-000012-calibr-simul](TD-SHE-000012-calibr-simul.md)
-* [Software Problem Reports](Software_Problem_Reports.md)ghh
+* [Software Problem Reports](Software_Problem_Reports.md)
+  * [SPR-TC-SHE-100023-gal-info-out-001](SPR-TC-SHE-100023-gal-info-out-001.md)

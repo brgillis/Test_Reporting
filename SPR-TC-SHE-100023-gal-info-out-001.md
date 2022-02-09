@@ -6,7 +6,7 @@
 
 **Test procedure:** The SHE Analysis pipeline was run on this observation. The resulting shear estimates table for LensMC was manually inspected for data quality issues.
 
-**Test result:** OK
+**Test result:** **OK** with warnings
 
 ## Detailed test results
 

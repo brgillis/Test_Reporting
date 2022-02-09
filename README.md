@@ -6,14 +6,6 @@ http://pf-she.pages.euclid-sgs.uk/test_reporting/
 ---
 
 This project hosts supporting documentation for the Software Test Plan/Report,
-including Testing Dataset definitions and Software Problem Reports.
-
----
-
-**Table of Contents**
-
-* [Testing Datasets](Testing_Datasets.html)
-  * [TD-SHE-000001-SHE-analysis](TD-SHE-000001-SHE-analysis.html)
-* [Software Problem Reports](Software_Problem_Reports.html)
+including Testing Dataset definitions and Software Problem Reports. These pages can be found linked from the sidebar, to the left.
 
 

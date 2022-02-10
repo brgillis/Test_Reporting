@@ -70,5 +70,14 @@ Both of these values exceed requirements, and so the test is considered failed f
 
 ### PSF model inaccuracy
 
-**Result:** **OK** with warnings
+**Result:** **POK** with warnings
 
+In the case of PSF model inaccuracy, requirements have been imposed on it based on equations from Paulin-Henriksson (2009). Thus, here we test the validity of these equations.
+
+In the first test, we alter the PSF by varying the simulated position of the M2 mirror, which is the model parameter with the most direct impact on PSF size and shape. In this test (shown in the top panels of Figures 6.8 and 6.9 of the linked document), we find that relationship between the multiplicative and additive biases and the change in PSF size and shape respectively is close to that predicted by Paulin-Henrikksson's equations, but with a slightly larger slope. In the case of multiplicative bias, the slope is approximately `50%` larger, and for additive bias it is approximately `30%` larger.
+
+This is not an unanticipated finding, as Paulin-Henrikksson's equations rely on simplified models and do not incorporate the impact of any moments of the PSF higher than quadrupole. We thus assess the test on this parameter a partial success, as while the bias varies more strongly than expected, it is by an amount can possibly be accounted for by stricter constraints on the PSF model.
+
+We further investigated the validity of the Paulin-Henrikksson equations by directly varying the PSF size and shape through linear scaling and a shear transformation respectively, and measuring the bias response. In both case, we found that the actual bias response was much lower than that predicted by the equations. In the case of multiplicative bias, the response was around half that predicted by the equations. In the case of additive bias, the response of the first component of bias was approximately `20%` lower than predicted, while there was almost no response of the second component to the change in ellipticity.
+
+This implies that the Paulin-Henrikksson equations are not in general a reliable predictor of bias. In the case of the Euclid PSF and motion of the M2 mirror, the underestimate of the equations happens to be roughly cancelled out by the extra bias induced through changes to higher-order moments of the PSF. We thus add a warning to the conclusion of this test, that the Paulin-Henrikksson equations which were used to set the initial requirements are not in general reliable, and direct bias measurement (such as through this test) will be necessary.

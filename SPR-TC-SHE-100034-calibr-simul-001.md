@@ -28,6 +28,7 @@ In all cases here, we compare against the allowed errors on bias:
 |dm| < 1e-4
 |dc| < 5e-6
 ```
+Each measured bias error reported here is the maximum error found across both polar components of `m` or `c`, and the maximum of both changing the tested value lower or higher, for the shear estimation method LensMC. Full details can be seen in Section 6 of the linked document.
 
 ### Intrinsic galaxy ellipticity
 
@@ -45,7 +46,7 @@ To meet requirements, `sigma(e)` will thus need to be constrained to errors of l
 
 **Result:** **NOK**
 
-In the case of sky background level, the tested range of sky background levels approximated the expected measurement error of this value, and so here we directly compare the measured bias differences between test and fiducial simulations to requirements. The bias errors found here at the test points at `1-sigma` distance from the fiducial points was:
+In the case of sky background level, the tested range of values approximated the expected measurement error, and so here we directly compare the measured bias differences between test and fiducial simulations to requirements. The bias errors found here at the test points at `1-sigma` distance from the fiducial points were:
 
 ```
 dm = ~5 x 10^-3
@@ -56,4 +57,18 @@ Both of these values exceed requirements, and so the test is considered failed f
 
 ### Galaxy disk truncation radius
 
+**Result:** **NOK**
+
+In the case of galaxy disk truncation radius, the tested range of values approximated the current scientific uncertainty in the typical value (one set of points at the lower and higher likely values, and one set at the most extreme plausible values), and so here we directly compare the measured bias differences between test and fiducial simulations to requirements. The bias errors found here at the test points at the lower and higher likely values were:
+
+```
+dm = ~3 x 10^-3
+dc = ~2 x 10^-4
+```
+
+Both of these values exceed requirements, and so the test is considered failed for this parameter.
+
 ### PSF model inaccuracy
+
+**Result:** **OK** with warnings
+

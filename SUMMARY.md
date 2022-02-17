@@ -12,6 +12,5 @@
   * [TD-SHE-000012-calibr-simul](TD-SHE-000012-calibr-simul.md)
 * [Software Problem Reports](Software_Problem_Reports.md)
   * [SPR-T-SHE-000006-shear-bias-001](SPR-T-SHE-000006-shear-bias-001.md)
-  * [SPR-TC-SHE-100022-gal-N-out-001](SPR-TC-SHE-100022-gal-N-out-001.md)
   * [SPR-TC-SHE-100023-gal-info-out-001](SPR-TC-SHE-100023-gal-info-out-001.md)
   * [SPR-TC-SHE-100034-calibr-simul-001](SPR-TC-SHE-100034-calibr-simul-001.md)

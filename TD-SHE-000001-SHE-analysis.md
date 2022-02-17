@@ -9,10 +9,9 @@ When the SHE Analysis pipeline is run, it performs the validation tests associat
 ## Relevant Tests and Test Cases
 
 * **T-SHE-000001-PSF-res-star-pos** (all test cases except epoch)
-* **T-SHE-000008-gal-info**
+* **TC-SHE-100023-gal-info-out**
 * **T-SHE-000009-CTI-PSF** (all test cases except epoch)
 * **T-SHE-000010-CTI-gal** (all test cases except epoch)
-* **T-SHE-000013-data-proc**
 
 ## Data Details
 

@@ -10,5 +10,5 @@ This section details the Testing Datasets used for OU-SHE's testing campaign. Th
 | [TD-SHE-000004-PSF-model-err-propa](TD-SHE-000004-PSF-model-err-propa.html) |  | T-SHE-000004-PSF-model-err-propa | 
 | [TD-SHE-000005-colgrad-emul](TD-SHE-000005-colgrad-emul.html) |  | T-SHE-000005-colgrad-emul | 
 | [TD-SHE-000006-global-validation](TD-SHE-000006-global-validation.html) | Output from the SHE Analysis pipeline on as many observations as are available | T-SHE-000006-shear-bias, T-SHE-000007-pdf-eps-s, TC-SHE-100009-PSF-res-interp-star-pos-epoch, TC-SHE-100027-CTI-PSF-epoch, TC-SHE-100032-CTI-gal-epoch |
-| [TD-SHE-000008-SHE-reconciliation.md](TD-SHE-000008-SHE-reconciliation.md.html) | Input for running the SHE Reconciliation pipeline on a single tile and all overlapping observations | TC-SHE-100022-gal-N-out, T-SHE-000013-data-proc | 
+| [TD-SHE-000008-SHE-reconciliation](TD-SHE-000008-SHE-reconciliation.html) | Input for running the SHE Reconciliation pipeline on a single tile and all overlapping observations | TC-SHE-100022-gal-N-out, T-SHE-000013-data-proc | 
 | [TD-SHE-000012-calibr-simul](TD-SHE-000012-calibr-simul.html) | Manually prepared data to test sensitivity of shear bias measurement to various properties | T-SHE-000012-calibr-simul | 

@@ -8,7 +8,7 @@
   * [TD-SHE-000004-PSF-model-err-propa](TD-SHE-000004-PSF-model-err-propa.md)
   * [TD-SHE-000005-colgrad-emul](TD-SHE-000005-colgrad-emul.md)
   * [TD-SHE-000006-global-validation](TD-SHE-000006-global-validation.md)
-  * [TD-SHE-000008-SHE-reconciliation.md](TD-SHE-000008-SHE-reconciliation.md)
+  * [TD-SHE-000008-SHE-reconciliation](TD-SHE-000008-SHE-reconciliation.md)
   * [TD-SHE-000012-calibr-simul](TD-SHE-000012-calibr-simul.md)
 * [Software Problem Reports](Software_Problem_Reports.md)
   * [SPR-T-SHE-000006-shear-bias-001](SPR-T-SHE-000006-shear-bias-001.md)

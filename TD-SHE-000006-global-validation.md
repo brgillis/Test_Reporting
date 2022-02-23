@@ -2,9 +2,9 @@
 
 ## Summary
 
-This testing dataset comprises the input data needed for a run of the SHE Global Validation pipeline on a set of Euclid observations which have been processed by the SHE Analysis pipeline. 
+This testing dataset comprises the input data needed for a run of the SHE Global Validation pipeline on a set of Euclid observations which have been processed by the SHE Analysis pipeline. When the SHE Global Validation pipeline is run, it performs the validation tests associated with this dataset.
 
-When the SHE Global Validation pipeline is run, it performs the validation tests associated with this dataset.
+The dataset used for this test campaign was a set of 119 simulated Euclid Wide observations, covering a sky area of 59.5 sq. deg.
 
 ## Relevant Tests and Test Cases
 

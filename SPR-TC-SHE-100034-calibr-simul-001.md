@@ -45,7 +45,7 @@ To meet requirements, *&sigma;*(*e*) will thus need to be constrained to errors 
 
 **Result:** **NOK**
 
-In the case of sky background level, the tested range of values approximated the expected measurement error, and so here we directly compare the measured bias differences between test and fiducial simulations to requirements. The bias errors found here at the test points at `1-sigma` distance from the fiducial points were:
+In the case of sky background level, the tested range of values approximated the expected measurement error, and so here we directly compare the measured bias differences between test and fiducial simulations to requirements. The bias errors found here at the test points at 1-*&sigma;* distance from the fiducial points were:
 
 * *&sigma;*(*m*) = ~5 x 10<sup>-3</sup>
 * *&sigma;*(*c*) = ~8 x 10<sup>-5</sup>

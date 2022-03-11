@@ -2,11 +2,29 @@
 
 ## Summary
 
+**Validated Requirement(s):** R-SHE-CAL-F-070, R-SHE-CAL-F-080
+
+**Relevent test or test case(s):** T-SHE-000012-calibr-simul (TC-SHE-100034-calibr-simul)
+
 **Test dataset:** [TD-SHE-000012-calibr-simul](TD-SHE-000012-calibr-simul.html)
 
 **Test procedure:** Shear bias was measured based on galaxy image simulations using a fiducial set of input parameters, and on variant simulations which each vary one of these parameters. The differences in bias between these simulations were used to estimate the expected error in bias for expected errors in these input parameters, and this was compared against requirements.
 
 **Test result:** **POK**
+
+## Requirement Interpretation
+
+This test validates Requirements R-SHE-CAL-F-070 and R-SHE-CAL-F-080, which state:
+
+* **R-SHE-CAL-F-070:** The average error on the multiplicative bias (&mu;) intrinsic to the ellipticity measurement per galaxy, accounting for the weak lensing weights, shall be less than 2x10<sup>-3</sup> (1&sigma;) for the ensemble of galaxies used for weak lensing.
+* **R-SHE-CAL-F-080:** The average error on the additive bias (c) intrinsic to the ellipticity measurement method, accounting for the weak lensing weights, shall be known to better than 5x10<sup>-4</sup> (1&sigma;) for the ensemble of galaxies used for weak lensing.
+
+That is, the requirements on the multiplative bias *m* and additive bias *c* when shear is estimated with an uncalibrated shear estimation algorithm are interpreted to be:
+
+* *&sigma;*(*m*) < 2 x 10<sup>-3</sup>
+* *&sigma;*(*c*) < 5 x 10<sup>-4</sup>
+
+This test focuses on confirming errors on any parameters which impact shear bias will not result in errors on shear bias exceeding these requirements. T-SHE-000006-shear-bias focuses on confirming that these conditions are met in a fiducial test case, where all parameters which impact shear bias are accurately known, i.e. the simulations used to estimate shear bias accurately reflect reality.
 
 ## Detailed test results
 

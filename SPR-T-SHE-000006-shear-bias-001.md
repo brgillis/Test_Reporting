@@ -2,6 +2,10 @@
 
 ## Summary
 
+**Validated Requirement(s):** R-SHE-CAL-F-070, R-SHE-CAL-F-080
+
+**Relevent test or test case(s):** T-SHE-000006-shear-bias (TC-SHE-100017-shear-bias-m and TC-SHE-100018-shear-bias-c)
+
 **Test dataset:** [TD-SHE-000006-global-validation](TD-SHE-000006-global-validation.html)
 
 **Test procedure:** Estimated shear values from LensMC were linearly regressed against true input shear values, and the slope and intercept of the regression were used to calculate the multiplicative and additive bias respectively. &sigma;
@@ -21,6 +25,8 @@ That is, the requirements on the multiplative bias *m* and additive bias *c* whe
 
 * *&sigma;*(*m*) < 2 x 10<sup>-3</sup>
 * *&sigma;*(*c*) < 5 x 10<sup>-4</sup>
+
+This test focuses on confirming that these conditions are met in a fiducial test case, where all parameters which impact shear bias are accurately known, i.e. the simulations used to estimate shear bias accurately reflect reality. Test T-SHE-000012-calibr-simul tests that expected errors in these parameters will not cause errors on bias to exceed these requirements.
 
 ## Detailed test results
 

@@ -8,7 +8,44 @@
 
 **Test result:** **OK** with warnings
 
+## Requirement Interpretation
+
+This test validates Requirement R-SHE-PRD-F-180, which states:
+
+**R-SHE-PRD-F-180:** For each galaxy used in the weak lensing analysis up to the limiting magnitude the following information should be available:
+
+1. At least 1 ellipticity measurement such that a shear estimate can be inferred.
+2. The posterior probability distribution of the true ellipticity given the data
+3. The posterior probability distribution of the photometric redshift given the data
+4. Estimate of the covariance between photometric redshift and ellipticity (TBD)
+5. The classification star / galaxy
+6. Confidence level and quality assessment
+7. At least one size measurement
+
+Due to design changes since the adoption of this requirement, we have adopted the following modifications and clarifications to these points, from the perspective of what PF-SHE is tasked with testing:
+
+1. At least 1 ellipticity measurement such that a shear estimate can be inferred.
+    * No modification or interpretation necessary
+2. The posterior probability distribution of the true ellipticity given the data
+    * Either a 1&sigma; error of the shear estimate or an inverse-variance weight of it should be provided
+3. The posterior probability distribution of the photometric redshift given the data
+    * This portion of the requirement is not to be tested by PF-SHE
+4. Estimate of the covariance between photometric redshift and ellipticity (TBD)
+    * Due to design changes, shear estimates are now provided conditioned on the bin assignments provided by PHZ. No value in the output measurements table from PF-SHE is necessary to indicate this
+5. The classification star / galaxy
+    * This may take the form of either a flag identifying star / galaxy / unknown or a probability estimate that the object is a galaxy
+6. Confidence level and quality assessment
+    * Flags should be provided indicating any problems which arise in the analysis of individual objects
+7. At least one size measurement
+    * The size measurement may be of any nature, as long it is properly documented
+
+We further interpret that this requirement is met if a table is provided containing columns for all required information, and that for each object, either:
+* Values are provided for all required information; or
+* The object is flagged as a failed measurement
+
 ## Detailed test results
+
+Columns are provided in the output shear measurements table indicating all required data.
 
 All required information is present (no *NaN* values) for all galaxies which are flagged with `SHE_LENSMC_FIT_FLAGS==0`, and so this test is considered passed. However, some data quality issues with other columns were identified, which are listed here:
 

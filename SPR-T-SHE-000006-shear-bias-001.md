@@ -10,7 +10,7 @@
 
 We find the Requirement on the measurement error of the multiplicative bias, m, is marginally outside of requirements for the test data size, compared to the end-of-mission Requirement, but would meet requirements for a factor 6.25 larger area (a 372 sq.deg simulated survey) or for a survey with appropriate ellipticity noise cancellation, and within requirements for the c-bias error. However, we meet Requirements for DR1. This performance is due to the change in detection signal-to-noise dropping from 10 to 5 to mitigate selection bias. However, the absolute bias was unexpectedly larger than expected (although not a calibration Requirement) based on earlier tests. A number of known issues with SC8 may have caused this which are under investigation. As a result we designate this test POK, rather than OK.
 
-## Detailed test results
+## Requirement Interpretation
 
 This test validates Requirements R-SHE-CAL-F-070 and R-SHE-CAL-F-080, which state:
 
@@ -21,6 +21,8 @@ That is, the requirements on the multiplative bias *m* and additive bias *c* whe
 
 * *&sigma;*(*m*) < 2 x 10<sup>-3</sup>
 * *&sigma;*(*c*) < 5 x 10<sup>-4</sup>
+
+## Detailed test results
 
 When the bias was measured with the shear estimation method LensMC, it was found to have bias and errors on such of:
 

@@ -12,7 +12,7 @@ We find the Requirement on the measurement error of the multiplicative bias, m, 
 
 ## Detailed test results
 
-This test validated Requirements R-SHE-CAL-F-070 and R-SHE-CAL-F-080, which state:
+This test validates Requirements R-SHE-CAL-F-070 and R-SHE-CAL-F-080, which state:
 
 * **R-SHE-CAL-F-070:** The average error on the multiplicative bias (&mu;) intrinsic to the ellipticity measurement per galaxy, accounting for the weak lensing weights, shall be less than 2x10<sup>-3</sup> (1&sigma;) for the ensemble of galaxies used for weak lensing.
 * **R-SHE-CAL-F-080:** The average error on the additive bias (c) intrinsic to the ellipticity measurement method, accounting for the weak lensing weights, shall be known to better than 5x10<sup>-4</sup> (1&sigma;) for the ensemble of galaxies used for weak lensing.

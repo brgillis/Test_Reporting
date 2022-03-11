@@ -12,7 +12,7 @@ We find the Requirement on the measurement error of the multiplicative bias, m, 
 
 ## Detailed test results
 
-The algorithmic bias requirements on the multiplative bias *m* and additive bias *c* for an uncalibrated shear estimation algorithm are interpreted to be:
+The bias requirements on the multiplative bias *m* and additive bias *c* for an uncalibrated shear estimation algorithm are interpreted to be:
 
 * *&sigma;*(*m*) < 2 x 10<sup>-3</sup>
 * *&sigma;*(*c*) < 5 x 10<sup>-4</sup>
@@ -23,8 +23,6 @@ When the bias of the shear estimation method LensMC was measured, it was found t
 * *m*<sub>2</sub> = -0.18275 +/- 0.00512
 * *c*<sub>1</sub> = (-8.13002 +/- 0.08181) x 10<sup>-3</sup>
 * *c*<sub>2</sub> = (-0.42275 +/- 0.08161) x 10<sup>-3</sup>
-
-Figure **** shows the (m1,c1) and (m2,c2) planes for SC8 test data.
 
 The measured error on the bias parameters is 
 

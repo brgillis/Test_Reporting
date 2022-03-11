@@ -12,12 +12,17 @@ We find the Requirement on the measurement error of the multiplicative bias, m, 
 
 ## Detailed test results
 
-The bias requirements on the multiplative bias *m* and additive bias *c* for an uncalibrated shear estimation algorithm are interpreted to be:
+This test validated Requirements R-SHE-CAL-F-070 and R-SHE-CAL-F-080, which state:
+
+* **R-SHE-CAL-F-070:** The average error on the multiplicative bias (&mu;) intrinsic to the ellipticity measurement per galaxy, accounting for the weak lensing weights, shall be less than 2x10<sup>-3</sup> (1&sigma;) for the ensemble of galaxies used for weak lensing.
+* **R-SHE-CAL-F-080:** The average error on the additive bias (c) intrinsic to the ellipticity measurement method, accounting for the weak lensing weights, shall be known to better than 5x10<sup>-4</sup> (1&sigma;) for the ensemble of galaxies used for weak lensing.
+
+That is, the requirements on the multiplative bias *m* and additive bias *c* when shear is estimated with an uncalibrated shear estimation algorithm are interpreted to be:
 
 * *&sigma;*(*m*) < 2 x 10<sup>-3</sup>
 * *&sigma;*(*c*) < 5 x 10<sup>-4</sup>
 
-When the bias of the shear estimation method LensMC was measured, it was found to have bias and errors on such of:
+When the bias was measured with the shear estimation method LensMC, it was found to have bias and errors on such of:
 
 * *m*<sub>1</sub> = -0.19604 +/- 0.00514
 * *m*<sub>2</sub> = -0.18275 +/- 0.00512
@@ -26,8 +31,8 @@ When the bias of the shear estimation method LensMC was measured, it was found t
 
 The measured error on the bias parameters is 
 
-sigma(m) = 5.1 x 10<sup>-3</sup>,
-sigma(c) = 8.2 x 10<sup>-5</sup>,
+* &sigma;(m) = 5.1 x 10<sup>-3</sup>,
+* &sigma;(c) = 8.2 x 10<sup>-5</sup>,
 
 modulo negligible differences between the two polar components. We see that for the 59.5 sq. deg. of SC8 data we are marginally outside of the Requirements for the error on m (factor of ~2.5), and well within Requirements for the error on c. This study was limited by the available sky area processed during the Science Challenge, and would imply that an area of 6.25 larger (372 sq. degs) would meet the m-bias error Requirement.  However, we note that the SC8 results would be within Requirements for DR1, if we were to assume a factor of root-6 or better increase in errors. 
 

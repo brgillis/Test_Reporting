@@ -8,6 +8,14 @@ This testing dataset comprises the data needed for a run of the SHE Sensitivity 
 
 * T-SHE-000012-calibr-simul
 
+## Data Description
+
+The data included in this testing dataset consists of:
+* Training data for PF-SHE's shear estimation methods
+* Template configuration files for the generation of galaxy image simulations
+* Control scripts for submitting pipeline runs
+* Pre-computed PSF images to be used for galaxy image simulation
+
 ## Data Details
 
 All data products in this testing dataset is stored in the Euclid Archive Service (EAS), and can be viewed on the DBView web service (https://eas-dps-cus-ops.esac.esa.int/) or retrieved via the DataProductRetrieval.py script through querying it appropriately.

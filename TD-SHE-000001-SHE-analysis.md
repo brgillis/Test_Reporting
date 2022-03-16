@@ -24,8 +24,8 @@ The data included in this testing dataset consists of:
 
 Of note, we detail here the object selection performed on the catalog provided by PF-MER:
 * The PSF Model Fitting task uses a selection of the 5 highest-S/N objects identified as stars in the catalog
-* The PSF Model Generation task and Shear Estimation tasks process all objects which are labelled in MER's catalog as being detected using only the VIS-channel data, regardless of whether these objects are labelled as stars or galaxies
-* For validation tests, only objects for which the shear estimate is provided without any error flags and which are identified as galaxies by the shear estimation method are used
+* The PSF Model Generation task and Shear Estimation tasks process all objects which are labelled in MER's catalog as being detected using only the VIS-channel data, regardless of whether these objects are labelled as stars or galaxies, and regardless of S/N. This results in a selection of 153,755 objects for this particular observation
+* For validation tests, only objects for which the shear estimate is provided without any error flags are used, and these objects are separated into those believed to be galaxies, those believed to be stars, and those of an unknown type. This results in a selection of 82,399 well-measured galaxies for this particular observation, of which 78,975 are believed to be galaxies and 534 are believed to be stars.
 
 ## Data Details
 

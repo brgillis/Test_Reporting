@@ -6,7 +6,7 @@
 
 **Relevent test or test case(s):** T-SHE-000012-calibr-simul (TC-SHE-100034-calibr-simul)
 
-**Test dataset:** [TD-SHE-000012-calibr-simul](TD-SHE-000012-calibr-simul.html)
+**Test dataset:** [TD-SHE-000012-calibr-simul](TD/TD-SHE-000012-calibr-simul.html)
 
 **Test procedure:** Shear bias was measured based on galaxy image simulations using a fiducial set of input parameters, and on variant simulations which each vary one of these parameters. The differences in bias between these simulations were used to estimate the expected error in bias for expected errors in these input parameters, and this was compared against requirements.
 

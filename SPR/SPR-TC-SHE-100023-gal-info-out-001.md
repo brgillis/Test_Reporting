@@ -6,7 +6,7 @@
 
 **Relevent test or test case(s):** TC-SHE-100023-gal-info-out
 
-**Test dataset:** [TD-SHE-000001-SHE-analysis](TD-SHE-000001-SHE-analysis.html)
+**Test dataset:** [TD-SHE-000001-SHE-analysis](TD/TD-SHE-000001-SHE-analysis.html)
 
 **Test procedure:** The SHE Analysis pipeline was run on this observation. The resulting shear estimates table for LensMC was manually inspected for data quality issues.
 

@@ -6,7 +6,7 @@
 
 **Relevent test or test case(s):** T-SHE-000006-shear-bias (TC-SHE-100017-shear-bias-m and TC-SHE-100018-shear-bias-c)
 
-**Test dataset:** [TD-SHE-000006-global-validation](TD-SHE-000006-global-validation.html)
+**Test dataset:** [TD-SHE-000006-global-validation](TD/TD-SHE-000006-global-validation.html)
 
 **Test procedure:** Estimated shear values from LensMC were linearly regressed against true input shear values, and the slope and intercept of the regression were used to calculate the multiplicative and additive bias respectively. &sigma;
 

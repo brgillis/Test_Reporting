@@ -36,8 +36,10 @@ The following bin limits were used for each test case, using the above parameter
 
 * TC-SHE-100028-CTI-gal-SNR: 0, 3.5, 5, 7, 10, 15, 30, 1e99
 * TC-SHE-100029-CTI-gal-bg: 0, 30, 35, 35.25, 36, 50, 1e99
-* TC-SHE-100030-CTI-gal-size: -1e99, -2.5, -2, -1.5, -1, -0.6, 1e99
-* TC-SHE-100031-CTI-gal-col: 0, 30, 45, 75, 140, 300, 1e99
+* TC-SHE-100030-CTI-gal-size: 0, 30, 45, 75, 140, 300, 1e99
+* TC-SHE-100031-CTI-gal-col: -1e99, -2.5, -2, -1.5, -1, -0.6, 1e99
 * TC-SHE-100900-CTI-gal-tot: (all data)
 
 These bin limits were selected to provide significant subsamples of the data. The test is to be deemed failed if, for any bin in which there is sufficient data to perform the test (generally at least 3 objects with well-measured shear), the slope of the shear versus the distance of objects from the readout register differs from zero by a statistically-significant margin.
+
+While not the focus of the test, the measured intercept value was tested for consistency with zero as well. A failure in this aspect does not indicate a likely issue with CTI, and so does not constitute a failure of this test, but does indicate the presence of some other issue.

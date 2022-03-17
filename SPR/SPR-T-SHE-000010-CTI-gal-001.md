@@ -42,4 +42,4 @@ The following bin limits were used for each test case, using the above parameter
 
 These bin limits were selected to provide significant subsamples of the data. The test is to be deemed failed if, for any bin in which there is sufficient data to perform the test (generally at least 3 objects with well-measured shear), the slope of the shear versus the distance of objects from the readout register differs from zero by a statistically-significant margin.
 
-While not the focus of the test, the measured intercept value was tested for consistency with zero as well. A failure in this aspect does not indicate a likely issue with CTI, and so does not constitute a failure of this test, but does indicate the presence of some other issue.
+While not the focus of the test, the measured intercept value was tested for consistency with zero as well. A failure in this aspect does not indicate a likely issue with CTI, and so does not constitute a failure of this test, but does indicate the presence of some other issue, and so is raised as a warning if it occurs.

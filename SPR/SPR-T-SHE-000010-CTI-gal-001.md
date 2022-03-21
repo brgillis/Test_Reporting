@@ -46,33 +46,50 @@ While not the focus of the test, the measured intercept value was tested for con
 
 The test results for each test case and bin are detailed in the tables below:
 
-|  **Test Case** | **Bin Limits** | **Slope** | **Slope Sigma** | **Result** |
-| :------------- | :------------- | :-------- | :-------------- | :--------- |
-| TC-SHE-100028-CTI-gal-SNR | [0, 3.5) | (0.32 +/- 5.10) x 10<sup>-6</sup> | 0.06 | OK |
-| TC-SHE-100028-CTI-gal-SNR | [3.5, 5) | (0.82 +/- 3.25) x 10<sup>-6</sup> | 0.25 | OK |
-| TC-SHE-100028-CTI-gal-SNR | [5, 7) | (-0.13 +/- 2.58) x 10<sup>-6</sup> | 0.05 | OK |
-| TC-SHE-100028-CTI-gal-SNR | [7, 10) | (0.32 +/- 2.24) x 10<sup>-6</sup> | 0.14 | OK |
-| TC-SHE-100028-CTI-gal-SNR | [10, 15) | (-0.88 +/- 2.07) x 10<sup>-6</sup> | 0.43 | OK |
-| TC-SHE-100028-CTI-gal-SNR | [15, 30) | (-0.49 +/- 1.92) x 10<sup>-6</sup> | 0.25 | OK |
-| TC-SHE-100028-CTI-gal-SNR | [30, 1e99) | (2.41 +/- 1.71) x 10<sup>-6</sup> | 1.41 | OK |
+|  **Test Case** | **Bin Limits** | **Slope** | **Slope Sigma** |
+| :------------- | :------------- | :-------- | :-------------- |
+| TC-SHE-100028-CTI-gal-SNR | [0, 3.5) | (0.32 +/- 5.10) x 10<sup>-6</sup> | 0.06 |
+|                           | [3.5, 5) | (0.82 +/- 3.25) x 10<sup>-6</sup> | 0.25 |
+|                           | [5, 7) | (-0.13 +/- 2.58) x 10<sup>-6</sup> | 0.05 |
+|                           | [7, 10) | (0.32 +/- 2.24) x 10<sup>-6</sup> | 0.14 |
+|                           | [10, 15) | (-0.88 +/- 2.07) x 10<sup>-6</sup> | 0.43 |
+|                           | [15, 30) | (-0.49 +/- 1.92) x 10<sup>-6</sup> | 0.25 |
+|                           | [30, 1e99) | (2.41 +/- 1.71) x 10<sup>-6</sup> | 1.41 |
 | TC-SHE-100029-CTI-gal-bg | [0, 30) | N/A | N/A | N/A |
-| TC-SHE-100029-CTI-gal-bg | [30, 35) | N/A | N/A | N/A |
-| TC-SHE-100029-CTI-gal-bg | [35, 35.25) | N/A | N/A | N/A |
-| TC-SHE-100029-CTI-gal-bg | [35.25, 36) | N/A | N/A | N/A |
-| TC-SHE-100029-CTI-gal-bg | [36, 50) | (0.54 +/- 0.87) x 10<sup>-6</sup> | 0.62 | OK |
-| TC-SHE-100029-CTI-gal-bg | [50, 1e99) | N/A | N/A | N/A |
-| TC-SHE-100030-CTI-gal-size | [0, 30) | (0.01 +/- 3.25) x 10<sup>-6</sup> | 0.00 | OK |
-| TC-SHE-100030-CTI-gal-size | [30, 45) | (0.74 +/- 2.31) x 10<sup>-6</sup> | 0.32 | OK |
-| TC-SHE-100030-CTI-gal-size | [45, 70) | (-0.71 +/- 1.83) x 10<sup>-6</sup> | 0.39 | OK |
-| TC-SHE-100030-CTI-gal-size | [75, 140) | (-0.11 +/- 1.76) x 10<sup>-6</sup> | 0.06 | OK |
-| TC-SHE-100030-CTI-gal-size | [140, 300) | (0.45 +/- 2.14) x 10<sup>-6</sup> | 0.21 | OK |
-| TC-SHE-100030-CTI-gal-size | [300, 1e99) | (2.97 +/- 2.20) x 10<sup>-6</sup> | 1.35 | OK |
-| TC-SHE-100031-CTI-gal-col | [-1e99, -2.5) | (0.94 +/- 4.60) x 10<sup>-6</sup> | 0.20 | OK |
-| TC-SHE-100031-CTI-gal-col | [-2.5, -2.0) | (0.15 +/- 2.48) x 10<sup>-6</sup> | 0.06 | OK |
-| TC-SHE-100031-CTI-gal-col | [-2.0, -1.5) | (-0.14 +/- 1.85) x 10<sup>-6</sup> | 0.08 | OK |
-| TC-SHE-100031-CTI-gal-col | [-1.5, -1.0) | (-0.20 +/- 1.62) x 10<sup>-6</sup> | 0.12 | OK |
-| TC-SHE-100031-CTI-gal-col | [-1.0, -0.6) | (-0.04 +/- 1.93) x 10<sup>-6</sup> | 0.02 | OK |
-| TC-SHE-100031-CTI-gal-col | [-0.6, 1e99) | (4.33 +/- 2.40) x 10<sup>-6</sup> | 1.81 | OK |
-| TC-SHE-100900-CTI-gal-tot | N/A | (0.54 +/- 0.87) x 10<sup>-6</sup> | 0.62 | OK |
+|                          | [30, 35) | N/A | N/A | N/A |
+|                          | [35, 35.25) | N/A | N/A | N/A |
+|                          | [35.25, 36) | N/A | N/A | N/A |
+|                          | [36, 50) | (0.54 +/- 0.87) x 10<sup>-6</sup> | 0.62 |
+|                          | [50, 1e99) | N/A | N/A | N/A |
+| TC-SHE-100030-CTI-gal-size | [0, 30) | (0.01 +/- 3.25) x 10<sup>-6</sup> | 0.00 |
+|                            | [30, 45) | (0.74 +/- 2.31) x 10<sup>-6</sup> | 0.32 |
+|                            | [45, 70) | (-0.71 +/- 1.83) x 10<sup>-6</sup> | 0.39 |
+|                            | [75, 140) | (-0.11 +/- 1.76) x 10<sup>-6</sup> | 0.06 |
+|                            | [140, 300) | (0.45 +/- 2.14) x 10<sup>-6</sup> | 0.21 |
+|                            | [300, 1e99) | (2.97 +/- 2.20) x 10<sup>-6</sup> | 1.35 |
+| TC-SHE-100031-CTI-gal-col | [-1e99, -2.5) | (0.94 +/- 4.60) x 10<sup>-6</sup> | 0.20 |
+|                           | [-2.5, -2.0) | (0.15 +/- 2.48) x 10<sup>-6</sup> | 0.06 |
+|                           | [-2.0, -1.5) | (-0.14 +/- 1.85) x 10<sup>-6</sup> | 0.08 |
+|                           | [-1.5, -1.0) | (-0.20 +/- 1.62) x 10<sup>-6</sup> | 0.12 |
+|                           | [-1.0, -0.6) | (-0.04 +/- 1.93) x 10<sup>-6</sup> | 0.02 |
+|                           | [-0.6, 1e99) | (4.33 +/- 2.40) x 10<sup>-6</sup> | 1.81 |
+| TC-SHE-100900-CTI-gal-tot | N/A | (0.54 +/- 0.87) x 10<sup>-6</sup> | 0.62 |
 
-(Remainder of page still under construction)
+To assess statistical significance, we must account for the fact that since we are checking multiple bins for each parameter, this increases the chance that the results for one bin will cross a given threshold of significance by chance. We choose to account for this through the following procedure:
+
+1. Decide upon a fiducial threshold of statistical significance we wish to use: p<sub>f</sub> = 0.05.
+2. Calculate a threshold for each bin, p<sub>b</sub> such that the probability of the results for any bin crossing the threshold is equal to the probability of the results for a single bin crossing the threshold p<sub>f</sub> through:
+
+    p<sub>b</sub> = 1 - (1-p<sub>f</sub>)<sup>1/N</sup>
+
+3. Calculate the corresponding two-tailed sigma value of a Gaussian distribution from this probability
+
+This results in the following threshold probabilities and sigma values for each test case:
+
+|  **Test Case** | **# of Bins** | **p<sub>b</sub>** | **Max Sigma** |
+| :------------- | :------------- | :-------- | :-------------- |
+| TC-SHE-100028-CTI-gal-SNR | 7 | 0.0073 | 2.68 |
+| TC-SHE-100029-CTI-gal-bg | 6 | 0.0085 | 2.63 |
+| TC-SHE-100030-CTI-gal-size | 6 | 0.0085 | 2.63 |
+| TC-SHE-100031-CTI-gal-col | 6 | 0.0085 | 2.63 |
+| TC-SHE-100900-CTI-gal-tot | 1 | 0.05 | 1.96 |

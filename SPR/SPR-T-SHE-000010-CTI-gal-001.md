@@ -61,5 +61,11 @@ The test results for each test case and bin are detailed in the tables below:
 | TC-SHE-100029-CTI-gal-bg | [35.25, 36) | N/A | N/A | N/A |
 | TC-SHE-100029-CTI-gal-bg | [36, 50) | (0.54 +/- 0.87) x 10<sup>-6</sup> | 0.62 | OK |
 | TC-SHE-100029-CTI-gal-bg | [50, 1e99) | N/A | N/A | N/A |
+| TC-SHE-100030-CTI-gal-size | [0, 30) | (0.01 +/- 3.25) x 10<sup>-6</sup> | 0.00 | OK |
+| TC-SHE-100030-CTI-gal-size | [30, 45) | (0.74 +/- 2.31) x 10<sup>-6</sup> | 0.32 | OK |
+| TC-SHE-100030-CTI-gal-size | [45, 70) | (-0.71 +/- 1.83) x 10<sup>-6</sup> | 0.39 | OK |
+| TC-SHE-100030-CTI-gal-size | [75, 140) | (-0.11 +/- 1.76) x 10<sup>-6</sup> | 0.06 | OK |
+| TC-SHE-100030-CTI-gal-size | [140, 300) | (0.45 +/- 2.14) x 10<sup>-6</sup> | 0.21 | OK |
+| TC-SHE-100030-CTI-gal-size | [300, 1e99) | (2.97 +/- 2.20) x 10<sup>-6</sup> | 1.35 | OK |
 
 (Remainder of page still under construction)

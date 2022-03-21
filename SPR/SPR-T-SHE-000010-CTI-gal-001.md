@@ -67,5 +67,12 @@ The test results for each test case and bin are detailed in the tables below:
 | TC-SHE-100030-CTI-gal-size | [75, 140) | (-0.11 +/- 1.76) x 10<sup>-6</sup> | 0.06 | OK |
 | TC-SHE-100030-CTI-gal-size | [140, 300) | (0.45 +/- 2.14) x 10<sup>-6</sup> | 0.21 | OK |
 | TC-SHE-100030-CTI-gal-size | [300, 1e99) | (2.97 +/- 2.20) x 10<sup>-6</sup> | 1.35 | OK |
+| TC-SHE-100031-CTI-gal-col | [-1e99, -2.5) | (0.94 +/- 4.60) x 10<sup>-6</sup> | 0.20 | OK |
+| TC-SHE-100031-CTI-gal-col | [-2.5, -2.0) | (0.15 +/- 2.48) x 10<sup>-6</sup> | 0.06 | OK |
+| TC-SHE-100031-CTI-gal-col | [-2.0, -1.5) | (-0.14 +/- 1.85) x 10<sup>-6</sup> | 0.08 | OK |
+| TC-SHE-100031-CTI-gal-col | [-1.5, -1.0) | (-0.20 +/- 1.62) x 10<sup>-6</sup> | 0.12 | OK |
+| TC-SHE-100031-CTI-gal-col | [-1.0, -0.6) | (-0.04 +/- 1.93) x 10<sup>-6</sup> | 0.02 | OK |
+| TC-SHE-100031-CTI-gal-col | [-0.6, 1e99) | (4.33 +/- 2.40) x 10<sup>-6</sup> | 1.81 | OK |
+| TC-SHE-100900-CTI-gal-tot | N/A | (0.54 +/- 0.87) x 10<sup>-6</sup> | 0.62 | OK |
 
 (Remainder of page still under construction)

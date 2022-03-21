@@ -42,39 +42,6 @@ The following bin limits were used for each test case, using the above parameter
 
 These bin limits were selected to provide significant subsamples of the data. The test is to be deemed failed if, for any bin in which there is sufficient data to perform the test (generally at least 3 objects with well-measured shear), the slope of the shear versus the distance of objects from the readout register differs from zero by a statistically-significant margin.
 
-While not the focus of the test, the measured intercept value was tested for consistency with zero as well. A failure in this aspect does not indicate a likely issue with CTI, and so does not constitute a failure of this test, but does indicate the presence of some other issue, and so is raised as a warning if it occurs.
-
-The test results for each test case and bin are detailed in the tables below:
-
-|  **Test Case** | **Bin Limits** | **Slope** | **Slope Sigma** |
-| :------------- | :------------- | :-------- | :-------------- |
-| TC-SHE-100028-CTI-gal-SNR | [0, 3.5) | (0.32 +/- 5.10) x 10<sup>-6</sup> | 0.06 |
-|                           | [3.5, 5) | (0.82 +/- 3.25) x 10<sup>-6</sup> | 0.25 |
-|                           | [5, 7) | (-0.13 +/- 2.58) x 10<sup>-6</sup> | 0.05 |
-|                           | [7, 10) | (0.32 +/- 2.24) x 10<sup>-6</sup> | 0.14 |
-|                           | [10, 15) | (-0.88 +/- 2.07) x 10<sup>-6</sup> | 0.43 |
-|                           | [15, 30) | (-0.49 +/- 1.92) x 10<sup>-6</sup> | 0.25 |
-|                           | [30, 1e99) | (2.41 +/- 1.71) x 10<sup>-6</sup> | 1.41 |
-| TC-SHE-100029-CTI-gal-bg | [0, 30) | N/A | N/A | N/A |
-|                          | [30, 35) | N/A | N/A | N/A |
-|                          | [35, 35.25) | N/A | N/A | N/A |
-|                          | [35.25, 36) | N/A | N/A | N/A |
-|                          | [36, 50) | (0.54 +/- 0.87) x 10<sup>-6</sup> | 0.62 |
-|                          | [50, 1e99) | N/A | N/A | N/A |
-| TC-SHE-100030-CTI-gal-size | [0, 30) | (0.01 +/- 3.25) x 10<sup>-6</sup> | 0.00 |
-|                            | [30, 45) | (0.74 +/- 2.31) x 10<sup>-6</sup> | 0.32 |
-|                            | [45, 70) | (-0.71 +/- 1.83) x 10<sup>-6</sup> | 0.39 |
-|                            | [75, 140) | (-0.11 +/- 1.76) x 10<sup>-6</sup> | 0.06 |
-|                            | [140, 300) | (0.45 +/- 2.14) x 10<sup>-6</sup> | 0.21 |
-|                            | [300, 1e99) | (2.97 +/- 2.20) x 10<sup>-6</sup> | 1.35 |
-| TC-SHE-100031-CTI-gal-col | [-1e99, -2.5) | (0.94 +/- 4.60) x 10<sup>-6</sup> | 0.20 |
-|                           | [-2.5, -2.0) | (0.15 +/- 2.48) x 10<sup>-6</sup> | 0.06 |
-|                           | [-2.0, -1.5) | (-0.14 +/- 1.85) x 10<sup>-6</sup> | 0.08 |
-|                           | [-1.5, -1.0) | (-0.20 +/- 1.62) x 10<sup>-6</sup> | 0.12 |
-|                           | [-1.0, -0.6) | (-0.04 +/- 1.93) x 10<sup>-6</sup> | 0.02 |
-|                           | [-0.6, 1e99) | (4.33 +/- 2.40) x 10<sup>-6</sup> | 1.81 |
-| TC-SHE-100900-CTI-gal-tot | N/A | (0.54 +/- 0.87) x 10<sup>-6</sup> | 0.62 |
-
 To assess statistical significance, we must account for the fact that since we are checking multiple bins for each parameter, this increases the chance that the results for one bin will cross a given threshold of significance by chance. We choose to account for this through the following procedure:
 
 1. Decide upon a fiducial threshold of statistical significance we wish to use: p<sub>f</sub> = 0.05.
@@ -93,3 +60,44 @@ This results in the following threshold probabilities and sigma values for each 
 | TC-SHE-100030-CTI-gal-size | 6 | 0.0085 | 2.63 |
 | TC-SHE-100031-CTI-gal-col | 6 | 0.0085 | 2.63 |
 | TC-SHE-100900-CTI-gal-tot | 1 | 0.05 | 1.96 |
+
+While not the focus of the test, the measured intercept value was tested for consistency with zero as well. A failure in this aspect does not indicate a likely issue with CTI, and so does not constitute a failure of this test, but does indicate the presence of some other issue, and so is raised as a warning if it occurs.
+
+The test results for each test case and bin are detailed in the table below:
+
+|  **Test Case** | **Bin Limits** | **Slope** | **Slope Sigma** | **Result** |
+| :------------- | :------------- | :-------- | :-------------- | :--------- |
+| TC-SHE-100028-CTI-gal-SNR | [0, 3.5) | (0.32 +/- 5.10) x 10<sup>-6</sup> | 0.06 | OK |
+|                           | [3.5, 5) | (0.82 +/- 3.25) x 10<sup>-6</sup> | 0.25 | OK |
+|                           | [5, 7) | (-0.13 +/- 2.58) x 10<sup>-6</sup> | 0.05 | OK |
+|                           | [7, 10) | (0.32 +/- 2.24) x 10<sup>-6</sup> | 0.14 | OK |
+|                           | [10, 15) | (-0.88 +/- 2.07) x 10<sup>-6</sup> | 0.43 | OK |
+|                           | [15, 30) | (-0.49 +/- 1.92) x 10<sup>-6</sup> | 0.25 | OK |
+|                           | [30, 1e99) | (2.41 +/- 1.71) x 10<sup>-6</sup> | 1.41 | OK |
+| TC-SHE-100029-CTI-gal-bg | [0, 30) | N/A | N/A | N/A | N/A |
+|                          | [30, 35) | N/A | N/A | N/A | N/A |
+|                          | [35, 35.25) | N/A | N/A | N/A | N/A |
+|                          | [35.25, 36) | N/A | N/A | N/A | N/A |
+|                          | [36, 50) | (0.54 +/- 0.87) x 10<sup>-6</sup> | 0.62 | OK |
+|                          | [50, 1e99) | N/A | N/A | N/A | N/A |
+| TC-SHE-100030-CTI-gal-size | [0, 30) | (0.01 +/- 3.25) x 10<sup>-6</sup> | 0.00 | OK |
+|                            | [30, 45) | (0.74 +/- 2.31) x 10<sup>-6</sup> | 0.32 | OK |
+|                            | [45, 70) | (-0.71 +/- 1.83) x 10<sup>-6</sup> | 0.39 | OK |
+|                            | [75, 140) | (-0.11 +/- 1.76) x 10<sup>-6</sup> | 0.06 | OK |
+|                            | [140, 300) | (0.45 +/- 2.14) x 10<sup>-6</sup> | 0.21 | OK |
+|                            | [300, 1e99) | (2.97 +/- 2.20) x 10<sup>-6</sup> | 1.35 | OK |
+| TC-SHE-100031-CTI-gal-col | [-1e99, -2.5) | (0.94 +/- 4.60) x 10<sup>-6</sup> | 0.20 | OK |
+|                           | [-2.5, -2.0) | (0.15 +/- 2.48) x 10<sup>-6</sup> | 0.06 | OK |
+|                           | [-2.0, -1.5) | (-0.14 +/- 1.85) x 10<sup>-6</sup> | 0.08 | OK |
+|                           | [-1.5, -1.0) | (-0.20 +/- 1.62) x 10<sup>-6</sup> | 0.12 | OK |
+|                           | [-1.0, -0.6) | (-0.04 +/- 1.93) x 10<sup>-6</sup> | 0.02 | OK |
+|                           | [-0.6, 1e99) | (4.33 +/- 2.40) x 10<sup>-6</sup> | 1.81 | OK |
+| TC-SHE-100900-CTI-gal-tot | N/A | (0.54 +/- 0.87) x 10<sup>-6</sup> | 0.62 | OK |
+
+As all test cases pass for all bins where sufficient data is available, all test cases are thus considered passed. However, we do note two issues here.
+
+The first issue is that in the case of the test case TC-SHE-100029-CTI-gal-bg, all data resides in a single bin. This is likely due to the fact that the bin limits were chosen based on the distribution of background levels at object positions in a different observation, and in this observation, the variance around the mean background level is not large enough for data to be present in more than one bin. It is recommended that a separate approach be considered for bins in the background level test case instead of using fixed bin limits, such as setting bin limits based on the quartiles of the data found in each observation.
+
+The second issue we note is that the scatter of measured slope values appears low relative to the error values. Using a chi-squared test, this doesn't reach statistical significance (p=0.94 for TC-SHE-100028-CTI-gal-SNR, for instance), but it is close enough that it is worth investigation to see if it might indicate a bug in the error calculation.
+
+No instances were noted where the measured intercept value of the linear regression differed from zero by a statistically significant margin.

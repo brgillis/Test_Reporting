@@ -44,7 +44,7 @@ The measured error on the bias parameters is
 
 modulo negligible differences between the two polar components. We see that for the 59.5 sq. deg. of SC8 data we are marginally outside of the Requirements for the error on m (factor of ~2.5), and well within Requirements for the error on c. This study was limited by the available sky area processed during the Science Challenge, and would imply that an area of 6.25 larger (372 sq. degs) would meet the m-bias error Requirement.  However, we note that the SC8 results would be within Requirements for DR1, if we were to assume a factor of root-6 or better increase in errors. 
 
-![Plot of shear bias errors compared to Requirements](images/plt_shear_bias_error.png "Shear Bias Error v. Requirements")
+![Plot of shear bias errors compared to Requirements](../images/plt_shear_bias_error.png "Shear Bias Error v. Requirements")
 
 The fact that the precision of the shear bias we observe here is better than expected for this area is most likely due to the relaxation of the S/N limit for galaxy detection from 10 to 5, to reduce the impact of selection bias, which boosts the number of detected galaxies in the WL sample. This implies there is some optimization to be done in the selection of Weak Lensing galaxies.
 

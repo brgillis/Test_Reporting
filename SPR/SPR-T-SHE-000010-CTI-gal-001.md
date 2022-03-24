@@ -94,6 +94,8 @@ The test results for each test case and bin are detailed in the table below:
 |                           | [-0.6, 1e99) | (4.33 +/- 2.40) x 10<sup>-6</sup> | 1.81 | OK |
 | TC-SHE-100900-CTI-gal-tot | N/A | (0.54 +/- 0.87) x 10<sup>-6</sup> | 0.62 | OK |
 
+![Plot of shear compared to readout register distance](../images/plt_cti_gal_lensmc.png "Shear v. Readout Register Distance")
+
 As all test cases pass for all bins where sufficient data is available, all test cases are thus considered passed. However, we do note two issues here.
 
 The first issue is that in the case of the test case TC-SHE-100029-CTI-gal-bg, all data resides in a single bin. This is likely due to the fact that the bin limits were chosen based on the distribution of background levels at object positions in a different observation, and in this observation, the variance around the mean background level is not large enough for data to be present in more than one bin. It is recommended that a separate approach be considered for bins in the background level test case instead of using fixed bin limits, such as setting bin limits based on the quartiles of the data found in each observation.

@@ -96,10 +96,10 @@ The test results for each test case and bin are detailed in the table below:
 
 ![Plot of shear compared to readout register distance](../images/plt_cti_gal_lensmc.png "Shear v. Readout Register Distance")
 
-As all test cases pass for all bins where sufficient data is available, all test cases are thus considered passed. However, we do note two issues here.
+As all test cases pass for all bins where sufficient data is available, all test cases are thus considered passed. However, we do note some minor issues:
 
-The first issue is that in the case of the test case TC-SHE-100029-CTI-gal-bg, all data resides in a single bin. This is likely due to the fact that the bin limits were chosen based on the distribution of background levels at object positions in a different observation, and in this observation, the variance around the mean background level is not large enough for data to be present in more than one bin. It is recommended that a separate approach be considered for bins in the background level test case instead of using fixed bin limits, such as setting bin limits based on the quartiles of the data found in each observation.
+1. In the case of the test case TC-SHE-100029-CTI-gal-bg, all data resides in a single bin. This is likely due to the fact that the bin limits were chosen based on the distribution of background levels at object positions in a different observation, and in this observation, the variance around the mean background level is not large enough for data to be present in more than one bin. It is recommended that a separate approach be considered for bins in the background level test case instead of using fixed bin limits, such as setting bin limits based on the quartiles of the data found in each observation.
 
-The second issue we note is that the scatter of measured slope values appears low relative to the error values. Using a chi-squared test, this doesn't reach statistical significance (p=0.94 for TC-SHE-100028-CTI-gal-SNR, for instance), but it is close enough that it is worth investigation to see if it might indicate a bug in the error calculation.
+2. The scatter of measured slope values appears low relative to the error values. Using a chi-squared test, this doesn't reach statistical significance (p=0.94 for TC-SHE-100028-CTI-gal-SNR, for instance), but it is close enough that it is worth investigation to determine if it might indicate a bug in the error calculation.
 
-No instances were noted where the measured intercept value of the linear regression differed from zero by a statistically significant margin.
+3. In the case of TC-SHE-100900-CTI-gal-tot (and TC-SHE-100029-CTI-gal-bg, where all data resided in a single bin), the measured intercept value of (5.71 +/-1.03) x 10<sup>-3</sup> differed from zero by 5.52&sigma;. This is not an expected effect of improper CTI correction, and so it does not constitute a test failure, but it does warrant a warning and further investigation.

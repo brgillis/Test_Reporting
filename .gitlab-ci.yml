@@ -14,7 +14,10 @@ before_script:
 test:
   stage: test
   script:
+    - cd public
     - gitbook build . public # build to public path
+    - cp -r public/* .
+    - rm -r public
   only:
     - branches # this job will affect every branch except 'master'
   except:
@@ -24,7 +27,10 @@ test:
 pages:
   stage: deploy
   script:
+    - cd public
     - gitbook build . public # build to public path
+    - cp -r public/* .
+    - rm -r public
   artifacts:
     paths:
       - public

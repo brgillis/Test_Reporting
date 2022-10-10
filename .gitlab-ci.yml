@@ -16,11 +16,8 @@ test:
   script:
     - cd public
     - gitbook build . public # build to public path
-    - mv public/*.html .
-    - mv public/images/*.html images/
-    - mv public/SPR/*.html SPR/
-    - mv public/TD/*.html TD/
-    - rmdir public
+    - cp -r public/* .
+    - rm -r public
   only:
     - branches # this job will affect every branch except 'master'
   except:
@@ -32,11 +29,8 @@ pages:
   script:
     - cd public
     - gitbook build . public # build to public path
-    - mv public/*.html .
-    - mv public/images/*.html images/
-    - mv public/SPR/*.html SPR/
-    - mv public/TD/*.html TD/
-    - rmdir public
+    - cp -r public/* .
+    - rm -r public
   artifacts:
     paths:
       - public

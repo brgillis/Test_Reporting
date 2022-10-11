@@ -13,11 +13,12 @@ test:pytest:
 test:
   stage: test
   image: node:10
-  script:
-    - ./scripts/build_all_report_pages.py
+  before_script:
     - npm install gitbook-cli -g # install gitbook
     - gitbook fetch 3.2.3 # fetch final stable version
     - gitbook install # add any requested plugins in book.json
+    - ./scripts/build_all_report_pages.py
+  script:
     - cd public
     - gitbook build . public # build to public path
     - cp -r public/* .
@@ -26,16 +27,17 @@ test:
     - branches # this job will affect every branch except 'master'
   except:
     - master
-    
+
 # the 'pages' job will deploy and build your site to the 'public' path
 pages:
   stage: deploy
   image: node:10
-  script:
-    - ./scripts/build_all_report_pages.py
+  before_script:
     - npm install gitbook-cli -g # install gitbook
     - gitbook fetch 3.2.3 # fetch final stable version
     - gitbook install # add any requested plugins in book.json
+    - ./scripts/build_all_report_pages.py
+  script:
     - cd public
     - gitbook build . public # build to public path
     - cp -r public/* .

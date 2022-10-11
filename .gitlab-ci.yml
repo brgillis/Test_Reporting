@@ -13,15 +13,13 @@ test:pytest:
     - pip install pytest --quiet
     - PYTHONPATH=`pwd`/scripts pytest -v tests/
 
-before_script:
-  - npm install gitbook-cli -g # install gitbook
-  - gitbook fetch 3.2.3 # fetch final stable version
-  - gitbook install # add any requested plugins in book.json
-
 test:
   stage: test
   script:
     - ./scripts/build_all_report_pages.py
+    - npm install gitbook-cli -g # install gitbook
+    - gitbook fetch 3.2.3 # fetch final stable version
+    - gitbook install # add any requested plugins in book.json
     - cd public
     - gitbook build . public # build to public path
     - cp -r public/* .
@@ -36,6 +34,9 @@ pages:
   stage: deploy
   script:
     - ./scripts/build_all_report_pages.py
+    - npm install gitbook-cli -g # install gitbook
+    - gitbook fetch 3.2.3 # fetch final stable version
+    - gitbook install # add any requested plugins in book.json
     - cd public
     - gitbook build . public # build to public path
     - cp -r public/* .

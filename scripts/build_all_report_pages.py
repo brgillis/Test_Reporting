@@ -31,6 +31,9 @@ from typing import Dict
 
 MANIFEST_FILENAME = "manifest.json"
 DATA_DIR = "data"
+CTI_GAL_KEY = "cti_gal"
+OBS_KEY = "obs"
+EXP_KEY = "exp"
 
 logger = getLogger(__name__)
 

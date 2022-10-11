@@ -10,6 +10,12 @@ test:pytest:
     - pip install pytest --quiet
     - PYTHONPATH=`pwd`/scripts pytest -v tests/
 
+build:
+  stage: build
+  image: python:3.9
+  script:
+    - ./scripts/build_all_report_pages.py
+
 test:
   stage: test
   image: node:10
@@ -17,7 +23,6 @@ test:
     - npm install gitbook-cli -g # install gitbook
     - gitbook fetch 3.2.3 # fetch final stable version
     - gitbook install # add any requested plugins in book.json
-    - python3.9 scripts/build_all_report_pages.py
   script:
     - cd public
     - gitbook build . public # build to public path
@@ -36,7 +41,6 @@ pages:
     - npm install gitbook-cli -g # install gitbook
     - gitbook fetch 3.2.3 # fetch final stable version
     - gitbook install # add any requested plugins in book.json
-    - python3.9 scripts/build_all_report_pages.py
   script:
     - cd public
     - gitbook build . public # build to public path

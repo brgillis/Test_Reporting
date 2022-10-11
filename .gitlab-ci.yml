@@ -7,6 +7,7 @@ cache:
     - node_modules/ # Node modules and dependencies
 
 before_script:
+  - pip install pytest
   - npm install gitbook-cli -g # install gitbook
   - gitbook fetch 3.2.3 # fetch final stable version
   - gitbook install # add any requested plugins in book.json
@@ -14,7 +15,7 @@ before_script:
 test:
   stage: test
   script:
-    - PYTHONPATH=`pwd`/scripts pytest tests/
+    - PYTHONPATH=`pwd`/scripts pytest -v tests/
     - ./scripts/build_all_report_pages.py
     - cd public
     - gitbook build . public # build to public path
@@ -29,7 +30,7 @@ test:
 pages:
   stage: deploy
   script:
-    - PYTHONPATH=`pwd`/scripts pytest tests/
+    - PYTHONPATH=`pwd`/scripts pytest -v tests/
     - ./scripts/build_all_report_pages.py
     - cd public
     - gitbook build . public # build to public path

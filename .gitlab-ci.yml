@@ -6,17 +6,21 @@ cache:
   paths:
     - node_modules/ # Node modules and dependencies
 
+test:pytest:
+  stage: test
+  image: python:3.9
+  script:
+    - pip install pytest
+    - PYTHONPATH=`pwd`/scripts pytest -v tests/
+
 before_script:
-  - pip install pytest
   - npm install gitbook-cli -g # install gitbook
   - gitbook fetch 3.2.3 # fetch final stable version
   - gitbook install # add any requested plugins in book.json
 
 test:
   stage: test
-  image: python:3.9
   script:
-    - PYTHONPATH=`pwd`/scripts pytest -v tests/
     - ./scripts/build_all_report_pages.py
     - cd public
     - gitbook build . public # build to public path
@@ -30,9 +34,7 @@ test:
 # the 'pages' job will deploy and build your site to the 'public' path
 pages:
   stage: deploy
-  image: python:3.9
   script:
-    - PYTHONPATH=`pwd`/scripts pytest -v tests/
     - ./scripts/build_all_report_pages.py
     - cd public
     - gitbook build . public # build to public path

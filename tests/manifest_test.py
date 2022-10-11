@@ -11,7 +11,7 @@ import os
 
 import pytest
 
-from build_all_report_pages import CTI_GAL_KEY, EXP_KEY, OBS_KEY, read_manifest
+from build_all_report_pages import CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY, read_manifest
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -76,14 +76,33 @@ def mock_manifest(tmpdir):
 
 
 def test_mock_manifest(mock_manifest):
+    """Unit test that a mock manifest can be read in, providing the expected values.
+
+    Parameters
+    ----------
+    mock_manifest : str
+        Fixture (defined above) which creates a mock manifest files and provides the fully-qualified filename of it
+    """
 
     d_manifest = read_manifest(mock_manifest)
 
     # Check that the manifest was read in as expected
     assert isinstance(d_manifest, dict)
-    assert CTI_GAL_KEY in d_manifest
 
     d_cti_gal = d_manifest[CTI_GAL_KEY]
 
     assert d_cti_gal[OBS_KEY] == MOCK_CTI_GAL_OBS_FILENAME
     assert d_cti_gal[EXP_KEY] is None
+
+
+def test_provided_manifest():
+    """Unit test that the provided manifest file in this repo can be read in and provides sensible values.
+    """
+
+    d_manifest = read_manifest(MANIFEST_FILENAME)
+
+    assert isinstance(d_manifest, dict)
+
+    for key, value in d_manifest.items():
+        assert isinstance(key, str)
+        assert isinstance(value, str) or isinstance(value, dict)

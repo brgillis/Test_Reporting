@@ -27,7 +27,7 @@ import json
 import os
 from argparse import ArgumentParser
 from logging import getLogger
-from typing import Dict
+from typing import Callable, Dict, Optional, Union
 
 MANIFEST_FILENAME = "manifest.json"
 DATA_DIR = "data"
@@ -35,7 +35,8 @@ CTI_GAL_KEY = "cti_gal"
 OBS_KEY = "obs"
 EXP_KEY = "exp"
 
-D_BUILD_FUNCTIONS = {CTI_GAL_KEY: None}
+BUILD_FUNCTION_TYPE = Optional[Callable[[Union[str, Dict[str, str]]], None]]
+D_BUILD_FUNCTIONS: Dict[str, BUILD_FUNCTION_TYPE] = {CTI_GAL_KEY: None}
 
 logger = getLogger(__name__)
 
@@ -100,6 +101,17 @@ def main():
     workdir = os.getcwd()
 
     d_manifest = read_manifest(os.path.join(workdir, args.manifest))
+
+    # Call the build function for each file in the manifest
+    for key, value in d_manifest.items():
+
+        build_function = D_BUILD_FUNCTIONS.get(key)
+
+        if not build_function:
+            logger.debug(f"No build function provided for key {key}")
+            continue
+
+        build_function(value)
 
     logger.debug("Exiting `main`.")
 

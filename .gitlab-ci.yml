@@ -10,7 +10,7 @@ test:pytest:
   stage: test
   image: python:3.9
   script:
-    - pip install pytest
+    - pip install pytest --quiet
     - PYTHONPATH=`pwd`/scripts pytest -v tests/
 
 before_script:

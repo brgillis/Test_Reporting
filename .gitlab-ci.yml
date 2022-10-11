@@ -14,6 +14,7 @@ before_script:
 
 test:
   stage: test
+  image: python:3.9
   script:
     - PYTHONPATH=`pwd`/scripts pytest -v tests/
     - ./scripts/build_all_report_pages.py
@@ -29,6 +30,7 @@ test:
 # the 'pages' job will deploy and build your site to the 'public' path
 pages:
   stage: deploy
+  image: python:3.9
   script:
     - PYTHONPATH=`pwd`/scripts pytest -v tests/
     - ./scripts/build_all_report_pages.py

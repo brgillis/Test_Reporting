@@ -4,7 +4,7 @@ cache:
     - node_modules/ # Node modules and dependencies
 
 test:pytest:
-  stage: test
+  stage: build
   image: python:3.9
   script:
     - pip install pytest --quiet

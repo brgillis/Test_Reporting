@@ -17,7 +17,7 @@ test:
     - npm install gitbook-cli -g # install gitbook
     - gitbook fetch 3.2.3 # fetch final stable version
     - gitbook install # add any requested plugins in book.json
-    - ./scripts/build_all_report_pages.py
+    - python3.9 scripts/build_all_report_pages.py
   script:
     - cd public
     - gitbook build . public # build to public path
@@ -36,7 +36,7 @@ pages:
     - npm install gitbook-cli -g # install gitbook
     - gitbook fetch 3.2.3 # fetch final stable version
     - gitbook install # add any requested plugins in book.json
-    - ./scripts/build_all_report_pages.py
+    - python3.9 scripts/build_all_report_pages.py
   script:
     - cd public
     - gitbook build . public # build to public path

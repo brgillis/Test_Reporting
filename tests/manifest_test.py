@@ -75,7 +75,7 @@ def mock_manifest(tmpdir):
     return qualified_manifest_filename
 
 
-def test_manifest(mock_manifest):
+def test_mock_manifest(mock_manifest):
 
     d_manifest = read_manifest(mock_manifest)
 

@@ -1,6 +1,3 @@
-# requiring the environment of NodeJS 10
-image: node:10
-
 # add 'node_modules' to cache for speeding up builds
 cache:
   paths:
@@ -15,6 +12,7 @@ test:pytest:
 
 test:
   stage: test
+  image: node:10
   script:
     - ./scripts/build_all_report_pages.py
     - npm install gitbook-cli -g # install gitbook
@@ -32,6 +30,7 @@ test:
 # the 'pages' job will deploy and build your site to the 'public' path
 pages:
   stage: deploy
+  image: node:10
   script:
     - ./scripts/build_all_report_pages.py
     - npm install gitbook-cli -g # install gitbook

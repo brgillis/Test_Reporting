@@ -1,10 +1,16 @@
+stages:
+  - pretest
+  - build
+  - test
+  - deploy
+
 # add 'node_modules' to cache for speeding up builds
 cache:
   paths:
     - node_modules/ # Node modules and dependencies
 
-test:pytest:
-  stage: build
+pytest:
+  stage: pretest
   image: python:3.9
   script:
     - pip install pytest --quiet

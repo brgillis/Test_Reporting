@@ -9,8 +9,7 @@
 This python script is run to construct report pages for all validation tests. It reads in the file manifest, and then
 calls appropriate functions to construct pages for each test results xml file.
 """
-import json
-import os
+
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
 # This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
@@ -24,6 +23,8 @@ import os
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+import json
+import os
 from argparse import ArgumentParser
 from logging import getLogger
 from typing import Dict

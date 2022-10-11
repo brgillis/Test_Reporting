@@ -35,6 +35,8 @@ CTI_GAL_KEY = "cti_gal"
 OBS_KEY = "obs"
 EXP_KEY = "exp"
 
+D_BUILD_FUNCTIONS = {CTI_GAL_KEY: None}
+
 logger = getLogger(__name__)
 
 

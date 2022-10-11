@@ -11,7 +11,7 @@ import os
 
 import pytest
 
-from build_all_report_pages import CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY, read_manifest
+from build_all_report_pages import CTI_GAL_KEY, D_BUILD_FUNCTIONS, EXP_KEY, MANIFEST_FILENAME, OBS_KEY, read_manifest
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -104,5 +104,5 @@ def test_provided_manifest():
     assert isinstance(d_manifest, dict)
 
     for key, value in d_manifest.items():
-        assert isinstance(key, str)
+        assert key in D_BUILD_FUNCTIONS
         assert isinstance(value, str) or isinstance(value, dict)

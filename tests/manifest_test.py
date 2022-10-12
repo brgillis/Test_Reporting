@@ -27,7 +27,8 @@ import pytest
 
 from build_all_report_pages import read_manifest
 from utility.constants import (CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY, S_MANIFEST_PRIMARY_KEYS,
-                               S_MANIFEST_SECONDARY_KEYS, TESTS_DIR, )
+                               S_MANIFEST_SECONDARY_KEYS, )
+from .testing_utility import rootdir  # noqa F401
 
 MOCK_MANIFEST_FILENAME = "mock_manifest.json"
 MOCK_CTI_GAL_OBS_FILENAME = "she_obs_cti_gal.tar.gz"
@@ -38,27 +39,6 @@ D_MOCK_MANIFEST = {
         EXP_KEY: None
         }
     }
-
-
-@pytest.fixture
-def rootdir():
-    """Pytest fixture to get the root directory of the project.
-
-    Returns
-    -------
-    rootdir : str
-        The root directory of the project.
-
-    """
-    cwd = os.getcwd()
-
-    # Check if we're in the tests directory, and if so, the rootdir will be one level up
-    if os.path.split(cwd)[-1] == TESTS_DIR:
-        rootdir = os.path.join(cwd, "..")
-    else:
-        rootdir = cwd
-
-    return rootdir
 
 
 def make_mock_manifest(qualified_manifest_filename):

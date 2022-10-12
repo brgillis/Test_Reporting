@@ -33,6 +33,8 @@ PUBLIC_DIR = "public"
 IMAGES_SUBDIR = "images"
 SUMMARY_FILENAME = "SUMMARY.md"
 
+TESTS_DIR = "tests"
+
 # Temporary work directory
 WORKDIR = "workdir"
 

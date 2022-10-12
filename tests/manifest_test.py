@@ -13,7 +13,7 @@ import pytest
 
 from build_all_report_pages import read_manifest
 from utility.constants import (CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY, S_MANIFEST_PRIMARY_KEYS,
-                               S_MANIFEST_SECONDARY_KEYS, )
+                               S_MANIFEST_SECONDARY_KEYS, TESTS_DIR, )
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -37,6 +37,27 @@ D_MOCK_MANIFEST = {
         EXP_KEY: None
         }
     }
+
+
+@pytest.fixture
+def rootdir():
+    """Pytest fixture to get the root directory of the project.
+
+    Returns
+    -------
+    rootdir : str
+        The root directory of the project.
+
+    """
+    cwd = os.getcwd()
+
+    # Check if we're in the tests directory, and if so, the rootdir will be one level up
+    if os.path.split(cwd)[-1] == TESTS_DIR:
+        rootdir = os.path.join(cwd, "..")
+    else:
+        rootdir = cwd
+
+    return rootdir
 
 
 def make_mock_manifest(qualified_manifest_filename):
@@ -97,11 +118,16 @@ def test_mock_manifest(mock_manifest):
     assert d_cti_gal[EXP_KEY] is None
 
 
-def test_provided_manifest():
+def test_provided_manifest(rootdir):
     """Unit test that the provided manifest file in this repo can be read in and provides sensible values.
+
+    Parameters
+    ----------
+    rootdir : str
+        Fixture (defined above) which provides the root directory of the project.
     """
 
-    qualified_manifest_filename = os.path.join(os.getcwd(), MANIFEST_FILENAME)
+    qualified_manifest_filename = os.path.join(rootdir, MANIFEST_FILENAME)
 
     d_manifest = read_manifest(qualified_manifest_filename)
 

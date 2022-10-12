@@ -11,8 +11,9 @@ import os
 
 import pytest
 
-from build_all_report_pages import D_BUILD_FUNCTIONS, read_manifest
-from utility.constants import CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY
+from build_all_report_pages import read_manifest
+from utility.constants import (CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY, S_MANIFEST_PRIMARY_KEYS,
+                               S_MANIFEST_SECONDARY_KEYS, )
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -105,5 +106,24 @@ def test_provided_manifest():
     assert isinstance(d_manifest, dict)
 
     for key, value in d_manifest.items():
-        assert key in D_BUILD_FUNCTIONS
-        assert isinstance(value, str) or isinstance(value, dict)
+
+        # Check that the primary keys are all recognized
+        assert key in S_MANIFEST_PRIMARY_KEYS, f"Unrecognized key in manifest: {key}. Allowed keys are: " \
+                                               f"{sorted(S_MANIFEST_PRIMARY_KEYS)}."
+
+        # If the value is a dict, check that all keys are known secondary keys. Otherwise, check that the value is a str
+        if isinstance(value, dict):
+
+            # Check that the keys of the dict are all recognise, and the values are all strings
+            for subkey, subvalue in value.items():
+
+                assert subkey in S_MANIFEST_SECONDARY_KEYS, f"Unrecognized subkey in manifest: {key}. Allowed " \
+                                                            f"subkeys are: {sorted(S_MANIFEST_PRIMARY_KEYS)}."
+
+                assert isinstance(subvalue, str), f"Invalid subvalue in manifest: {subvalue}, with type " \
+                                                  f"{type(subvalue)}. All subvalues must be strings."
+
+        else:
+
+            assert isinstance(value, str), f"Invalid value in manifest: {value}, with type {type(value)}. All values " \
+                                           f"must be either strings or dicts."

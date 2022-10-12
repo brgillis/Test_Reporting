@@ -6,14 +6,6 @@
 
 Unit tests of reading in .json manifest files.
 """
-import json
-import os
-
-import pytest
-
-from build_all_report_pages import read_manifest
-from utility.constants import (CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY, S_MANIFEST_PRIMARY_KEYS,
-                               S_MANIFEST_SECONDARY_KEYS, TESTS_DIR, )
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -27,6 +19,15 @@ from utility.constants import (CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY,
 #
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+import json
+import os
+
+import pytest
+
+from build_all_report_pages import read_manifest
+from utility.constants import (CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY, S_MANIFEST_PRIMARY_KEYS,
+                               S_MANIFEST_SECONDARY_KEYS, TESTS_DIR, )
 
 MOCK_MANIFEST_FILENAME = "mock_manifest.json"
 MOCK_CTI_GAL_OBS_FILENAME = "she_obs_cti_gal.tar.gz"

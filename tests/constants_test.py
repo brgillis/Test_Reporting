@@ -20,6 +20,9 @@ Unit tests of reading in .json manifest files.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+import os
+
+from utility.constants import DATA_DIR, IMAGES_SUBDIR, MANIFEST_FILENAME, PUBLIC_DIR, PYTHON_DIR, SUMMARY_FILENAME
 from .testing_utility import rootdir  # noqa F401
 
 
@@ -33,4 +36,12 @@ def test_files_exist(rootdir):
         Fixture which provides the root directory of the project
     """
 
-    pass
+    for dirname in (DATA_DIR, PYTHON_DIR, PUBLIC_DIR, os.path.join(PUBLIC_DIR, IMAGES_SUBDIR)):
+        qualified_dirname = os.path.join(rootdir, dirname)
+        assert os.path.isdir(qualified_dirname), f"Expected directory '{dirname}' does not exist in this " \
+                                                 f"project or is not a directory."
+
+    for filename in (MANIFEST_FILENAME, os.path.join(PUBLIC_DIR, SUMMARY_FILENAME)):
+        qualified_filename = os.path.join(rootdir, filename)
+        assert os.path.isfile(qualified_filename), f"Expected file '{qualified_filename}' does not exist in this " \
+                                                   f"project or is not a file."

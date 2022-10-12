@@ -101,7 +101,9 @@ def test_provided_manifest():
     """Unit test that the provided manifest file in this repo can be read in and provides sensible values.
     """
 
-    d_manifest = read_manifest(MANIFEST_FILENAME)
+    qualified_manifest_filename = os.path.join(os.getcwd(), MANIFEST_FILENAME)
+
+    d_manifest = read_manifest(qualified_manifest_filename)
 
     assert isinstance(d_manifest, dict)
 
@@ -120,10 +122,11 @@ def test_provided_manifest():
                 assert subkey in S_MANIFEST_SECONDARY_KEYS, f"Unrecognized subkey in manifest: {key}. Allowed " \
                                                             f"subkeys are: {sorted(S_MANIFEST_PRIMARY_KEYS)}."
 
-                assert isinstance(subvalue, str), f"Invalid subvalue in manifest: {subvalue}, with type " \
-                                                  f"{type(subvalue)}. All subvalues must be strings."
+                assert (isinstance(subvalue, str) or
+                        subvalue is None), f"Invalid subvalue in manifest: {subvalue}, with type " \
+                                           f"{type(subvalue)}. All subvalues must be strings or null."
 
-        else:
+        elif value is not None:
 
             assert isinstance(value, str), f"Invalid value in manifest: {value}, with type {type(value)}. All values " \
-                                           f"must be either strings or dicts."
+                                           f"must be either strings, dicts, or null."

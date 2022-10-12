@@ -14,13 +14,13 @@ pytest:
   image: python:3.9
   script:
     - pip install pytest --quiet
-    - PYTHONPATH=`pwd`/scripts pytest -v tests/
+    - PYTHONPATH=`pwd`/python pytest -v tests/
 
 build:
   stage: build
   image: python:3.9
   script:
-    - ./scripts/build_all_report_pages.py
+    - ./python/build_all_report_pages.py
 
 test:
   stage: test

@@ -29,11 +29,7 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import Callable, Dict, Optional, Union
 
-MANIFEST_FILENAME = "manifest.json"
-DATA_DIR = "data"
-CTI_GAL_KEY = "cti_gal"
-OBS_KEY = "obs"
-EXP_KEY = "exp"
+from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME
 
 BUILD_FUNCTION_TYPE = Optional[Callable[[Union[str, Dict[str, str]]], None]]
 D_BUILD_FUNCTIONS: Dict[str, BUILD_FUNCTION_TYPE] = {CTI_GAL_KEY: None}

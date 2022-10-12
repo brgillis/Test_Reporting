@@ -11,7 +11,8 @@ import os
 
 import pytest
 
-from build_all_report_pages import CTI_GAL_KEY, D_BUILD_FUNCTIONS, EXP_KEY, MANIFEST_FILENAME, OBS_KEY, read_manifest
+from build_all_report_pages import D_BUILD_FUNCTIONS, read_manifest
+from utility.constants import CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #

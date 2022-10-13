@@ -7,6 +7,9 @@
 This python script is run to construct report pages for all validation tests. It reads in the file manifest, and then
 calls appropriate functions to construct pages for each test results xml file.
 """
+import os
+
+from utility.constants import AUX_DIR, PUBLIC_DIR, TEST_REPORT_TEMPLATE_FILENAME
 
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -39,3 +42,24 @@ def build_test_report_summary(test_report_summary_filename,
     rootdir: str
         The root directory of this project (or during unit testing, a copied instance of this project).
     """
+
+    qualified_test_report_summary_filename = os.path.join(rootdir, PUBLIC_DIR, test_report_summary_filename)
+    qualified_test_report_template_filename = os.path.join(rootdir, AUX_DIR, TEST_REPORT_TEMPLATE_FILENAME)
+
+    # Open the file we want to write
+    with open(qualified_test_report_summary_filename) as fo:
+
+        # First, copy all lines from the template file
+        with open(qualified_test_report_template_filename) as fi:
+            for line in fi:
+                fo.write(line)
+
+        # Now, add a line for each test
+        for test_name, md_filename in l_test_and_file_names:
+
+            if not md_filename.endswith('.md'):
+                raise ValueError("Filenames of test reports passed to `build_test_report_summary` must end with '.md'.")
+            html_filename = f"{md_filename[:-3]}.html"
+
+            test_line = f"|[{test_name}]({html_filename})|"
+            fo.write(test_line)

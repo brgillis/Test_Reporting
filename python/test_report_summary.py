@@ -62,5 +62,5 @@ def build_test_report_summary(test_report_summary_filename,
                 raise ValueError("Filenames of test reports passed to `build_test_report_summary` must end with '.md'.")
             html_filename = f"{md_filename[:-3]}.html"
 
-            test_line = f"|[{test_name}]({html_filename})|"
+            test_line = f"|[{test_name}]({html_filename})|\n"
             fo.write(test_line)

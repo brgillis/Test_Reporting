@@ -31,9 +31,13 @@ test:
     - gitbook install # add any requested plugins in book.json
   script:
     - cd public
-    - gitbook build . public # build to public path
-    - cp -r public/* .
-    - rm -r public
+    - gitbook build . test # build to test path
+    - mv test ../
+    - rm -r test
+  artifacts:
+    paths:
+      - test
+    expire_in: 1 week
   only:
     - branches # this job will affect every branch except 'master'
   except:

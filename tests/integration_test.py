@@ -6,11 +6,6 @@
 
 Unit tests of running the whole script in a minimal state.
 """
-import os
-
-import build_all_report_pages
-from utility.constants import PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
-
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -24,6 +19,11 @@ from utility.constants import PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
 #
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+import os
+
+import build_all_report_pages
+from utility.constants import PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
 
 
 def test_integration(project_copy, test_manifest):

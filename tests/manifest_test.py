@@ -28,7 +28,6 @@ import pytest
 from build_all_report_pages import read_manifest
 from utility.constants import (CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY, S_MANIFEST_PRIMARY_KEYS,
                                S_MANIFEST_SECONDARY_KEYS, )
-from .testing_utility import rootdir  # noqa F401
 
 MOCK_MANIFEST_FILENAME = "mock_manifest.json"
 MOCK_CTI_GAL_OBS_FILENAME = "she_obs_cti_gal.tar.gz"

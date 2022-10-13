@@ -1,5 +1,5 @@
 """
-:file: testing_utility.py
+:file: conftest.py
 
 :date: 10/12/2022
 :author: Bryan Gillis
@@ -35,7 +35,7 @@ L_FILES_MODIFIED = (os.path.join(PUBLIC_DIR, SUMMARY_FILENAME),
                     )
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def rootdir():
     """Pytest fixture to get the root directory of the project.
 

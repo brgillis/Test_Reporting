@@ -21,7 +21,6 @@ Unit tests of running the whole script in a minimal state.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import build_all_report_pages
-from .testing_utility import project_copy  # noqa F401
 
 
 def test_integration(project_copy):

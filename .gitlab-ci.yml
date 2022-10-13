@@ -21,6 +21,10 @@ build:
   image: python:3.9
   script:
     - ./python/build_all_report_pages.py
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
 
 test:
   stage: test

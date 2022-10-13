@@ -23,7 +23,6 @@ Unit tests of reading in .json manifest files.
 import os
 
 from utility.constants import DATA_DIR, IMAGES_SUBDIR, MANIFEST_FILENAME, PUBLIC_DIR, PYTHON_DIR, SUMMARY_FILENAME
-from .testing_utility import rootdir  # noqa F401
 
 
 def test_files_exist(rootdir):

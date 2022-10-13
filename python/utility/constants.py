@@ -25,6 +25,9 @@ This python module defines constants used throughout this project.
 # Files and directories which already exist in the project
 MANIFEST_FILENAME = "manifest.json"
 
+AUX_DIR = "auxdir"
+TEST_REPORT_TEMPLATE_FILENAME = "Test_Reports_template.md"
+
 DATA_DIR = "data"
 
 PYTHON_DIR = "python"
@@ -34,11 +37,13 @@ IMAGES_SUBDIR = "images"
 SUMMARY_FILENAME = "SUMMARY.md"
 
 TESTS_DIR = "tests"
+TEST_DATA_DIR = "test_data"
 
 # Temporary work directory
 WORKDIR = "workdir"
 
-# Desired filename to use for created markdown files to report test results
+# Desired filenames and directories to use for created markdown files to report test results
+TEST_REPORT_SUMMARY_FILENAME = "Test_Reports.md"
 REPORT_SUBDIR = "reports"
 
 # Primary keys within the manifest JSON file

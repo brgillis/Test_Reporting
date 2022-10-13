@@ -21,6 +21,10 @@ build:
   image: python:3.9
   script:
     - ./python/build_all_report_pages.py
+  artifacts:
+    paths:
+      - public
+    expire_in: 1 day
 
 test:
   stage: test
@@ -31,9 +35,15 @@ test:
     - gitbook install # add any requested plugins in book.json
   script:
     - cd public
-    - gitbook build . public # build to public path
-    - cp -r public/* .
-    - rm -r public
+    - gitbook build . test_output # build to test path
+    - mv test_output ../
+    - cd ..
+    - mv public test_input
+  artifacts:
+    paths:
+      - test_input
+      - test_output
+    expire_in: 1 week
   only:
     - branches # this job will affect every branch except 'master'
   except:

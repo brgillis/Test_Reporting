@@ -27,14 +27,38 @@ import json
 import os
 from argparse import ArgumentParser
 from logging import getLogger
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, List, Optional, TYPE_CHECKING, Tuple, Union
 
-from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME
+from summary import update_summary
+from test_report_summary import build_test_report_summary
+from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 
-BUILD_FUNCTION_TYPE = Optional[Callable[[Union[str, Dict[str, str]]], None]]
+if TYPE_CHECKING:
+    import Namespace  # noqa F401
+
+BUILD_FUNCTION_TYPE = Optional[Callable[[Union[str, Dict[str, str]], str], Tuple[str, str]]]
 D_BUILD_FUNCTIONS: Dict[str, BUILD_FUNCTION_TYPE] = {CTI_GAL_KEY: None}
 
 logger = getLogger(__name__)
+
+
+def get_build_argument_parser():
+    """Get an argument parser for this script.
+
+    Returns
+    -------
+    parser : ArgumentParser
+        An argument parser set up with the allowed command-line arguments for this script.
+    """
+
+    parser = ArgumentParser()
+    parser.add_argument("--manifest", type=str, default=MANIFEST_FILENAME,
+                        help="The name of the .json-format file manifest, containing the validation test results "
+                             "tarballs to have results pages built.")
+    parser.add_argument("--rootdir", type=str, default=None,
+                        help="The root directory of this project, or a copied instance thereof. Will default to the "
+                             "current directory if not provided.")
+    return parser
 
 
 def parse_args():
@@ -46,21 +70,18 @@ def parse_args():
         The parsed arguments
     """
 
-    logger.debug("Entering `parse_args`.")
-
-    parser = ArgumentParser()
-
-    parser.add_argument("--manifest", type=str, default=MANIFEST_FILENAME)
+    parser = get_build_argument_parser()
 
     args = parser.parse_args()
 
-    logger.debug("Exiting `parse_args`.")
+    if args.rootdir is None:
+        args.rootdir = os.getcwd()
 
     return args
 
 
 def read_manifest(qualified_manifest_filename):
-    """
+    """Read in the .json-format manifest file.
 
     Parameters
     ----------
@@ -69,9 +90,8 @@ def read_manifest(qualified_manifest_filename):
 
     Returns
     -------
-    d_manifest : Dict[str, str or Dict[str,str]]
-        The file manifest, stored as a
-
+    d_manifest : Dict[str, str or Dict[str, str or None] or None]
+        The file manifest, stored as a dict
     """
 
     logger.debug("Entering `read_manifest`.")
@@ -94,9 +114,23 @@ def main():
 
     args = parse_args()
 
-    workdir = os.getcwd()
+    run_build_from_args(args)
 
-    d_manifest = read_manifest(os.path.join(workdir, args.manifest))
+    logger.debug("Exiting `main`.")
+
+
+def run_build_from_args(args):
+    """Workhorse function to perform primary execution of this script, using the provided parsed arguments.
+
+    Parameters
+    ----------
+    args : Namespace
+        The parsed arguments for this script
+    """
+
+    d_manifest = read_manifest(os.path.join(args.rootdir, args.manifest))
+
+    l_test_and_file_names: List[Tuple[str, str]] = []
 
     # Call the build function for each file in the manifest
     for key, value in d_manifest.items():
@@ -104,12 +138,22 @@ def main():
         build_function = D_BUILD_FUNCTIONS.get(key)
 
         if not build_function:
-            logger.debug(f"No build function provided for key {key}")
+            logger.debug(f"No build function provided for key '{key}'")
             continue
 
-        build_function(value)
+        t_test_and_file_name = build_function(value, args.rootdir)
 
-    logger.debug("Exiting `main`.")
+        l_test_and_file_names.append(t_test_and_file_name)
+
+    # Build the summary page for test reports
+    build_test_report_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
+                              l_test_and_file_names=l_test_and_file_names,
+                              rootdir=args.rootdir)
+
+    # Update the public SUMMARY.md file with new files created
+    update_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
+                   l_test_and_file_names=l_test_and_file_names,
+                   rootdir=args.rootdir)
 
 
 if __name__ == "__main__":

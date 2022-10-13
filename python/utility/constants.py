@@ -38,7 +38,8 @@ TESTS_DIR = "tests"
 # Temporary work directory
 WORKDIR = "workdir"
 
-# Desired filename to use for created markdown files to report test results
+# Desired filenames and directories to use for created markdown files to report test results
+TEST_REPORT_SUMMARY_FILENAME = "Test_Reports.md"
 REPORT_SUBDIR = "reports"
 
 # Primary keys within the manifest JSON file

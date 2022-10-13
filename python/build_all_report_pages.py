@@ -27,11 +27,11 @@ import json
 import os
 from argparse import ArgumentParser
 from logging import getLogger
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME
+from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 
-BUILD_FUNCTION_TYPE = Optional[Callable[[Union[str, Dict[str, str]]], None]]
+BUILD_FUNCTION_TYPE = Optional[Callable[[Union[str, Dict[str, str]]], Tuple[str, str]]]
 D_BUILD_FUNCTIONS: Dict[str, BUILD_FUNCTION_TYPE] = {CTI_GAL_KEY: None}
 
 logger = getLogger(__name__)
@@ -98,16 +98,24 @@ def main():
 
     d_manifest = read_manifest(os.path.join(workdir, args.manifest))
 
+    l_test_and_file_names: List[Tuple[str, str]] = []
+
     # Call the build function for each file in the manifest
     for key, value in d_manifest.items():
 
         build_function = D_BUILD_FUNCTIONS.get(key)
 
         if not build_function:
-            logger.debug(f"No build function provided for key {key}")
+            logger.debug(f"No build function provided for key '{key}'")
             continue
 
-        build_function(value)
+        t_test_and_file_name = build_function(value)
+
+        l_test_and_file_names.append(t_test_and_file_name)
+
+    # Build the summary page for test reports
+    build_test_report_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
+                              l_test_and_file_names=l_test_and_file_names)
 
     logger.debug("Exiting `main`.")
 

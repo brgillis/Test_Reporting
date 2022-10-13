@@ -4,8 +4,7 @@
 :date: 10/13/2022
 :author: Bryan Gillis
 
-This python script is run to construct report pages for all validation tests. It reads in the file manifest, and then
-calls appropriate functions to construct pages for each test results xml file.
+Functions to handle building a new test report summary file.
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment

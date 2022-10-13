@@ -47,10 +47,10 @@ def build_test_report_summary(test_report_summary_filename,
     qualified_test_report_template_filename = os.path.join(rootdir, AUX_DIR, TEST_REPORT_TEMPLATE_FILENAME)
 
     # Open the file we want to write
-    with open(qualified_test_report_summary_filename) as fo:
+    with open(qualified_test_report_summary_filename, 'w') as fo:
 
         # First, copy all lines from the template file
-        with open(qualified_test_report_template_filename) as fi:
+        with open(qualified_test_report_template_filename, 'r') as fi:
             for line in fi:
                 fo.write(line)
 

@@ -37,6 +37,7 @@ L_FILES_MODIFIED = (os.path.join(PUBLIC_DIR, SUMMARY_FILENAME),
 
 S_EXCLUDE = {*L_FILES_MODIFIED, DATA_DIR, TEST_DATA_DIR}
 
+
 @pytest.fixture(scope="session")
 def rootdir():
     """Pytest fixture to get the root directory of the project.
@@ -114,7 +115,7 @@ def symlink_contents(src_dir,
             os.symlink(qualified_src_filename, qualified_dest_filename)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def project_copy(rootdir, tmpdir_factory):
     """Pytest fixture which creates a copy of the project in a temporary directory for use with unit testing.
 

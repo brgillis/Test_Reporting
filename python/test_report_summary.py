@@ -7,10 +7,6 @@
 This python script is run to construct report pages for all validation tests. It reads in the file manifest, and then
 calls appropriate functions to construct pages for each test results xml file.
 """
-import os
-
-from utility.constants import AUX_DIR, PUBLIC_DIR, TEST_REPORT_TEMPLATE_FILENAME
-
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -24,6 +20,11 @@ from utility.constants import AUX_DIR, PUBLIC_DIR, TEST_REPORT_TEMPLATE_FILENAME
 #
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+import os
+
+from utility.constants import AUX_DIR, PUBLIC_DIR, TEST_REPORT_TEMPLATE_FILENAME
+
 
 def build_test_report_summary(test_report_summary_filename,
                               l_test_and_file_names,

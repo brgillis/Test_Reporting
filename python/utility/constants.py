@@ -34,6 +34,7 @@ IMAGES_SUBDIR = "images"
 SUMMARY_FILENAME = "SUMMARY.md"
 
 TESTS_DIR = "tests"
+TEST_DATA_DIR = "test_data"
 
 # Temporary work directory
 WORKDIR = "workdir"

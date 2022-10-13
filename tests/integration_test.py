@@ -23,7 +23,7 @@ Unit tests of running the whole script in a minimal state.
 import build_all_report_pages
 
 
-def test_integration(project_copy):
+def test_integration(project_copy, test_manifest):
     """Tests a slimmed-down full execution of the build script.
 
     Parameters
@@ -36,6 +36,7 @@ def test_integration(project_copy):
     parser = build_all_report_pages.get_build_argument_parser()
     args = parser.parse_args([])
     args.rootdir = project_copy
+    args.manifest = test_manifest
 
     # Call the main workhorse function
     build_all_report_pages.run_build_from_args(args)

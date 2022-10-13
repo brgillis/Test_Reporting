@@ -29,6 +29,7 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import Callable, Dict, List, Optional, TYPE_CHECKING, Tuple, Union
 
+from summary import update_summary
 from test_report_summary import build_test_report_summary
 from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 
@@ -148,6 +149,11 @@ def run_build_from_args(args):
     build_test_report_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
                               l_test_and_file_names=l_test_and_file_names,
                               rootdir=args.rootdir)
+
+    # Update the public SUMMARY.md file with new files created
+    update_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
+                   l_test_and_file_names=l_test_and_file_names,
+                   rootdir=args.rootdir)
 
 
 if __name__ == "__main__":

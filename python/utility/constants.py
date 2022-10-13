@@ -25,6 +25,9 @@ This python module defines constants used throughout this project.
 # Files and directories which already exist in the project
 MANIFEST_FILENAME = "manifest.json"
 
+AUX_DIR = "auxdir"
+TEST_REPORT_TEMPLATE_FILENAME = "Test_Reports_template.md"
+
 DATA_DIR = "data"
 
 PYTHON_DIR = "python"

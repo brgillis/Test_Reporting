@@ -29,9 +29,10 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
+from test_report_summary import build_test_report_summary
 from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 
-BUILD_FUNCTION_TYPE = Optional[Callable[[Union[str, Dict[str, str]]], Tuple[str, str]]]
+BUILD_FUNCTION_TYPE = Optional[Callable[[Union[str, Dict[str, str]], str], Tuple[str, str]]]
 D_BUILD_FUNCTIONS: Dict[str, BUILD_FUNCTION_TYPE] = {CTI_GAL_KEY: None}
 
 logger = getLogger(__name__)
@@ -50,9 +51,17 @@ def parse_args():
 
     parser = ArgumentParser()
 
-    parser.add_argument("--manifest", type=str, default=MANIFEST_FILENAME)
+    parser.add_argument("--manifest", type=str, default=MANIFEST_FILENAME,
+                        help="The name of the .json-format file manifest, containing the validation test results "
+                             "tarballs to have results pages built.")
+    parser.add_argument("--rootdir", type=str, default=None,
+                        help="The root directory of this project, or a copied instance thereof. Will default to the "
+                             "current directory if not provided.")
 
     args = parser.parse_args()
+
+    if args.rootdir is None:
+        args.rootdir = os.getcwd()
 
     logger.debug("Exiting `parse_args`.")
 
@@ -109,13 +118,14 @@ def main():
             logger.debug(f"No build function provided for key '{key}'")
             continue
 
-        t_test_and_file_name = build_function(value)
+        t_test_and_file_name = build_function(value, args.rootdir)
 
         l_test_and_file_names.append(t_test_and_file_name)
 
     # Build the summary page for test reports
     build_test_report_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
-                              l_test_and_file_names=l_test_and_file_names)
+                              l_test_and_file_names=l_test_and_file_names,
+                              rootdir=args.rootdir)
 
     logger.debug("Exiting `main`.")
 

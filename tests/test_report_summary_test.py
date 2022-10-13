@@ -28,8 +28,8 @@ from utility.constants import PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
 L_TEST_AND_FILE_NAMES = [("T1", "T1.md"),
                          ("T2", "T2a.md")]
 
-EX_TEST_STR_1 = "|[T1](T1.html)|"
-EX_TEST_STR_2 = "|[T2](T2a.html)|"
+EX_TEST_STR_1 = "|[T1](T1.html)|\n"
+EX_TEST_STR_2 = "|[T2](T2a.html)|\n"
 
 
 def test_build_summary(project_copy):

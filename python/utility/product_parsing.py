@@ -24,7 +24,7 @@ written to output Markdown files.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Literal, Optional
+from typing import Any, List, Literal, Optional
 
 
 @dataclass
@@ -35,8 +35,17 @@ class Tags:
     """
 
     # Data stored in the AnalysisResult dataclass
+    ana_result = "Result"
+    textfiles_tarball = "AnalysisFiles.TextFiles.FileName"
+    figures_tarball = "AnalysisFiles.Figures.FileName"
+    ana_comment = "Comment"
 
     # Data stored in the RequirementResults dataclass
+    req_id = "Id"
+    meas_value = "MeasuredValue"
+    req_result = "ValidationResult"
+    req_comment = "Comment"
+    supp_info = "SupplementaryInformation"
 
     # Data stored in the SingleTestResult dataclass
     test_id = "TestId"
@@ -45,34 +54,38 @@ class Tags:
     l_requirements = "ValidatedRequirements"
     analysis_result = "AnalysisResult"
 
-    # Data stored in the TestResultsMeta dataclass
-    product_id = "ProductId"
-    dataset_release = "DataSetRelease"
-    plan_id = "PlanId"
-    ppo_id = "PPOId"
-    pipeline_definition_id = "PipelineDefinitionId"
-    creation_date = "CreationDate"
-    exp_product_id = "ExposureProductId"
-    obs_id = "ObservationId"
-    pnt_id = "PointingId"
-    obs_mode = "ObservationMode"
-    n_exp = "NumberExposures"
-    tile_id = "TileId"
-    source_pipeline = "SourcePipeline"
-
     # Data stored in the TestResults dataclass
-    meta = ("Header", "Data")
-    l_test_results = "ValidationTestList"
+    product_id = "Header.ProductId"
+    dataset_release = "Header.DataSetRelease"
+    plan_id = "Header.PlanId"
+    ppo_id = "Header.PPOId"
+    pipeline_definition_id = "Header.PipelineDefinitionId"
+    creation_date = "Header.CreationDate"
+    exp_product_id = "Data.ExposureProductId"
+    obs_id = "Data.ObservationId"
+    pnt_id = "Data.PointingId"
+    obs_mode = "Data.ObservationMode"
+    n_exp = "Data.NumberExposures"
+    tile_id = "Data.TileId"
+    source_pipeline = "Data.SourcePipeline"
+    l_test_results = "Data.ValidationTestList"
 
 
 @dataclass
 class AnalysisResult:
-    pass
+    ana_result: Literal["PASSED", "FAILED"]
+    textfiles_tarball: Optional[str] = None
+    figures_tarball: Optional[str] = None
+    ana_comment: Optional[str] = None
 
 
 @dataclass
 class RequirementResults:
-    pass
+    req_id: str
+    meas_value: Any
+    req_result: Literal["PASSED", "FAILED"]
+    req_comment: Optional[str] = None
+    supp_info: Optional[str] = None
 
 
 @dataclass
@@ -88,9 +101,9 @@ class SingleTestResult:
 
 
 @dataclass
-class TestResultsMeta:
+class TestResults:
 
-    # Data stored in the header
+    # Metadata stored in the header
     product_id: str
     dataset_release: str
     plan_id: str
@@ -107,9 +120,5 @@ class TestResultsMeta:
     tile_id: Optional[int] = None
     source_pipeline: str = "sheAnalysis"
 
-
-@dataclass
-class TestResults:
-    meta: TestResultsMeta
+    # Data
     l_test_results: List[SingleTestResult] = field(default_factory=list)
-    pass

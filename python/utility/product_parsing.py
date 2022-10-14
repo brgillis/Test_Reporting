@@ -131,6 +131,31 @@ S_XML_OBJECT_TYPES = {TestResults, SingleTestResult, RequirementResults, Analysi
 OutputType = TypeVar("OutputType")
 
 
+def recursive_element_find(element, tag):
+    """Gets a sub-element from an XML ElementTree Element, searching recursively as necessary.
+
+    Parameters
+    ----------
+    element : Element
+        The element in an XML ElementTree from which to generate the output object
+    tag : str
+        The tag to search for, which may be a period (.) separated set of tags to work through recursively
+
+    Returns
+    -------
+    sub_element : Element
+        The sub-element for the given tag
+    """
+
+    # Check for simple case, to break out of recursion
+    if "." not in tag:
+        return element.find(tag)
+
+    # Otherwise, split on the first . and call this method recursively
+    head, tail = tag.split(".", maxsplit=1)
+    return recursive_element_find(element.find(head), tail)
+
+
 def create_from_xml_element(output_type, element):
     """Generates an object of the desired output type from an element in an XML ElementTree.
 
@@ -170,7 +195,7 @@ def create_from_xml_element(output_type, element):
                                   for sub_element in l_sub_elements]
 
         else:
-            d_attrs[attr_name] = element.find(attr_tag)
+            d_attrs[attr_name] = recursive_element_find(element, attr_tag)
 
     return output_type(**d_attrs)
 

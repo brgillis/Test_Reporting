@@ -28,10 +28,15 @@ from utility.product_parsing import parse_xml_product
 TEST_XML_FILENAME = "she_observation_cti_gal_validation_test_results_product.xml"
 
 
-def test_parse_xml_product():
+def test_parse_xml_product(rootdir):
     """Unit test of the `parse_xml_file` method.
+
+    Parameters
+    ----------
+    rootdir : str
+        Fixture which provides the root directory of the project
     """
 
-    qualified_xml_filename = os.path.join(TEST_DATA_DIR, TEST_XML_FILENAME)
+    qualified_xml_filename = os.path.join(rootdir, TEST_DATA_DIR, TEST_XML_FILENAME)
 
     test_results = parse_xml_product(qualified_xml_filename)

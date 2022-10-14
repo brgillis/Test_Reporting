@@ -156,6 +156,28 @@ def recursive_element_find(element, tag):
     return recursive_element_find(element.find(head), tail)
 
 
+def get_constructor(output_type):
+    """Get a constructor that can be called on a str to convert it to the desired output type
+
+    Parameters
+    ----------
+    output_type : Type[OutputType]
+        The type of the object to be generated.
+
+    Returns
+    -------
+    constructor : Callable[[str], OutputType]
+        An appropriate constructor for this type
+
+    """
+
+    # Check if the type is an optional type and handle appropriately if so
+    if hasattr(output_type, "__args__"):
+        return output_type.__args__[0]
+
+    return output_type
+
+
 def create_from_xml_element(output_type, element):
     """Generates an object of the desired output type from an element in an XML ElementTree.
 
@@ -172,9 +194,17 @@ def create_from_xml_element(output_type, element):
         The generated object.
     """
 
+    if element is None:
+        return None
+
     # If the desired type is not one of the XML object types, simply read in the value from the element
     if output_type not in S_XML_OBJECT_TYPES:
-        return output_type(element.text)
+        try:
+            constructor = get_constructor(output_type)
+            return constructor(element.text)
+        except Exception as e:
+            print(str(e))
+            return element.text
 
     # We use the type's meta-info to find what attributes it has and their types, and use this to recursively
     # construct it
@@ -195,7 +225,8 @@ def create_from_xml_element(output_type, element):
                                   for sub_element in l_sub_elements]
 
         else:
-            d_attrs[attr_name] = recursive_element_find(element, attr_tag)
+            sub_element = recursive_element_find(element, attr_tag)
+            d_attrs[attr_name] = create_from_xml_element(attr_type, sub_element)
 
     return output_type(**d_attrs)
 

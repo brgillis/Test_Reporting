@@ -24,12 +24,29 @@ written to output Markdown files.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 
 @dataclass
-class SingleTestResults:
+class AnalysisResult:
     pass
+
+
+@dataclass
+class RequirementResults:
+    pass
+
+
+@dataclass
+class SingleTestResult:
+
+    # Attributes specially added to the SHE implementation
+    test_id: str
+    test_description: str
+    global_result: Literal["PASSED", "FAILED"]
+
+    l_requirements: List[RequirementResults] = field(default_factory=list)
+    analysis_result: Optional[AnalysisResult] = None
 
 
 @dataclass
@@ -56,5 +73,5 @@ class TestResultsMeta:
 @dataclass
 class TestResults:
     meta: TestResultsMeta
-    l_test_results: List[SingleTestResults] = field(default_factory=list)
+    l_test_results: List[SingleTestResult] = field(default_factory=list)
     pass

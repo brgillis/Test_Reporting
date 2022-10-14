@@ -22,10 +22,11 @@ written to output Markdown files.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-from dataclasses import dataclass, field
+from dataclasses import Field, dataclass, field
 from datetime import datetime
-from typing import Any, List, Literal, Optional
+from typing import Any, Dict, List, Literal, Optional, TypeVar
 from xml.etree import ElementTree
+from xml.etree.ElementTree import Element
 
 
 @dataclass
@@ -125,6 +126,55 @@ class TestResults:
     l_test_results: List[SingleTestResult] = field(default_factory=list)
 
 
+S_XML_OBJECT_TYPES = {TestResults, SingleTestResult, RequirementResults, AnalysisResult}
+
+OutputType = TypeVar("OutputType")
+
+
+def create_from_xml_element(output_type, element):
+    """Generates an object of the desired output type from an element in an XML ElementTree.
+
+    Parameters
+    ----------
+    output_type : Type[OutputType]
+        The type of the object to be generated.
+    element : Element
+        The element in an XML ElementTree from which to generate the output object
+
+    Returns
+    -------
+    output_object : OutputType
+        The generated object.
+    """
+
+    # If the desired type is not one of the XML object types, simply read in the value from the element
+    if output_type not in S_XML_OBJECT_TYPES:
+        return output_type(element.text)
+
+    # We use the type's meta-info to find what attributes it has and their types, and use this to recursively
+    # construct it
+    d_attrs: Dict[str, Any] = {}
+    attr_name: str
+    dataclass_field: Field
+    for attr_name, dataclass_field in output_type.__dataclass_fields__.items():
+
+        attr_type = dataclass_field.type
+        attr_tag: str = getattr(Tags, attr_name)
+
+        # Special handling for lists
+        if dataclass_field.default_factory == list:
+            attr_elem_type = attr_type.__args__[0]
+
+            l_sub_elements = element.findall(attr_tag)
+            d_attrs[attr_name] = [create_from_xml_element(attr_elem_type, sub_element)
+                                  for sub_element in l_sub_elements]
+
+        else:
+            d_attrs[attr_name] = element.find(attr_tag)
+
+    return output_type(**d_attrs)
+
+
 def parse_xml_product(filename):
     """Parses a SheValidationTestResults XML product, returning a TestResults dataclass containing the information
     within it.
@@ -143,4 +193,6 @@ def parse_xml_product(filename):
 
     root = tree.getroot()
 
-    return None
+    test_results = create_from_xml_element(TestResults, root)
+
+    return test_results

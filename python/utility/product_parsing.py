@@ -25,6 +25,7 @@ written to output Markdown files.
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, List, Literal, Optional
+from xml.etree import ElementTree
 
 
 @dataclass
@@ -122,3 +123,24 @@ class TestResults:
 
     # Data
     l_test_results: List[SingleTestResult] = field(default_factory=list)
+
+
+def parse_xml_product(filename):
+    """Parses a SheValidationTestResults XML product, returning a TestResults dataclass containing the information
+    within it.
+
+    Parameters
+    ----------
+    filename : str
+        The fully-qualified filename of the SheValidationTestResults XML product to parse
+
+    Returns
+    -------
+    parsed_xml_product : TestResults
+    """
+
+    tree = ElementTree.parse(filename)
+
+    root = tree.getroot()
+
+    return None

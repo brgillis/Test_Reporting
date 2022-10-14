@@ -28,6 +28,44 @@ from typing import List, Literal, Optional
 
 
 @dataclass
+class Tags:
+    """A special dataclass which defines the XML tags which we wish to read data from. The name of each attribute in
+    this class corresponds to the name of the attribute in the associated dataclass which will store the information
+    contained within that entry.
+    """
+
+    # Data stored in the AnalysisResult dataclass
+
+    # Data stored in the RequirementResults dataclass
+
+    # Data stored in the SingleTestResult dataclass
+    test_id = "TestId"
+    test_description = "TestDescription"
+    global_result = "GlobalResult"
+    l_requirements = "ValidatedRequirements"
+    analysis_result = "AnalysisResult"
+
+    # Data stored in the TestResultsMeta dataclass
+    product_id = "ProductId"
+    dataset_release = "DataSetRelease"
+    plan_id = "PlanId"
+    ppo_id = "PPOId"
+    pipeline_definition_id = "PipelineDefinitionId"
+    creation_date = "CreationDate"
+    exp_product_id = "ExposureProductId"
+    obs_id = "ObservationId"
+    pnt_id = "PointingId"
+    obs_mode = "ObservationMode"
+    n_exp = "NumberExposures"
+    tile_id = "TileId"
+    source_pipeline = "SourcePipeline"
+
+    # Data stored in the TestResults dataclass
+    meta = ("Header", "Data")
+    l_test_results = "ValidationTestList"
+
+
+@dataclass
 class AnalysisResult:
     pass
 

@@ -20,10 +20,10 @@ Unit tests of writing test reports.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-from conftest import TEST_XML_FILENAME
 from utility.constants import TEST_REPORTS_SUBDIR
 from utility.test_writing import TestSummaryWriter
 
+TEST_TARBALL_FILENAME = "she_obs_cti_gal.tar.gz"
 
 def test_write_summary(rootdir):
     """Unit test of the `TestSummaryWriter` class's __call__ method.
@@ -36,7 +36,7 @@ def test_write_summary(rootdir):
 
     # Since the filename is normally expected to be in the "data" dir, but we're working with "test_data" here, we
     # prepend the filename to redirect to that directory
-    relative_test_xml_filename = "../test_data/" + TEST_XML_FILENAME
+    relative_test_xml_filename = "../test_data/" + TEST_TARBALL_FILENAME
 
     writer = TestSummaryWriter()
     l_summary_write_output = writer(relative_test_xml_filename, rootdir)
@@ -44,6 +44,6 @@ def test_write_summary(rootdir):
     summary_write_output = l_summary_write_output[0]
 
     # Check that the test name is as expected and the filename is sensible
-    assert summary_write_output.test_name_and_filename.name == "T-UNKNOWN"
+    assert summary_write_output.test_name_and_filename.name == "21950be4-0f90-4d36-be01-2a9a507b36cc"
     assert summary_write_output.test_name_and_filename.filename.startswith(TEST_REPORTS_SUBDIR)
     assert summary_write_output.test_name_and_filename.filename.endswith(".md")

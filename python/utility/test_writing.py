@@ -27,7 +27,9 @@ from __future__ import annotations
 import codecs
 import hashlib
 import os
+import re
 import shutil
+import subprocess
 from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, Union
 
@@ -240,7 +242,20 @@ class TestSummaryWriter:
         qualified_results_tarball_filename : str
         qualified_tmpdir : str
         """
-        pass
+
+        # Check the filename contains only expected characters. If it doesn't, this could open a security hole
+        regex_match = re.match(r"^[a-zA-Z\-_./]\.tar(\.gz)?$", qualified_results_tarball_filename)
+
+        if not regex_match:
+            raise ValueError(f"Qualified filename {qualified_results_tarball_filename} failed security check. It must"
+                             f"contain alphanumeric characters and -_./")
+
+        cmd = f"cd {qualified_tmpdir} && tar -xf {qualified_results_tarball_filename}"
+        tar_results = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        if tar_results.returncode:
+            raise ValueError(f"Untarring of {qualified_results_tarball_filename} failed. stderr from tar "
+                             f"process was: {tar_results.stderr}")
 
     def _find_product_filename(self, qualified_tmpdir):
         """Finds the filename of the .xml product in the provided directory.

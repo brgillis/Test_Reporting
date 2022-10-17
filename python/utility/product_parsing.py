@@ -24,10 +24,12 @@ written to output Markdown files.
 
 from dataclasses import Field, dataclass, field
 from datetime import datetime
+from logging import getLogger
 from typing import Any, Dict, List, Literal, Optional, TypeVar
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 
+logger = getLogger(__name__)
 
 @dataclass
 class Tags:
@@ -156,8 +158,28 @@ def recursive_element_find(element, tag):
     return recursive_element_find(element.find(head), tail)
 
 
+def construct_datetime(s):
+    """Converts a string value, formatted like "YYYY-MM-DDTHH:MM:SS.408Z", into a datetime object.
+
+    Parameters
+    ----------
+    s : str
+        The string value to be converted
+
+    Returns
+    -------
+    dt : datetime
+        The datetime object equivalent of the input string
+    """
+
+    dt = datetime.fromisoformat(s.replace('Z', '+00:00'))
+
+    return dt
+
+
 def get_constructor(output_type):
-    """Get a constructor that can be called on a str to convert it to the desired output type
+    """Get a constructor that can be called on a str to convert it to the desired output type. This works by checking
+    first for known types which need special handling, and then defaulting to using the type itself as a constructor.
 
     Parameters
     ----------
@@ -170,6 +192,9 @@ def get_constructor(output_type):
         An appropriate constructor for this type
 
     """
+
+    if output_type == datetime:
+        return construct_datetime
 
     # Check if the type is an optional type and handle appropriately if so
     if hasattr(output_type, "__args__"):
@@ -203,8 +228,9 @@ def create_from_xml_element(output_type, element):
             constructor = get_constructor(output_type)
             return constructor(element.text)
         except Exception as e:
-            print(str(e))
-            return element.text
+            logger.warning("Could not convert value %s to type %s; will be stored as a string. Exception was: %s",
+                           element.text, output_type, e)
+            return str(element.text)
 
     # We use the type's meta-info to find what attributes it has and their types, and use this to recursively
     # construct it

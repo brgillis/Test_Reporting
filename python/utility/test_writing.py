@@ -32,6 +32,7 @@ from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, Union
 
 from utility.constants import DATA_DIR, TEST_REPORTS_SUBDIR
+from utility.product_parsing import parse_xml_product
 
 TMPDIR_MAXLEN = 16
 
@@ -212,18 +213,53 @@ class TestSummaryWriter:
         summary_write_output : SummaryWriteOutput
         """
 
-        assert os.path.isdir(qualified_tmpdir)
-        assert os.path.isfile(qualified_results_tarball_filename)
+        self._extract_tarball(qualified_results_tarball_filename, qualified_tmpdir)
+
+        product_filename = self._find_product_filename(qualified_tmpdir)
+        qualified_product_filename = os.path.join(qualified_tmpdir, product_filename)
+
+        test_results = parse_xml_product(qualified_product_filename)
 
         if self.test_name is None:
-            # TODO - when product is parsed, use its ProductID here instead
-            test_name = "T-UNKNOWN"
+            test_name = test_results.product_id
         else:
             test_name = self.test_name
 
         if tag is not None:
             test_name += f"-{tag}"
-            
+
         test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
 
         return SummaryWriteOutput(NameAndFileName(test_name, test_filename), [])
+
+    def _extract_tarball(self, qualified_results_tarball_filename, qualified_tmpdir):
+        """Extracts a tarball into the provided directory, performing security checks on the provided filename.
+
+        Parameters
+        ----------
+        qualified_results_tarball_filename : str
+        qualified_tmpdir : str
+        """
+        pass
+
+    def _find_product_filename(self, qualified_tmpdir):
+        """Finds the filename of the .xml product in the provided directory.
+
+        Parameters
+        ----------
+        qualified_tmpdir : str
+
+        Returns
+        -------
+        product_filename : str
+        """
+
+        l_possible_product_filenames = [fn for fn in os.listdir(qualified_tmpdir) if fn.endswith(".xml")]
+
+        if len(l_possible_product_filenames) == 1:
+            return l_possible_product_filenames[0]
+        elif len(l_possible_product_filenames) == 0:
+            raise ValueError("No .xml data product found in tarball.")
+        else:
+            raise ValueError("More than one .xml product found in tarball. Found: "
+                             f"{l_possible_product_filenames}")

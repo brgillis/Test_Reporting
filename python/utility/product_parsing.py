@@ -38,18 +38,23 @@ class Tags:
     contained within that entry.
     """
 
-    # Data stored in the AnalysisResult dataclass
-    ana_result = "Result"
-    textfiles_tarball = "AnalysisFiles.TextFiles.FileName"
-    figures_tarball = "AnalysisFiles.Figures.FileName"
-    ana_comment = "Comment"
+    # Data stored in the SupplementaryInfo dataclass
+    info_key: str = "Key"
+    info_description: str = "Description"
+    info_value: str = "StringValue"
 
     # Data stored in the RequirementResults dataclass
     req_id = "Requirement.Id"
     meas_value = "Requirement.MeasuredValue"
     req_result = "Requirement.ValidationResult"
     req_comment = "Requirement.Comment"
-    supp_info = "Requirement.SupplementaryInformation"
+    l_supp_info = "Requirement.SupplementaryInformation.Parameter"
+
+    # Data stored in the AnalysisResult dataclass
+    ana_result = "Result"
+    textfiles_tarball = "AnalysisFiles.TextFiles.FileName"
+    figures_tarball = "AnalysisFiles.Figures.FileName"
+    ana_comment = "Comment"
 
     # Data stored in the SingleTestResult dataclass
     test_id = "TestId"
@@ -76,11 +81,10 @@ class Tags:
 
 
 @dataclass
-class AnalysisResult:
-    ana_result: Literal["PASSED", "FAILED"]
-    textfiles_tarball: Optional[str] = None
-    figures_tarball: Optional[str] = None
-    ana_comment: Optional[str] = None
+class SupplementaryInfo:
+    info_key: str
+    info_description: str
+    info_value: str
 
 
 @dataclass
@@ -89,7 +93,15 @@ class RequirementResults:
     meas_value: Any
     req_result: Literal["PASSED", "FAILED"]
     req_comment: Optional[str] = None
-    supp_info: Optional[str] = None
+    l_supp_info: List[SupplementaryInfo] = field(default_factory=list)
+
+
+@dataclass
+class AnalysisResult:
+    ana_result: str
+    textfiles_tarball: Optional[str] = None
+    figures_tarball: Optional[str] = None
+    ana_comment: Optional[str] = None
 
 
 @dataclass
@@ -98,7 +110,7 @@ class SingleTestResult:
     # Attributes specially added to the SHE implementation
     test_id: str
     test_description: str
-    global_result: Literal["PASSED", "FAILED"]
+    global_result: str
 
     l_requirements: List[RequirementResults] = field(default_factory=list)
     analysis_result: Optional[AnalysisResult] = None
@@ -128,7 +140,7 @@ class TestResults:
     l_test_results: List[SingleTestResult] = field(default_factory=list)
 
 
-S_XML_OBJECT_TYPES = {TestResults, SingleTestResult, RequirementResults, AnalysisResult}
+S_XML_OBJECT_TYPES = {TestResults, SingleTestResult, RequirementResults, AnalysisResult, SupplementaryInfo}
 
 OutputType = TypeVar("OutputType")
 

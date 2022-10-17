@@ -24,7 +24,7 @@ import os
 from datetime import datetime
 
 from utility.constants import TEST_DATA_DIR
-from utility.product_parsing import RequirementResults, SingleTestResult, parse_xml_product
+from utility.product_parsing import RequirementResults, SingleTestResult, SupplementaryInfo, parse_xml_product
 
 TEST_XML_FILENAME = "she_observation_cti_gal_validation_test_results_product.xml"
 
@@ -60,3 +60,9 @@ def test_parse_xml_product(rootdir):
     requirement_0 = test_results_0.l_requirements[0]
     assert isinstance(requirement_0, RequirementResults)
     assert requirement_0.req_id == "R-SHE-CAL-F-140"
+
+    # Check the SupplementaryInfo
+    assert len(requirement_0.l_supp_info) == 2
+    info_1 = requirement_0.l_supp_info[1]
+    assert isinstance(info_1, SupplementaryInfo)
+    assert info_1.info_key == "INTERCEPT_INFO"

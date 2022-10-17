@@ -1,0 +1,2366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:DpdSheValidationTestResults xmlns:ns1="http://euclid.esa.org/schema/dpd/she/validationtestresults">
+	<Header>
+		<ProductId>21950be4-0f90-4d36-be01-2a9a507b36cc</ProductId>
+		<ProductType>DpdSheValidationTestResults</ProductType>
+		<SoftwareName>NA</SoftwareName>
+		<SoftwareRelease>0.0</SoftwareRelease>
+		<EuclidPipelineSoftwareRelease>0.0</EuclidPipelineSoftwareRelease>
+		<ProdSDC>SDC-IT</ProdSDC>
+		<DataSetRelease>NA</DataSetRelease>
+		<Purpose>UNKNOWN</Purpose>
+		<PlanId>e8150578-bc73-4b93-8cd1-e63b90fbbfc7</PlanId>
+		<PPOId>f50e5402-42fa-4ee0-af66-d8e140065aba</PPOId>
+		<PipelineDefinitionId>PipelineDefinitionId</PipelineDefinitionId>
+		<PipelineRun>NA</PipelineRun>
+		<ExitStatusCode>NA</ExitStatusCode>
+		<ManualValidationStatus>UNKNOWN</ManualValidationStatus>
+		<ExpirationDate>2021-12-03T11:24:43.408Z</ExpirationDate>
+		<ToBePublished>false</ToBePublished>
+		<Published>false</Published>
+		<Curator>Curator0</Curator>
+		<CreationDate>2021-12-03T11:24:43.408Z</CreationDate>
+	</Header>
+	<Data>
+		<ObservationId>25463</ObservationId>
+		<NumberExposures>4</NumberExposures>
+		<SourcePipeline>sheAnalysis</SourcePipeline>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.32086604833602905</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+slope = -4.488047488848679e-05
+slope_err = 0.00013987293641548604
+slope_z = 0.32086604833602905
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+intercept = 0.03164852410554886
+intercept_err = 0.12974394857883453
+intercept_z = 0.2439306378364563
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-GLOBAL-KSB</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by GLOBAL. Shear estimation method: ShearEstimationMethods.KSB.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112445.653709Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112445.695596Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.30614331364631653</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+slope = -4.0128405089490116e-05
+slope_err = 0.0001310771913267672
+slope_z = 0.30614331364631653
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+intercept = 0.026938743889331818
+intercept_err = 0.1225176453590393
+intercept_z = 0.21987643837928772
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-GLOBAL-REGAUSS</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by GLOBAL. Shear estimation method: ShearEstimationMethods.REGAUSS.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112445.727138Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112445.744305Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>FAILED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>-1.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>FAILED</ValidationResult>
+					<Comment>WARNING: Bad data; see SupplementaryInformation</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>Test failed due to NaN regression results for slope.
+
+slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-GLOBAL-MomentsML</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by GLOBAL. Shear estimation method: ShearEstimationMethods.MOMENTSML.</TestDescription>
+			<AnalysisResult>
+				<Result>FAILED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112445.773352Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112445.790067Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.4462152421474457</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+slope = -7.968822319526225e-05
+slope_err = 0.0001785869535524398
+slope_z = 0.4462152421474457
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+intercept = 0.0462455153465271
+intercept_err = 0.15255558490753174
+intercept_z = 0.303138792514801
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-GLOBAL-LensMC</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by GLOBAL. Shear estimation method: ShearEstimationMethods.LENSMC.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112445.821293Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112445.839091Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.0687340572476387</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 3.5:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 3.5 to 5.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 5.0 to 7.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 7.0 to 10.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 10.0 to 15.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 15.0 to 30.0:slope = 1.0707506589824334e-05
+slope_err = 0.00015578167221974581
+slope_z = 0.0687340572476387
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 6, for values from 30.0 to 1e+99:slope = 5.161408722642591e-08
+slope_err = 0.00035434853634797037
+slope_z = 0.00014565909805241972
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 3.5:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 3.5 to 5.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 5.0 to 7.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 7.0 to 10.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 10.0 to 15.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 15.0 to 30.0:intercept = -0.11336293816566467
+intercept_err = 0.15760718286037445
+intercept_z = 0.719275176525116
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 6, for values from 30.0 to 1e+99:intercept = 0.24147716164588928
+intercept_err = 0.24542632699012756
+intercept_z = 0.9839089512825012
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-SNR-KSB</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by SNR. Shear estimation method: ShearEstimationMethods.KSB.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112445.870125Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112445.888072Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.06796619296073914</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 3.5:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 3.5 to 5.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 5.0 to 7.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 7.0 to 10.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 10.0 to 15.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 15.0 to 30.0:slope = 9.827396752370987e-06
+slope_err = 0.0001445924281142652
+slope_z = 0.06796619296073914
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 6, for values from 30.0 to 1e+99:slope = 5.2669221872747585e-08
+slope_err = 0.00034756844979710877
+slope_z = 0.00015153625281527638
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 3.5:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 3.5 to 5.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 5.0 to 7.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 7.0 to 10.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 10.0 to 15.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 15.0 to 30.0:intercept = -0.10195746272802353
+intercept_err = 0.14639028906822205
+intercept_z = 0.696476936340332
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 6, for values from 30.0 to 1e+99:intercept = 0.23618677258491516
+intercept_err = 0.24073033034801483
+intercept_z = 0.9811259508132935
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-SNR-REGAUSS</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by SNR. Shear estimation method: ShearEstimationMethods.REGAUSS.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112445.922211Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112445.939234Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>FAILED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>-1.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>FAILED</ValidationResult>
+					<Comment>WARNING: Bad data; see SupplementaryInformation</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>Test failed due to NaN regression results for slope.
+
+Results for bin 0, for values from 0.0 to 3.5:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 3.5 to 5.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 5.0 to 7.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 7.0 to 10.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 10.0 to 15.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 15.0 to 30.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 6, for values from 30.0 to 1e+99:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 3.5:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 3.5 to 5.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 5.0 to 7.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 7.0 to 10.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 10.0 to 15.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 15.0 to 30.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 6, for values from 30.0 to 1e+99:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-SNR-MomentsML</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by SNR. Shear estimation method: ShearEstimationMethods.MOMENTSML.</TestDescription>
+			<AnalysisResult>
+				<Result>FAILED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112445.970046Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112445.987521Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.0009337567607872188</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 3.5:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 3.5 to 5.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 5.0 to 7.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 7.0 to 10.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 10.0 to 15.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 15.0 to 30.0:slope = -1.9899044900739682e-07
+slope_err = 0.00021310737065505236
+slope_z = 0.0009337567607872188
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 6, for values from 30.0 to 1e+99:slope = 4.9240014732276904e-08
+slope_err = 0.00034822372253984213
+slope_z = 0.00014140339044388384
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 3.5:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 3.5 to 5.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 5.0 to 7.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 7.0 to 10.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 10.0 to 15.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 15.0 to 30.0:intercept = -0.20473994314670563
+intercept_err = 0.2042723298072815
+intercept_z = 1.0022891759872437
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 6, for values from 30.0 to 1e+99:intercept = 0.2547464668750763
+intercept_err = 0.24118420481681824
+intercept_z = 1.05623197555542
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-SNR-LensMC</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by SNR. Shear estimation method: ShearEstimationMethods.LENSMC.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112445.999048Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.016131Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.32086604833602905</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 35.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 35.0 to 35.25:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 35.25 to 36.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 36.0 to 50.0:slope = -4.488047488848679e-05
+slope_err = 0.00013987293641548604
+slope_z = 0.32086604833602905
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 5, for values from 50.0 to 1e+99:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 35.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 35.0 to 35.25:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 35.25 to 36.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 36.0 to 50.0:intercept = 0.03164852410554886
+intercept_err = 0.12974394857883453
+intercept_z = 0.2439306378364563
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 5, for values from 50.0 to 1e+99:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-BG-KSB</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by background level. Shear estimation method: ShearEstimationMethods.KSB.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.027304Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.044472Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.30614331364631653</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 35.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 35.0 to 35.25:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 35.25 to 36.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 36.0 to 50.0:slope = -4.0128405089490116e-05
+slope_err = 0.0001310771913267672
+slope_z = 0.30614331364631653
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 5, for values from 50.0 to 1e+99:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 35.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 35.0 to 35.25:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 35.25 to 36.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 36.0 to 50.0:intercept = 0.026938743889331818
+intercept_err = 0.1225176453590393
+intercept_z = 0.21987643837928772
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 5, for values from 50.0 to 1e+99:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-BG-REGAUSS</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by background level. Shear estimation method: ShearEstimationMethods.REGAUSS.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.076399Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.093182Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>FAILED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>-1.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>FAILED</ValidationResult>
+					<Comment>WARNING: Bad data; see SupplementaryInformation</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>Test failed due to NaN regression results for slope.
+
+Results for bin 0, for values from 0.0 to 30.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 35.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 35.0 to 35.25:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 35.25 to 36.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 36.0 to 50.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 50.0 to 1e+99:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 35.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 35.0 to 35.25:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 35.25 to 36.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 36.0 to 50.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 50.0 to 1e+99:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-BG-MomentsML</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by background level. Shear estimation method: ShearEstimationMethods.MOMENTSML.</TestDescription>
+			<AnalysisResult>
+				<Result>FAILED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.124292Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.141992Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.4462152421474457</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 35.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 35.0 to 35.25:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 35.25 to 36.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 36.0 to 50.0:slope = -7.968822319526225e-05
+slope_err = 0.0001785869535524398
+slope_z = 0.4462152421474457
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 5, for values from 50.0 to 1e+99:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 35.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 35.0 to 35.25:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 35.25 to 36.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 36.0 to 50.0:intercept = 0.0462455153465271
+intercept_err = 0.15255558490753174
+intercept_z = 0.303138792514801
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 5, for values from 50.0 to 1e+99:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-BG-LensMC</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by background level. Shear estimation method: ShearEstimationMethods.LENSMC.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.153890Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.171090Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.4117838442325592</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from -1e+99 to -2.5:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from -2.5 to -2.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from -2.0 to -1.5:slope = -1.7272104457788373e-07
+slope_err = 0.0002135318936780095
+slope_z = 0.0008088770555332303
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 3, for values from -1.5 to -1.0:slope = -7.780141459079459e-05
+slope_err = 0.00018893751257564873
+slope_z = 0.4117838442325592
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from -1.0 to -0.6:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from -0.6 to 1e+99:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from -1e+99 to -2.5:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from -2.5 to -2.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from -2.0 to -1.5:intercept = -0.01218570675700903
+intercept_err = 0.22714664041996002
+intercept_z = 0.05364687368273735
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 3, for values from -1.5 to -1.0:intercept = 0.0566079318523407
+intercept_err = 0.16007265448570251
+intercept_z = 0.35363897681236267
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from -1.0 to -0.6:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from -0.6 to 1e+99:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-COLOUR-KSB</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by COLOUR. Shear estimation method: ShearEstimationMethods.KSB.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.201115Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.217676Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.4022402763366699</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from -1e+99 to -2.5:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from -2.5 to -2.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from -2.0 to -1.5:slope = -1.7238629368421243e-07
+slope_err = 0.00019695263472385705
+slope_z = 0.0008752677822485566
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 3, for values from -1.5 to -1.0:slope = -7.206786540336907e-05
+slope_err = 0.00017916620709002018
+slope_z = 0.4022402763366699
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from -1.0 to -0.6:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from -0.6 to 1e+99:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from -1e+99 to -2.5:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from -2.5 to -2.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from -2.0 to -1.5:intercept = -0.010020948946475983
+intercept_err = 0.20951032638549805
+intercept_z = 0.047830335795879364
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 3, for values from -1.5 to -1.0:intercept = 0.05001875385642052
+intercept_err = 0.15288861095905304
+intercept_z = 0.3271581530570984
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from -1.0 to -0.6:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from -0.6 to 1e+99:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-COLOUR-REGAUSS</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by COLOUR. Shear estimation method: ShearEstimationMethods.REGAUSS.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.249340Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.265860Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>FAILED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>-1.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>FAILED</ValidationResult>
+					<Comment>WARNING: Bad data; see SupplementaryInformation</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>Test failed due to NaN regression results for slope.
+
+Results for bin 0, for values from -1e+99 to -2.5:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from -2.5 to -2.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from -2.0 to -1.5:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from -1.5 to -1.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from -1.0 to -0.6:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from -0.6 to 1e+99:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from -1e+99 to -2.5:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from -2.5 to -2.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from -2.0 to -1.5:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from -1.5 to -1.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from -1.0 to -0.6:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from -0.6 to 1e+99:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-COLOUR-MomentsML</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by COLOUR. Shear estimation method: ShearEstimationMethods.MOMENTSML.</TestDescription>
+			<AnalysisResult>
+				<Result>FAILED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.296558Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.313282Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.4462152421474457</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from -1e+99 to -2.5:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from -2.5 to -2.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from -2.0 to -1.5:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from -1.5 to -1.0:slope = -7.968822319526225e-05
+slope_err = 0.0001785869535524398
+slope_z = 0.4462152421474457
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from -1.0 to -0.6:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from -0.6 to 1e+99:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from -1e+99 to -2.5:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from -2.5 to -2.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from -2.0 to -1.5:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from -1.5 to -1.0:intercept = 0.0462455153465271
+intercept_err = 0.15255558490753174
+intercept_z = 0.303138792514801
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from -1.0 to -0.6:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from -0.6 to 1e+99:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-COLOUR-LensMC</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by COLOUR. Shear estimation method: ShearEstimationMethods.LENSMC.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.324827Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.342049Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.0008635352132841945</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 45.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 45.0 to 75.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 75.0 to 140.0:slope = -1.978582986339461e-07
+slope_err = 0.0002291259152116254
+slope_z = 0.0008635352132841945
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from 140.0 to 300.0:slope = -1.7272104457788373e-07
+slope_err = 0.0002135318936780095
+slope_z = 0.0008088770555332303
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 5, for values from 300.0 to 1e+99:slope = 5.161408722642591e-08
+slope_err = 0.00035434853634797037
+slope_z = 0.00014565909805241972
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 45.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 45.0 to 75.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 75.0 to 140.0:intercept = -0.1943560391664505
+intercept_err = 0.219626784324646
+intercept_z = 0.8849377632141113
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from 140.0 to 300.0:intercept = -0.01218570675700903
+intercept_err = 0.22714664041996002
+intercept_z = 0.05364687368273735
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 5, for values from 300.0 to 1e+99:intercept = 0.24147716164588928
+intercept_err = 0.24542632699012756
+intercept_z = 0.9839089512825012
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-SIZE-KSB</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by SIZE. Shear estimation method: ShearEstimationMethods.KSB.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.370712Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.387868Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.0009166530799120665</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 45.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 45.0 to 75.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 75.0 to 140.0:slope = -1.9637788284398994e-07
+slope_err = 0.00021423358703032136
+slope_z = 0.0009166530799120665
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from 140.0 to 300.0:slope = -1.7238629368421243e-07
+slope_err = 0.00019695263472385705
+slope_z = 0.0008752677822485566
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 5, for values from 300.0 to 1e+99:slope = 5.2669221872747585e-08
+slope_err = 0.00034756844979710877
+slope_z = 0.00015153625281527638
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 45.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 45.0 to 75.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 75.0 to 140.0:intercept = -0.17760981619358063
+intercept_err = 0.20535185933113098
+intercept_z = 0.8649048209190369
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from 140.0 to 300.0:intercept = -0.010020948946475983
+intercept_err = 0.20951032638549805
+intercept_z = 0.047830335795879364
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 5, for values from 300.0 to 1e+99:intercept = 0.23618677258491516
+intercept_err = 0.24073033034801483
+intercept_z = 0.9811259508132935
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-SIZE-REGAUSS</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by SIZE. Shear estimation method: ShearEstimationMethods.REGAUSS.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.400042Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.416491Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>FAILED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>-1.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>FAILED</ValidationResult>
+					<Comment>WARNING: Bad data; see SupplementaryInformation</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>Test failed due to NaN regression results for slope.
+
+Results for bin 0, for values from 0.0 to 30.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 45.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 45.0 to 75.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 75.0 to 140.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 140.0 to 300.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 300.0 to 1e+99:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 45.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 45.0 to 75.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 75.0 to 140.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 4, for values from 140.0 to 300.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 300.0 to 1e+99:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-SIZE-MomentsML</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by SIZE. Shear estimation method: ShearEstimationMethods.MOMENTSML.</TestDescription>
+			<AnalysisResult>
+				<Result>FAILED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.427537Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.445081Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-CAL-F-140</Id>
+					<MeasuredValue>
+						<Parameter>Z-value for slope of g1_image versus distance from readout register compared to expectation of zero.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.0009337567607872188</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>SLOPE_INFO</Key>
+							<Description>Information about the test on slope of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 45.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 45.0 to 75.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 75.0 to 140.0:slope = -1.9899044900739682e-07
+slope_err = 0.00021310737065505236
+slope_z = 0.0009337567607872188
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from 140.0 to 300.0:slope = nan
+slope_err = nan
+slope_z = nan
+Maximum allowed slope_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 300.0 to 1e+99:slope = 4.9240014732276904e-08
+slope_err = 0.00034822372253984213
+slope_z = 0.00014140339044388384
+Maximum allowed slope_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+						<Parameter>
+							<Key>INTERCEPT_INFO</Key>
+							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
+							<StringValue>
+Results for bin 0, for values from 0.0 to 30.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 1, for values from 30.0 to 45.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 2, for values from 45.0 to 75.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 3, for values from 75.0 to 140.0:intercept = -0.20473994314670563
+intercept_err = 0.2042723298072815
+intercept_z = 1.0022891759872437
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+Results for bin 4, for values from 140.0 to 300.0:intercept = nan
+intercept_err = nan
+intercept_z = nan
+Maximum allowed intercept_z = 5.83720540034761
+Result: FAILED
+
+Results for bin 5, for values from 300.0 to 1e+99:intercept = 0.2547464668750763
+intercept_err = 0.24118420481681824
+intercept_z = 1.05623197555542
+Maximum allowed intercept_z = 5.83720540034761
+Result: PASSED
+
+</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-SIZE-LensMC</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by SIZE. Shear estimation method: ShearEstimationMethods.LENSMC.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.455989Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.473109Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>-1</Id>
+					<MeasuredValue>
+						<Parameter>WARNING: Test not run.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>-1.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>WARNING: Test not run.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>REASON</Key>
+							<Description>Why the test was not run.</Description>
+							<StringValue>This test has not yet been implemented.</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-EPOCH-KSB</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by EPOCH. Shear estimation method: ShearEstimationMethods.KSB.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.475553Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.493017Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>-1</Id>
+					<MeasuredValue>
+						<Parameter>WARNING: Test not run.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>-1.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>WARNING: Test not run.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>REASON</Key>
+							<Description>Why the test was not run.</Description>
+							<StringValue>This test has not yet been implemented.</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-EPOCH-REGAUSS</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by EPOCH. Shear estimation method: ShearEstimationMethods.REGAUSS.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.513047Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.529761Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>-1</Id>
+					<MeasuredValue>
+						<Parameter>WARNING: Test not run.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>-1.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>WARNING: Test not run.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>REASON</Key>
+							<Description>Why the test was not run.</Description>
+							<StringValue>This test has not yet been implemented.</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-EPOCH-MomentsML</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by EPOCH. Shear estimation method: ShearEstimationMethods.MOMENTSML.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.548982Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.565805Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>-1</Id>
+					<MeasuredValue>
+						<Parameter>WARNING: Test not run.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>-1.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>WARNING: Test not run.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>REASON</Key>
+							<Description>Why the test was not run.</Description>
+							<StringValue>This test has not yet been implemented.</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>T-SHE-000010-CTI-gal-EPOCH-LensMC</TestId>
+			<TestDescription>Linear dependence of residual galaxy ellipticity with read-out register distance (slope). Binned by EPOCH. Shear estimation method: ShearEstimationMethods.LENSMC.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112446.568210Z_08.02.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112446.585050Z_08.02.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+	</Data>
+	<QualityFlags>
+		<DummyFlag flagged="false" maxLimit="10.0" minLimit="0.05" xpath="//Data/Some/Path/To/Quality/Parameter">true</DummyFlag>
+		<AuxiliaryFlags flagName="RSG1j" flagged="false" maxLimit="5.0" minLimit="-7.0" xpath="p8hra">false</AuxiliaryFlags>
+	</QualityFlags>
+	<Parameters>
+		<Parameter>
+			<Key>pV73o</Key>
+			<Description>DUXcx</Description>
+			<StringValue>8kssj</StringValue>
+			<Unit>xYHIw</Unit>
+		</Parameter>
+	</Parameters>
+</ns1:DpdSheValidationTestResults>

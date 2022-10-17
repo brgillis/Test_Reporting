@@ -45,11 +45,11 @@ class Tags:
     ana_comment = "Comment"
 
     # Data stored in the RequirementResults dataclass
-    req_id = "Id"
-    meas_value = "MeasuredValue"
-    req_result = "ValidationResult"
-    req_comment = "Comment"
-    supp_info = "SupplementaryInformation"
+    req_id = "Requirement.Id"
+    meas_value = "Requirement.MeasuredValue"
+    req_result = "Requirement.ValidationResult"
+    req_comment = "Requirement.Comment"
+    supp_info = "Requirement.SupplementaryInformation"
 
     # Data stored in the SingleTestResult dataclass
     test_id = "TestId"

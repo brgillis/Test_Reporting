@@ -234,7 +234,8 @@ class TestSummaryWriter:
 
         return SummaryWriteOutput(NameAndFileName(test_name, test_filename), [])
 
-    def _extract_tarball(self, qualified_results_tarball_filename, qualified_tmpdir):
+    @staticmethod
+    def _extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
         """Extracts a tarball into the provided directory, performing security checks on the provided filename.
 
         Parameters
@@ -254,10 +255,11 @@ class TestSummaryWriter:
         tar_results = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         if tar_results.returncode:
-            raise ValueError(f"Untarring of {qualified_results_tarball_filename} failed. stderr from tar "
+            raise ValueError(f"Un-tarring of {qualified_results_tarball_filename} failed. stderr from tar "
                              f"process was: {tar_results.stderr}")
 
-    def _find_product_filename(self, qualified_tmpdir):
+    @staticmethod
+    def _find_product_filename(qualified_tmpdir):
         """Finds the filename of the .xml product in the provided directory.
 
         Parameters

@@ -31,7 +31,7 @@ import shutil
 from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, Union
 
-from utility.constants import DATA_DIR
+from utility.constants import DATA_DIR, TEST_REPORTS_SUBDIR
 
 TMPDIR_MAXLEN = 16
 
@@ -93,7 +93,7 @@ class TestSummaryWriter:
     class's __call__ method for further details.
     """
 
-    test_name: str = "T-UNKNOWN"
+    test_name: Optional[str] = None
 
     def __call__(self, value, rootdir):
         """Template method which implements basic writing the summary of output for the test as a whole. Portions of
@@ -214,3 +214,12 @@ class TestSummaryWriter:
 
         assert os.path.isdir(qualified_tmpdir)
         assert os.path.isfile(qualified_results_tarball_filename)
+
+        if self.test_name is None:
+            # TODO - when product is parsed, use its ProductID here instead
+            test_name = "T-UNKNOWN"
+        else:
+            test_name = self.test_name
+        test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
+
+        return SummaryWriteOutput(NameAndFileName(test_name, test_filename), [])

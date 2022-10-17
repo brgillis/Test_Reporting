@@ -44,6 +44,6 @@ def test_write_summary(rootdir):
     summary_write_output = l_summary_write_output[0]
 
     # Check that the test name is as expected and the filename is sensible
-    assert summary_write_output.test_name_and_filename.name == TestSummaryWriter.test_name
+    assert summary_write_output.test_name_and_filename.name == "T-UNKNOWN"
     assert summary_write_output.test_name_and_filename.filename.startswith(TEST_REPORTS_SUBDIR)
     assert summary_write_output.test_name_and_filename.filename.endswith(".md")

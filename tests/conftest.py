@@ -166,6 +166,3 @@ def test_manifest(project_copy):
 
     """
     return os.path.join(project_copy, DATA_DIR, MANIFEST_FILENAME)
-
-
-TEST_XML_FILENAME = "she_observation_cti_gal_validation_test_results_product.xml"

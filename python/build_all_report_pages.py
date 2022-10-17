@@ -27,16 +27,16 @@ import json
 import os
 from argparse import ArgumentParser
 from logging import getLogger
-from typing import Callable, Dict, List, Optional, TYPE_CHECKING, Tuple, Union
+from typing import Dict, List, TYPE_CHECKING, Tuple
 
 from summary import update_summary
 from test_report_summary import build_test_report_summary
 from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
+from utility.test_writing import BUILD_FUNCTION_TYPE
 
 if TYPE_CHECKING:
     import Namespace  # noqa F401
 
-BUILD_FUNCTION_TYPE = Optional[Callable[[Union[str, Dict[str, str]], str], Tuple[str, str]]]
 D_BUILD_FUNCTIONS: Dict[str, BUILD_FUNCTION_TYPE] = {CTI_GAL_KEY: None}
 
 logger = getLogger(__name__)

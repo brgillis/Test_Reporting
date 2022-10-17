@@ -133,7 +133,7 @@ S_XML_OBJECT_TYPES = {TestResults, SingleTestResult, RequirementResults, Analysi
 OutputType = TypeVar("OutputType")
 
 
-def recursive_element_find(element, tag):
+def recursive_element_find(element, tag, find_all=False):
     """Gets a sub-element from an XML ElementTree Element, searching recursively as necessary.
 
     Parameters
@@ -142,6 +142,9 @@ def recursive_element_find(element, tag):
         The element in an XML ElementTree from which to generate the output object
     tag : str
         The tag to search for, which may be a period (.) separated set of tags to work through recursively
+    find_all : bool, default=False
+        If False, will return the results of `element.find` in final step, which returns a single value. If True,
+        will return the results of `element.findall` in the final step, which returns a list of all values.
 
     Returns
     -------
@@ -151,11 +154,14 @@ def recursive_element_find(element, tag):
 
     # Check for simple case, to break out of recursion
     if "." not in tag:
-        return element.find(tag)
+        if find_all:
+            return element.findall(tag)
+        else:
+            return element.find(tag)
 
     # Otherwise, split on the first . and call this method recursively
     head, tail = tag.split(".", maxsplit=1)
-    return recursive_element_find(element.find(head), tail)
+    return recursive_element_find(element.find(head), tail, find_all=find_all)
 
 
 def construct_datetime(s):
@@ -246,7 +252,7 @@ def create_from_xml_element(output_type, element):
         if dataclass_field.default_factory == list:
             attr_elem_type = attr_type.__args__[0]
 
-            l_sub_elements = element.findall(attr_tag)
+            l_sub_elements = recursive_element_find(element, attr_tag, find_all=True)
             d_attrs[attr_name] = [create_from_xml_element(attr_elem_type, sub_element)
                                   for sub_element in l_sub_elements]
 

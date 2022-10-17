@@ -93,6 +93,8 @@ class TestSummaryWriter:
     class's __call__ method for further details.
     """
 
+    test_name: str = "T-UNKNOWN"
+
     def __call__(self, value, rootdir):
         """Template method which implements basic writing the summary of output for the test as a whole. Portions of
         this method which call protected methods can be overridden by child classes for customization.

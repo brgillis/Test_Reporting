@@ -34,6 +34,7 @@ PYTHON_DIR = "python"
 
 PUBLIC_DIR = "public"
 IMAGES_SUBDIR = "images"
+TEST_REPORTS_SUBDIR = "TR"
 SUMMARY_FILENAME = "SUMMARY.md"
 
 TESTS_DIR = "tests"

@@ -220,6 +220,10 @@ class TestSummaryWriter:
             test_name = "T-UNKNOWN"
         else:
             test_name = self.test_name
+
+        if tag is not None:
+            test_name += f"-{tag}"
+            
         test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
 
         return SummaryWriteOutput(NameAndFileName(test_name, test_filename), [])

@@ -214,10 +214,6 @@ def get_constructor(output_type):
     if output_type == datetime:
         return construct_datetime
 
-    # Check if the type is an optional type and handle appropriately if so
-    if hasattr(output_type, "__args__"):
-        return output_type.__args__[0]
-
     return output_type
 
 
@@ -240,14 +236,19 @@ def create_from_xml_element(output_type, element):
     if element is None:
         return None
 
+    if hasattr(output_type, "__args__"):
+        base_output_type = output_type.__args__[0]
+    else:
+        base_output_type = output_type
+
     # If the desired type is not one of the XML object types, simply read in the value from the element
-    if output_type not in S_XML_OBJECT_TYPES:
+    if base_output_type not in S_XML_OBJECT_TYPES:
         try:
-            constructor = get_constructor(output_type)
+            constructor = get_constructor(base_output_type)
             return constructor(element.text)
         except Exception as e:
             logger.warning("Could not convert value %s to type %s; will be stored as a string. Exception was: %s",
-                           element.text, output_type, e)
+                           element.text, base_output_type, e)
             return str(element.text)
 
     # We use the type's meta-info to find what attributes it has and their types, and use this to recursively
@@ -255,7 +256,7 @@ def create_from_xml_element(output_type, element):
     d_attrs: Dict[str, Any] = {}
     attr_name: str
     dataclass_field: Field
-    for attr_name, dataclass_field in output_type.__dataclass_fields__.items():
+    for attr_name, dataclass_field in base_output_type.__dataclass_fields__.items():
 
         attr_type = dataclass_field.type
         attr_tag: str = getattr(Tags, attr_name)
@@ -272,7 +273,10 @@ def create_from_xml_element(output_type, element):
             sub_element = recursive_element_find(element, attr_tag)
             d_attrs[attr_name] = create_from_xml_element(attr_type, sub_element)
 
-    return output_type(**d_attrs)
+    try:
+        return base_output_type(**d_attrs)
+    except Exception as e:
+        print(str(e))
 
 
 def parse_xml_product(filename):

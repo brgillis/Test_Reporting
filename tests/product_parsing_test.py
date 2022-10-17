@@ -66,3 +66,9 @@ def test_parse_xml_product(rootdir):
     info_1 = requirement_0.l_supp_info[1]
     assert isinstance(info_1, SupplementaryInfo)
     assert info_1.info_key == "INTERCEPT_INFO"
+
+    # Check the filenames
+    assert (test_results_0.analysis_result.figures_tarball ==
+            "data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_FIGURES-7814-_20211203T112445.695596Z_08.02.tar.gz")
+    assert (test_results_0.analysis_result.textfiles_tarball ==
+            "data/EUC_SHE_CTI-GAL-ANALYSIS-FILES_TEXTFILES-7814-_20211203T112445.653709Z_08.02.tar.gz")

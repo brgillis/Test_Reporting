@@ -166,3 +166,6 @@ def test_manifest(project_copy):
 
     """
     return os.path.join(project_copy, DATA_DIR, MANIFEST_FILENAME)
+
+
+TEST_TARBALL_FILENAME = "she_obs_cti_gal.tar.gz"

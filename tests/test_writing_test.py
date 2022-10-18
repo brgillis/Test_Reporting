@@ -20,10 +20,11 @@ Unit tests of writing test reports.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-from utility.constants import TEST_REPORTS_SUBDIR
-from utility.test_writing import TestSummaryWriter
+import os
 
-TEST_TARBALL_FILENAME = "she_obs_cti_gal.tar.gz"
+from conftest import TEST_TARBALL_FILENAME
+from utility.constants import TEST_DATA_DIR, TEST_REPORTS_SUBDIR
+from utility.test_writing import TestSummaryWriter
 
 
 def test_write_summary(rootdir):
@@ -37,7 +38,7 @@ def test_write_summary(rootdir):
 
     # Since the filename is normally expected to be in the "data" dir, but we're working with "test_data" here, we
     # prepend the filename to redirect to that directory
-    relative_test_xml_filename = "../test_data/" + TEST_TARBALL_FILENAME
+    relative_test_xml_filename = os.path.join("..", TEST_DATA_DIR, TEST_TARBALL_FILENAME)
 
     writer = TestSummaryWriter()
     l_summary_write_output = writer(relative_test_xml_filename, rootdir)

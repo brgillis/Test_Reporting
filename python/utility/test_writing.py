@@ -91,7 +91,7 @@ class TestSummaryWriter:
         # process each individual tarball
         l_summary_write_output: List[SummaryWriteOutput]
         if isinstance(value, str):
-            l_summary_write_output = [self._summarize_results_tarball(value, rootdir, tag=None)]
+            l_summary_write_output = self._summarize_results_tarball(value, rootdir, tag=None)
         elif isinstance(value, dict):
             l_summary_write_output = []
             for sub_key, sub_value in value.items():
@@ -208,7 +208,7 @@ class TestSummaryWriter:
                 test_name += f"-{tag}"
 
             # If we're processing more than one product, ensure they're all named uniquely
-            if len(l_qualified_product_filenames) > 0:
+            if len(l_qualified_product_filenames) > 1:
                 test_name += f"-{i}"
 
             test_filename = self._write_test_results_summary(test_results, test_name, rootdir)

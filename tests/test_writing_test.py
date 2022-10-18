@@ -25,6 +25,7 @@ from utility.test_writing import TestSummaryWriter
 
 TEST_TARBALL_FILENAME = "she_obs_cti_gal.tar.gz"
 
+
 def test_write_summary(rootdir):
     """Unit test of the `TestSummaryWriter` class's __call__ method.
 
@@ -44,6 +45,6 @@ def test_write_summary(rootdir):
     summary_write_output = l_summary_write_output[0]
 
     # Check that the test name is as expected and the filename is sensible
-    assert summary_write_output.test_name_and_filename.name == "21950be4-0f90-4d36-be01-2a9a507b36cc"
+    assert summary_write_output.test_name_and_filename.name == "TR-21950be4-0f90-4d36-be01-2a9a507b36cc"
     assert summary_write_output.test_name_and_filename.filename.startswith(TEST_REPORTS_SUBDIR)
     assert summary_write_output.test_name_and_filename.filename.endswith(".md")

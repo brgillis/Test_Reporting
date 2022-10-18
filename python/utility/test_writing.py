@@ -223,7 +223,7 @@ class TestSummaryWriter:
         test_results = parse_xml_product(qualified_product_filename)
 
         if self.test_name is None:
-            test_name = test_results.product_id
+            test_name = f"TR-{test_results.product_id}"
         else:
             test_name = self.test_name
 

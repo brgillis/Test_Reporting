@@ -26,16 +26,18 @@ import pytest
 
 from conftest import TEST_TARBALL_FILENAME, TEST_XML_FILENAME
 from utility.constants import TEST_DATA_DIR
-from utility.misc import extract_tarball
+from utility.misc import extract_tarball, hash_any
 
 
 def test_extract_tarball(rootdir, tmpdir):
-    """Unit test of the `TestSummaryWriter` class's __call__ method.
+    """Unit test of the `extract_tarball` method.
 
     Parameters
     ----------
     rootdir : str
         Fixture which provides the root directory of the project
+    rootdir : str
+        Fixture which provides a temporary directory for use with testing
     """
 
     qualified_test_tarball_filename = os.path.join(rootdir, TEST_DATA_DIR, TEST_TARBALL_FILENAME)
@@ -43,7 +45,7 @@ def test_extract_tarball(rootdir, tmpdir):
     # Try normal execution
     extract_tarball(qualified_test_tarball_filename, tmpdir)
     assert os.path.isfile(os.path.join(tmpdir, TEST_XML_FILENAME))
-    
+
     with pytest.raises(FileNotFoundError):
         extract_tarball("Bad_filename.tar.gz", tmpdir)
 
@@ -70,3 +72,15 @@ def test_extract_tarball(rootdir, tmpdir):
         extract_tarball("Bad_filename.tar.gz>", tmpdir)
     with pytest.raises(ValueError):
         extract_tarball("Bad_filename.tar.gz!", tmpdir)
+
+
+def test_hash_any():
+    """Unit test of the `hash_any` method.
+    """
+
+    TEST_MAX_LEN = 16
+
+    hash_str = hash_any("foo", max_length=TEST_MAX_LEN)
+
+    assert isinstance(hash_str, str)
+    assert len(hash_str) <= TEST_MAX_LEN

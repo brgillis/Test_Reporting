@@ -1,7 +1,7 @@
 """
 :file: utility/misc.py
 
-:date: 10/12/2022
+:date: 10/18/2022
 :author: Bryan Gillis
 
 Module for miscellaneous utility functions.
@@ -48,6 +48,8 @@ def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
     tar_results = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     if tar_results.returncode:
+        if "No such file" in str(tar_results.stderr):
+            raise FileNotFoundError(tar_results.stderr)
         raise ValueError(f"Un-tarring of {qualified_results_tarball_filename} failed. stderr from tar "
                          f"process was: {tar_results.stderr}")
 

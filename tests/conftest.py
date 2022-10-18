@@ -169,3 +169,4 @@ def test_manifest(project_copy):
 
 
 TEST_TARBALL_FILENAME = "she_obs_cti_gal.tar.gz"
+TEST_XML_FILENAME = "she_observation_cti_gal_validation_test_results_product.xml"

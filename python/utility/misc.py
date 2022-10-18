@@ -38,7 +38,7 @@ def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
     """
 
     # Check the filename contains only expected characters. If it doesn't, this could open a security hole
-    regex_match = re.match(r"^[a-zA-Z\-_./]*\.tar(\.gz)?$", qualified_results_tarball_filename)
+    regex_match = re.match(r"^[a-zA-Z0-9\-_./]*\.tar(\.gz)?$", qualified_results_tarball_filename)
 
     if not regex_match:
         raise ValueError(f"Qualified filename {qualified_results_tarball_filename} failed security check. It must"

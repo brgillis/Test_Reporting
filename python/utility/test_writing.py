@@ -29,7 +29,7 @@ import shutil
 from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, Union
 
-from utility.constants import DATA_DIR, TEST_REPORTS_SUBDIR
+from utility.constants import DATA_DIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
 from utility.misc import extract_tarball, hash_any
 from utility.product_parsing import parse_xml_product
 
@@ -190,6 +190,9 @@ class TestSummaryWriter:
         l_qualified_product_filenames = [os.path.join(qualified_tmpdir, product_filename)
                                          for product_filename in l_product_filenames]
 
+        # Make sure the required subdir exists before we start writing anything
+        os.makedirs(os.path.join(rootdir, PUBLIC_DIR, TEST_REPORTS_SUBDIR))
+
         l_summary_write_output: List[SummaryWriteOutput] = []
 
         for i, qualified_product_filename in enumerate(l_qualified_product_filenames):
@@ -238,10 +241,10 @@ class TestSummaryWriter:
 
         test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
 
-        qualified_test_filename = os.path.join(rootdir, test_filename)
+        qualified_test_filename = os.path.join(rootdir, PUBLIC_DIR, test_filename)
 
         with open(qualified_test_filename, "w") as fo:
-            pass
+            fo.write(f"# {test_name}")
 
         return test_filename
 

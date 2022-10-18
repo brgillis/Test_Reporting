@@ -20,28 +20,22 @@ Unit tests of writing test reports.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-import os
-
-from conftest import TEST_TARBALL_FILENAME
-from utility.constants import TEST_DATA_DIR, TEST_REPORTS_SUBDIR
+from common import TEST_TARBALL_FILENAME
+from utility.constants import TEST_REPORTS_SUBDIR
 from utility.test_writing import TestSummaryWriter
 
 
-def test_write_summary(rootdir):
+def test_write_summary(project_copy):
     """Unit test of the `TestSummaryWriter` class's __call__ method.
 
     Parameters
     ----------
-    rootdir : str
-        Fixture which provides the root directory of the project
+    project_copy : str
+        Fixture which provides the root directory of a copy of the project
     """
 
-    # Since the filename is normally expected to be in the "data" dir, but we're working with "test_data" here, we
-    # prepend the filename to redirect to that directory
-    relative_test_xml_filename = os.path.join("..", TEST_DATA_DIR, TEST_TARBALL_FILENAME)
-
     writer = TestSummaryWriter()
-    l_summary_write_output = writer(relative_test_xml_filename, rootdir)
+    l_summary_write_output = writer(TEST_TARBALL_FILENAME, project_copy)
 
     summary_write_output = l_summary_write_output[0]
 

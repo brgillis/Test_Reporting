@@ -23,7 +23,7 @@ Unit tests of parsing XML files.
 import os
 from datetime import datetime
 
-from conftest import TEST_XML_FILENAME
+from common import TEST_XML_FILENAME
 from utility.constants import TEST_DATA_DIR
 from utility.product_parsing import RequirementResults, SingleTestResult, SupplementaryInfo, parse_xml_product
 

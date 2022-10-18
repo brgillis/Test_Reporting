@@ -24,7 +24,7 @@ import os
 
 import pytest
 
-from conftest import TEST_TARBALL_FILENAME, TEST_XML_FILENAME
+from common import TEST_TARBALL_FILENAME, TEST_XML_FILENAME
 from utility.constants import TEST_DATA_DIR
 from utility.misc import extract_tarball, hash_any
 

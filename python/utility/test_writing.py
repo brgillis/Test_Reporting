@@ -24,16 +24,13 @@ sub-methods it calls can be overridden.
 
 from __future__ import annotations
 
-import codecs
-import hashlib
 import os
-import re
 import shutil
-import subprocess
 from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, Union
 
 from utility.constants import DATA_DIR, TEST_REPORTS_SUBDIR
+from utility.misc import extract_tarball, hash_any
 from utility.product_parsing import parse_xml_product
 
 TMPDIR_MAXLEN = 16
@@ -58,37 +55,6 @@ class SummaryWriteOutput(NamedTuple):
 
 VALUE_TYPE = Union[str, Dict[str, str]]
 BUILD_FUNCTION_TYPE = Optional[Callable[[VALUE_TYPE, str], NameAndFileName]]
-
-
-def hash_any(obj, max_length=None):
-    """Hashes any immutable object into a base64 string of a given length.
-
-    Parameters
-    ----------
-    obj : Any immutable
-        The object to be hashed
-    max_length : int
-        This limits the maximum length of the string to return
-
-    Return
-    ------
-    hash : str
-    """
-
-    full_hash = hashlib.sha256(repr(obj).encode()).hexdigest()
-
-    # Recode it into base 64. Note that this results in a stray newline character
-    # at the end, so we remove that.
-    full_hash = codecs.encode(codecs.decode(full_hash, 'hex'), 'base64')[:-1]
-
-    # This also allows the / character which we can't use, so replace it with .
-    # Also decode it into a standard string
-    full_hash = full_hash.decode().replace("/", ".")
-
-    if max_length is not None and len(full_hash) > max_length:
-        full_hash = full_hash[:max_length]
-
-    return full_hash
 
 
 class TestSummaryWriter:
@@ -215,7 +181,7 @@ class TestSummaryWriter:
         summary_write_output : SummaryWriteOutput
         """
 
-        self._extract_tarball(qualified_results_tarball_filename, qualified_tmpdir)
+        extract_tarball(qualified_results_tarball_filename, qualified_tmpdir)
 
         product_filename = self._find_product_filename(qualified_tmpdir)
         qualified_product_filename = os.path.join(qualified_tmpdir, product_filename)
@@ -233,30 +199,6 @@ class TestSummaryWriter:
         test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
 
         return SummaryWriteOutput(NameAndFileName(test_name, test_filename), [])
-
-    @staticmethod
-    def _extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
-        """Extracts a tarball into the provided directory, performing security checks on the provided filename.
-
-        Parameters
-        ----------
-        qualified_results_tarball_filename : str
-        qualified_tmpdir : str
-        """
-
-        # Check the filename contains only expected characters. If it doesn't, this could open a security hole
-        regex_match = re.match(r"^[a-zA-Z\-_./]*\.tar(\.gz)?$", qualified_results_tarball_filename)
-
-        if not regex_match:
-            raise ValueError(f"Qualified filename {qualified_results_tarball_filename} failed security check. It must"
-                             f"contain only alphanumeric characters and [-_./], and must end with .tar or .tar.gz.")
-
-        cmd = f"cd {qualified_tmpdir} && tar -xf {qualified_results_tarball_filename}"
-        tar_results = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-        if tar_results.returncode:
-            raise ValueError(f"Un-tarring of {qualified_results_tarball_filename} failed. stderr from tar "
-                             f"process was: {tar_results.stderr}")
 
     @staticmethod
     def _find_product_filename(qualified_tmpdir):

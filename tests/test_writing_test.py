@@ -20,8 +20,10 @@ Unit tests of writing test reports.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+import os
+
 from common import TEST_TARBALL_FILENAME
-from utility.constants import TEST_REPORTS_SUBDIR
+from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
 from utility.test_writing import TestSummaryWriter
 
 
@@ -39,7 +41,10 @@ def test_write_summary(project_copy):
 
     summary_write_output = l_summary_write_output[0]
 
-    # Check that the test name is as expected and the filename is sensible
-    assert summary_write_output.test_name_and_filename.name == "TR-21950be4-0f90-4d36-be01-2a9a507b36cc"
-    assert summary_write_output.test_name_and_filename.filename.startswith(TEST_REPORTS_SUBDIR)
-    assert summary_write_output.test_name_and_filename.filename.endswith(".md")
+    # Check that the test name is as expected and the filename is sensible and exists
+    test_name_and_filename = summary_write_output.test_name_and_filename
+    assert test_name_and_filename.name == "TR-21950be4-0f90-4d36-be01-2a9a507b36cc"
+    filename = test_name_and_filename.filename
+    assert filename.startswith(TEST_REPORTS_SUBDIR)
+    assert filename.endswith(".md")
+    assert os.path.isfile(os.path.join(project_copy, PUBLIC_DIR, filename))

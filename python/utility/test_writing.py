@@ -95,7 +95,7 @@ class TestSummaryWriter:
         elif isinstance(value, dict):
             l_summary_write_output = []
             for sub_key, sub_value in value.items():
-                l_summary_write_output.append(self._summarize_results_tarball(sub_value, rootdir, tag=sub_key))
+                l_summary_write_output.append(*self._summarize_results_tarball(sub_value, rootdir, tag=sub_key))
         else:
             raise ValueError("Value in manifest is of unrecognized type.\n"
                              f"Value was: {value}\n"
@@ -118,8 +118,8 @@ class TestSummaryWriter:
 
         Returns
         -------
-        summary_write_output : SummaryWriteOutput
-            An object containing the test name and filename and a list of the same for associated tests.
+        l_summary_write_output : List[SummaryWriteOutput]
+            A list of objects containing the test name and filename and a list of the same for associated tests.
         """
 
         qualified_tmpdir = self._make_tmpdir(results_tarball_filename, rootdir)
@@ -127,13 +127,14 @@ class TestSummaryWriter:
         # We use a try-finally block here to ensure the created tmpdir is removed after use
         try:
             qualified_results_tarball_filename = os.path.join(rootdir, DATA_DIR, results_tarball_filename)
-            summary_write_output = self._summarize_results_tarball_with_tmpdir(qualified_results_tarball_filename,
-                                                                               qualified_tmpdir,
-                                                                               tag=tag)
+            l_summary_write_output = self._summarize_results_tarball_with_tmpdir(qualified_results_tarball_filename,
+                                                                                 qualified_tmpdir,
+                                                                                 rootdir,
+                                                                                 tag=tag)
         finally:
             shutil.rmtree(qualified_tmpdir)
 
-        return summary_write_output
+        return l_summary_write_output
 
     @staticmethod
     def _make_tmpdir(results_tarball_filename, rootdir):
@@ -164,6 +165,7 @@ class TestSummaryWriter:
     def _summarize_results_tarball_with_tmpdir(self,
                                                qualified_results_tarball_filename,
                                                qualified_tmpdir,
+                                               rootdir,
                                                tag=None):
         """Writes summary markdown files for the test results contained in a tarball of the test results product and
         associated data, using a provided tmpdir for work.
@@ -174,35 +176,78 @@ class TestSummaryWriter:
             The fully-qualified filename of a tarball containing the test results product and associated datafiles
         qualified_tmpdir : str
             The fully-qualified path to a temporary directory which can be used for this function.
+        rootdir : str
         tag : str or None
 
         Returns
         -------
-        summary_write_output : SummaryWriteOutput
+        l_summary_write_output : List[SummaryWriteOutput]
         """
 
         extract_tarball(qualified_results_tarball_filename, qualified_tmpdir)
 
-        product_filename = self._find_product_filename(qualified_tmpdir)
-        qualified_product_filename = os.path.join(qualified_tmpdir, product_filename)
+        l_product_filenames = self._find_product_filenames(qualified_tmpdir)
+        l_qualified_product_filenames = [os.path.join(qualified_tmpdir, product_filename)
+                                         for product_filename in l_product_filenames]
 
-        test_results = parse_xml_product(qualified_product_filename)
+        l_summary_write_output: List[SummaryWriteOutput] = []
 
-        if self.test_name is None:
-            test_name = f"TR-{test_results.product_id}"
-        else:
-            test_name = self.test_name
+        for i, qualified_product_filename in enumerate(l_qualified_product_filenames):
 
-        if tag is not None:
-            test_name += f"-{tag}"
+            test_results = parse_xml_product(qualified_product_filename)
+
+            if self.test_name is None:
+                test_name = f"TR-{test_results.product_id}"
+            else:
+                test_name = self.test_name
+
+            if tag is not None:
+                test_name += f"-{tag}"
+
+            # If we're processing more than one product, ensure they're all named uniquely
+            if len(l_qualified_product_filenames) > 0:
+                test_name += f"-{i}"
+
+            test_filename = self._write_test_results_summary(test_results, test_name, rootdir)
+
+            l_summary_write_output.append(SummaryWriteOutput(NameAndFileName(test_name, test_filename), []))
+
+        return l_summary_write_output
+
+    @staticmethod
+    def _write_test_results_summary(test_results, test_name, rootdir):
+        """Writes out the summary of the test to a .md-format file. If special formatting is desired for an
+        individual test, this method can be overridden by child classes.
+
+        Parameters
+        ----------
+        test_results : TestResults
+            Object representing the read-in and parsed .xml product for test results.
+        test_name : str
+            The name of this test.
+        rootdir : str
+            The root directory of the project
+
+        Returns
+        -------
+        test_filename : str
+            The filename of the created .md file containing the summary of this test, relative to "public" directory
+            within `rootdir`
+
+        """
 
         test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
 
-        return SummaryWriteOutput(NameAndFileName(test_name, test_filename), [])
+        qualified_test_filename = os.path.join(rootdir, test_filename)
+
+        with open(qualified_test_filename, "w") as fo:
+            pass
+
+        return test_filename
 
     @staticmethod
-    def _find_product_filename(qualified_tmpdir):
-        """Finds the filename of the .xml product in the provided directory.
+    def _find_product_filenames(qualified_tmpdir):
+        """Finds the filenames of all .xml products in the provided directory.
 
         Parameters
         ----------
@@ -210,15 +255,12 @@ class TestSummaryWriter:
 
         Returns
         -------
-        product_filename : str
+        l_product_filenames : List[str]
         """
 
-        l_possible_product_filenames = [fn for fn in os.listdir(qualified_tmpdir) if fn.endswith(".xml")]
+        l_product_filenames = [fn for fn in os.listdir(qualified_tmpdir) if fn.endswith(".xml")]
 
-        if len(l_possible_product_filenames) == 1:
-            return l_possible_product_filenames[0]
-        elif len(l_possible_product_filenames) == 0:
-            raise ValueError("No .xml data product found in tarball.")
-        else:
-            raise ValueError("More than one .xml product found in tarball. Found: "
-                             f"{l_possible_product_filenames}")
+        if len(l_product_filenames) == 0:
+            raise ValueError("No .xml data products found in tarball.")
+
+        return l_product_filenames

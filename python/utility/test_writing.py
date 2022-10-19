@@ -225,7 +225,8 @@ class TestSummaryWriter:
                 l_test_case_names_and_filenames=l_test_case_names_and_filenames,
                 rootdir=rootdir)
 
-            l_summary_write_output.append(SummaryWriteOutput(NameAndFileName(test_name, test_filename), []))
+            l_summary_write_output.append(SummaryWriteOutput(NameAndFileName(test_name, test_filename),
+                                                             l_test_case_names_and_filenames))
 
         return l_summary_write_output
 

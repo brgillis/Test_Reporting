@@ -32,12 +32,12 @@ from typing import Dict, List, TYPE_CHECKING, Tuple
 from summary import update_summary
 from test_report_summary import build_test_report_summary
 from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
-from utility.test_writing import BUILD_FUNCTION_TYPE
+from utility.test_writing import BUILD_FUNCTION_TYPE, TestSummaryWriter
 
 if TYPE_CHECKING:
     import Namespace  # noqa F401
 
-D_BUILD_FUNCTIONS: Dict[str, BUILD_FUNCTION_TYPE] = {CTI_GAL_KEY: None}
+D_BUILD_FUNCTIONS: Dict[str, BUILD_FUNCTION_TYPE] = {CTI_GAL_KEY: TestSummaryWriter()}
 
 logger = getLogger(__name__)
 
@@ -141,9 +141,9 @@ def run_build_from_args(args):
             logger.debug(f"No build function provided for key '{key}'")
             continue
 
-        t_test_and_file_name = build_function(value, args.rootdir)
+        l_summary_write_output = build_function(value, args.rootdir)
 
-        l_test_and_file_names.append(t_test_and_file_name)
+        l_test_and_file_names.append(*[x.test_name_and_filename for x in l_summary_write_output])
 
     # Build the summary page for test reports
     build_test_report_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,

@@ -58,7 +58,7 @@ class SummaryWriteOutput(NamedTuple):
 
 
 VALUE_TYPE = Union[str, Dict[str, str]]
-BUILD_FUNCTION_TYPE = Optional[Callable[[VALUE_TYPE, str], NameAndFileName]]
+BUILD_FUNCTION_TYPE = Optional[Callable[[VALUE_TYPE, str], List[SummaryWriteOutput]]]
 
 
 class TestSummaryWriter:
@@ -99,7 +99,7 @@ class TestSummaryWriter:
         elif isinstance(value, dict):
             l_summary_write_output = []
             for sub_key, sub_value in value.items():
-                l_summary_write_output.append(*self._summarize_results_tarball(sub_value, rootdir, tag=sub_key))
+                l_summary_write_output += self._summarize_results_tarball(sub_value, rootdir, tag=sub_key)
         else:
             raise ValueError("Value in manifest is of unrecognized type.\n"
                              f"Value was: {value}\n"
@@ -125,6 +125,10 @@ class TestSummaryWriter:
         l_summary_write_output : List[SummaryWriteOutput]
             A list of objects containing the test name and filename and a list of the same for associated tests.
         """
+
+        # Check for no input
+        if results_tarball_filename is None:
+            return []
 
         qualified_tmpdir = self._make_tmpdir(results_tarball_filename, rootdir)
 

@@ -355,7 +355,8 @@ class TestSummaryWriter:
 
         return test_filename
 
-    def _write_product_metadata(self, test_results, fo):
+    @staticmethod
+    def _write_product_metadata(test_results, fo):
         """Writes metadata related to the test's data product to an open filehandle
 
         Parameters
@@ -377,7 +378,8 @@ class TestSummaryWriter:
         t = test_results.creation_date
         fo.write(f"**Creation Date and Time:** {t.day} {t.month}, {t.year} at {t.time()}\n")
 
-    def _write_test_metadata(self, test_results, fo):
+    @staticmethod
+    def _write_test_metadata(test_results, fo):
         """Writes metadata related to the test itself to an open filehandle
 
         Parameters

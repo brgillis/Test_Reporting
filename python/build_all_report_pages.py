@@ -130,7 +130,7 @@ def run_build_from_args(args):
 
     d_manifest = read_manifest(os.path.join(args.rootdir, args.manifest))
 
-    l_test_and_file_names: List[Tuple[str, str]] = []
+    l_summary_write_output: List[Tuple[str, str]] = []
 
     # Call the build function for each file in the manifest
     for key, value in d_manifest.items():
@@ -141,18 +141,16 @@ def run_build_from_args(args):
             logger.debug(f"No build function provided for key '{key}'")
             continue
 
-        l_summary_write_output = build_function(value, args.rootdir)
-
-        l_test_and_file_names.append(*[x.test_name_and_filename for x in l_summary_write_output])
+        l_summary_write_output += build_function(value, args.rootdir)
 
     # Build the summary page for test reports
     build_test_report_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
-                              l_test_and_file_names=l_test_and_file_names,
+                              l_summary_write_output=l_summary_write_output,
                               rootdir=args.rootdir)
 
     # Update the public SUMMARY.md file with new files created
     update_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
-                   l_test_and_file_names=l_test_and_file_names,
+                   l_summary_write_output=l_summary_write_output,
                    rootdir=args.rootdir)
 
 

@@ -207,21 +207,23 @@ class TestSummaryWriter:
 
             test_results = parse_xml_product(qualified_product_filename)
 
-            # We write the pages for the test cases first, so we know about and can link to them from the test
-            # summary page
-            l_test_case_names_and_filenames = self._write_all_test_case_results(test_results, rootdir)
-
-            if self.test_name is None:
-                test_name = f"TR-{test_results.product_id}"
-            else:
-                test_name = self.test_name
+            test_name_tail = ""
 
             if tag is not None:
-                test_name += f"-{tag}"
+                test_name_tail += f"-{tag}"
 
             # If we're processing more than one product, ensure they're all named uniquely
             if len(l_qualified_product_filenames) > 1:
-                test_name += f"-{i}"
+                test_name_tail += f"-{i}"
+
+            if self.test_name is None:
+                test_name = f"TR-{test_results.product_id}{test_name_tail}"
+            else:
+                test_name = f"{self.test_name}{test_name_tail}"
+
+            # We write the pages for the test cases first, so we know about and can link to them from the test
+            # summary page
+            l_test_case_names_and_filenames = self._write_all_test_case_results(test_results, test_name_tail, rootdir)
 
             test_filename = self._write_test_results_summary(
                 test_results=test_results,
@@ -255,13 +257,16 @@ class TestSummaryWriter:
 
         return l_product_filenames
 
-    def _write_all_test_case_results(self, test_results, rootdir):
+    def _write_all_test_case_results(self, test_results, test_name_tail, rootdir):
         """Writes out the results of all test cases to a .md-format file.
 
         Parameters
         ----------
         test_results : TestResults
             Object representing the read-in and parsed .xml product for test results.
+        test_name_tail : str
+            The extra "tail" added to the end of the test name, which will also be added to the end of all test case
+            names.
         rootdir : str
 
         Returns
@@ -278,10 +283,10 @@ class TestSummaryWriter:
             test_case_id = test_case_results.test_id
             if test_case_id in d_test_name_instances:
                 d_test_name_instances[test_case_id] += 1
-                test_case_name = f"{test_case_id}-{d_test_name_instances[test_case_id]}"
+                test_case_name = f"{test_case_id}-{d_test_name_instances[test_case_id]}{test_name_tail}"
             else:
                 d_test_name_instances[test_case_id] = 1
-                test_case_name = test_case_id
+                test_case_name = f"{test_case_id}{test_name_tail}"
 
             test_case_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_case_name}.md")
 

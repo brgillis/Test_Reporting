@@ -381,15 +381,15 @@ class TestSummaryWriter:
 
         fo.write(f"## Product Metadata\n\n")
 
-        fo.write(f"**Product ID:** {test_results.product_id}\n")
-        fo.write(f"**Dataset Release:** {test_results.dataset_release}\n")
-        fo.write(f"**Plan ID:** {test_results.plan_id}\n")
-        fo.write(f"**PPO ID:** {test_results.ppo_id}\n")
-        fo.write(f"**Pipeline Definition ID:** {test_results.pipeline_definition_id}\n")
-        fo.write(f"**Source Pipeline:** {test_results.source_pipeline}")
+        fo.write(f"**Product ID:** {test_results.product_id}\n\n")
+        fo.write(f"**Dataset Release:** {test_results.dataset_release}\n\n")
+        fo.write(f"**Plan ID:** {test_results.plan_id}\n\n")
+        fo.write(f"**PPO ID:** {test_results.ppo_id}\n\n")
+        fo.write(f"**Pipeline Definition ID:** {test_results.pipeline_definition_id}\n\n")
+        fo.write(f"**Source Pipeline:** {test_results.source_pipeline}\n\n")
 
         t = test_results.creation_date
-        fo.write(f"**Creation Date and Time:** {t.day} {t.month}, {t.year} at {t.time()}\n")
+        fo.write(f"**Creation Date and Time:** {t.day} {t.month}, {t.year} at {t.time()}\n\n")
 
     @staticmethod
     def _write_test_metadata(test_results, fo):
@@ -404,17 +404,17 @@ class TestSummaryWriter:
         fo.write("## Test Metadata\n\n")
 
         if test_results.exp_product_id is not None:
-            fo.write(f"**Exposure Product ID:** {test_results.exp_product_id}")
+            fo.write(f"**Exposure Product ID:** {test_results.exp_product_id}\n\n")
         if test_results.obs_id is not None:
-            fo.write(f"**Observation ID:** {test_results.obs_id}")
+            fo.write(f"**Observation ID:** {test_results.obs_id}\n\n")
         if test_results.pnt_id is not None:
-            fo.write(f"**Pointing ID:** {test_results.pnt_id}")
+            fo.write(f"**Pointing ID:** {test_results.pnt_id}\n\n")
         if test_results.n_exp is not None:
-            fo.write(f"**Number of Exposures:** {test_results.n_exp}")
+            fo.write(f"**Number of Exposures:** {test_results.n_exp}\n\n")
         if test_results.tile_id is not None:
-            fo.write(f"**Tile ID:** {test_results.tile_id}")
+            fo.write(f"**Tile ID:** {test_results.tile_id}\n\n")
         if test_results.obs_mode is not None:
-            fo.write(f"**Observation Mode:** {test_results.obs_mode}")
+            fo.write(f"**Observation Mode:** {test_results.obs_mode}\n\n")
 
     def _write_test_case_table(self, test_results, l_test_case_names_and_filenames, fo):
         """Writes a table containing test case information and links to their pages to an open filehandle.
@@ -426,8 +426,8 @@ class TestSummaryWriter:
         fo : TextIO
         """
 
-        fo.write("| **Test Case** | **Result** |")
-        fo.write("| :------------ | :--------- |")
+        fo.write("| **Test Case** | **Result** |\n")
+        fo.write("| :------------ | :--------- |\n")
 
         for (test_case_name_and_filename, test_case_results) in zip(l_test_case_names_and_filenames,
                                                                     test_results.l_test_results):

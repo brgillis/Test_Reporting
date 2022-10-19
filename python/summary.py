@@ -70,4 +70,4 @@ def update_summary(test_report_summary_filename,
                 if not test_case_md_filename.endswith('.md'):
                     raise ValueError("Filenames of test reports passed to `update_summary` must end with '.md'.")
 
-                fo.write(f"  * [{test_case_name}]({test_case_md_filename})\n")
+                fo.write(f"    * [{test_case_name}]({test_case_md_filename})\n")

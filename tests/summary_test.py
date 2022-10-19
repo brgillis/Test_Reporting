@@ -23,14 +23,15 @@ Unit tests of updating the SUMMARY.md file
 import os
 
 from summary import update_summary
+from test_data.common import L_SUMMARY_WRITE_OUTPUT
 from utility.constants import PUBLIC_DIR, SUMMARY_FILENAME, TEST_REPORT_SUMMARY_FILENAME
-
-L_TEST_AND_FILE_NAMES = [("T1", "T1.md"),
-                         ("T2", "T2a.md")]
 
 EX_TEST_SUMMARY_STR = f"* [Test Reports]({TEST_REPORT_SUMMARY_FILENAME})\n"
 EX_TEST_STR_1 = "  * [T1](T1.md)\n"
+EX_TEST_CASE_STR_1_1 = "    * [TC1-1](TC1-1.md)\n"
 EX_TEST_STR_2 = "  * [T2](T2a.md)\n"
+EX_TEST_CASE_STR_2_1 = "    * [TC2-1](TC2-1.md)\n"
+EX_TEST_CASE_STR_2_2 = "    * [TC2-2](TC2-2.md)\n"
 
 
 def test_build_summary(project_copy):
@@ -43,7 +44,7 @@ def test_build_summary(project_copy):
     """
 
     update_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
-                   l_test_and_file_names=L_TEST_AND_FILE_NAMES,
+                   l_summary_write_output=L_SUMMARY_WRITE_OUTPUT,
                    rootdir=project_copy)
 
     qualified_summary_filename = os.path.join(project_copy, PUBLIC_DIR, SUMMARY_FILENAME)
@@ -52,6 +53,9 @@ def test_build_summary(project_copy):
     # Check that the file contains the expected content
     with open(qualified_summary_filename, "r") as fi:
         l_lines = fi.readlines()
-        assert l_lines[-3] == EX_TEST_SUMMARY_STR
-        assert l_lines[-2] == EX_TEST_STR_1
-        assert l_lines[-1] == EX_TEST_STR_2
+        assert l_lines[-6] == EX_TEST_SUMMARY_STR
+        assert l_lines[-5] == EX_TEST_STR_1
+        assert l_lines[-4] == EX_TEST_CASE_STR_1_1
+        assert l_lines[-3] == EX_TEST_STR_2
+        assert l_lines[-2] == EX_TEST_CASE_STR_2_1
+        assert l_lines[-1] == EX_TEST_CASE_STR_2_2

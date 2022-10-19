@@ -6,6 +6,7 @@
 
 Common code for unit tests in this project.
 """
+from utility.test_writing import NameAndFileName, SummaryWriteOutput
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -22,3 +23,6 @@ Common code for unit tests in this project.
 
 TEST_TARBALL_FILENAME = "she_obs_cti_gal.tar.gz"
 TEST_XML_FILENAME = "she_observation_cti_gal_validation_test_results_product.xml"
+L_SUMMARY_WRITE_OUTPUT = [SummaryWriteOutput(NameAndFileName("T1", "T1.md"), [NameAndFileName("TC1-1", "TC1-1.md")]),
+                          SummaryWriteOutput(NameAndFileName("T2", "T2a.md"), [NameAndFileName("TC2-1", "TC2-1.md"),
+                                                                               NameAndFileName("TC2-2", "TC2-2.md")])]

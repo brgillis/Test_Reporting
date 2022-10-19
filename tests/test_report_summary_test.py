@@ -22,11 +22,9 @@ Unit tests of creating the test report summary file.
 
 import os
 
+from test_data.common import L_SUMMARY_WRITE_OUTPUT
 from test_report_summary import build_test_report_summary
 from utility.constants import PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
-
-L_TEST_AND_FILE_NAMES = [("T1", "T1.md"),
-                         ("T2", "T2a.md")]
 
 EX_TEST_STR_1 = "|[T1](T1.html)|\n"
 EX_TEST_STR_2 = "|[T2](T2a.html)|\n"
@@ -42,7 +40,7 @@ def test_build_summary(project_copy):
     """
 
     build_test_report_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
-                              l_test_and_file_names=L_TEST_AND_FILE_NAMES,
+                              l_summary_write_output=L_SUMMARY_WRITE_OUTPUT,
                               rootdir=project_copy)
 
     qualified_test_report_summary_filename = os.path.join(project_copy, PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME)

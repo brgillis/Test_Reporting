@@ -349,7 +349,11 @@ class TestSummaryWriter:
 
             self._write_product_metadata(test_results, fo)
 
+            fo.write("\n")
+
             self._write_test_metadata(test_results, fo)
+
+            fo.write("\n")
 
             self._write_test_case_table(test_results, l_test_case_names_and_filenames, fo)
 
@@ -412,4 +416,14 @@ class TestSummaryWriter:
         l_test_case_names_and_filenames : Sequence[NameAndFileName]
         fo : TextIO
         """
-        pass
+
+        fo.write("| **Test Case** | **Result** |")
+        fo.write("| :------------ | :--------- |")
+
+        for (test_case_name_and_filename, test_case_results) in zip(l_test_case_names_and_filenames,
+                                                                    test_results.l_test_results):
+            test_case_name = test_case_name_and_filename.name
+            html_filename = f"{test_case_name_and_filename.filename[:-3]}.html"
+
+            test_line = f"| [{test_case_name}]({html_filename}) | {test_case_results.global_result} |\n"
+            fo.write(test_line)

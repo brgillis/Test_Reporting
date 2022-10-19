@@ -426,6 +426,8 @@ class TestSummaryWriter:
         fo : TextIO
         """
 
+        fo.write("## Test Cases\n\n")
+
         fo.write("| **Test Case** | **Result** |\n")
         fo.write("| :------------ | :--------- |\n")
 

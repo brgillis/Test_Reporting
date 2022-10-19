@@ -27,11 +27,15 @@ from __future__ import annotations
 import os
 import shutil
 from logging import getLogger
-from typing import Callable, Dict, List, NamedTuple, Optional, Union
+from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Union
 
 from utility.constants import DATA_DIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
 from utility.misc import extract_tarball, hash_any
 from utility.product_parsing import parse_xml_product
+
+if TYPE_CHECKING:
+    from utility.product_parsing import SingleTestResult, TestResults  # noqa F401
+    from typing import TextIO  # noqa F401
 
 TMPDIR_MAXLEN = 16
 
@@ -199,6 +203,10 @@ class TestSummaryWriter:
 
             test_results = parse_xml_product(qualified_product_filename)
 
+            # We write the pages for the test cases first, so we know about and can link to them from the test
+            # summary page
+            l_test_case_names_and_filenames = self._write_all_test_case_results(test_results, rootdir)
+
             if self.test_name is None:
                 test_name = f"TR-{test_results.product_id}"
             else:
@@ -211,46 +219,20 @@ class TestSummaryWriter:
             if len(l_qualified_product_filenames) > 1:
                 test_name += f"-{i}"
 
-            test_filename = self._write_test_results_summary(test_results, test_name, rootdir)
+            test_filename = self._write_test_results_summary(
+                test_results=test_results,
+                test_name=test_name,
+                l_test_case_names_and_filenames=l_test_case_names_and_filenames,
+                rootdir=rootdir)
 
             l_summary_write_output.append(SummaryWriteOutput(NameAndFileName(test_name, test_filename), []))
 
         return l_summary_write_output
 
     @staticmethod
-    def _write_test_results_summary(test_results, test_name, rootdir):
-        """Writes out the summary of the test to a .md-format file. If special formatting is desired for an
-        individual test, this method can be overridden by child classes.
-
-        Parameters
-        ----------
-        test_results : TestResults
-            Object representing the read-in and parsed .xml product for test results.
-        test_name : str
-            The name of this test.
-        rootdir : str
-            The root directory of the project
-
-        Returns
-        -------
-        test_filename : str
-            The filename of the created .md file containing the summary of this test, relative to "public" directory
-            within `rootdir`
-
-        """
-
-        test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
-
-        qualified_test_filename = os.path.join(rootdir, PUBLIC_DIR, test_filename)
-
-        with open(qualified_test_filename, "w") as fo:
-            fo.write(f"# {test_name}")
-
-        return test_filename
-
-    @staticmethod
     def _find_product_filenames(qualified_tmpdir):
-        """Finds the filenames of all .xml products in the provided directory.
+        """Finds the filenames of all .xml products in the provided directory. If certain .xml files should be
+        ignored for a given test, this method can be overridden to handle that.
 
         Parameters
         ----------
@@ -267,3 +249,139 @@ class TestSummaryWriter:
             raise ValueError("No .xml data products found in tarball.")
 
         return l_product_filenames
+
+    def _write_all_test_case_results(self, test_results, rootdir):
+        """Writes out the results of all test cases to a .md-format file.
+
+        Parameters
+        ----------
+        test_results : TestResults
+            Object representing the read-in and parsed .xml product for test results.
+        rootdir : str
+
+        Returns
+        -------
+        l_test_case_names_and_filenames : Sequence[NameAndFileName]
+            The names and generated file names of each test case associated with this test.
+        """
+
+        # We handle naming the test cases in this method so we can check for the presence of duplicates
+        d_test_name_instances: Dict[str, int] = {}
+        l_test_case_names_and_filenames: List[NameAndFileName] = []
+        for test_case_results in test_results.l_test_results:
+
+            test_case_id = test_case_results.test_id
+            if test_case_id in d_test_name_instances:
+                d_test_name_instances[test_case_id] += 1
+                test_case_name = f"{test_case_id}-{d_test_name_instances[test_case_id]}"
+            else:
+                d_test_name_instances[test_case_id] = 1
+                test_case_name = test_case_id
+
+            test_case_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_case_name}.md")
+
+            l_test_case_names_and_filenames.append(NameAndFileName(test_case_name, test_case_filename))
+
+            # Now we defer to a sub-method to write the results, so the formatting in that bit can be easily overridden
+            self._write_individual_test_case_results(test_case_results, test_case_name, test_case_filename, rootdir)
+
+        return l_test_case_names_and_filenames
+
+    def _write_individual_test_case_results(self, test_case_results, test_case_name, test_case_filename, rootdir):
+        """Writes out the results of all test cases to a .md-format file. If special formatting is desired for an
+        individual test case, this method can be overridden.
+
+        Parameters
+        ----------
+        test_case_results : SingleTestResult
+            Object representing the element of the read-in and parsed .xml product for test results which contains
+            the results for an individual test case.
+        test_case_name : str
+            The name of this individual test case
+        test_case_filename : str
+            The desired filename for the report on this test case. This should be relative to the "public" directory
+            in the rootdir and unique for each test case.
+        rootdir : str
+        """
+
+        qualified_test_case_filename = os.path.join(rootdir, PUBLIC_DIR, test_case_filename)
+
+        # Ensure the folder for this exists
+        os.makedirs(os.path.split(qualified_test_case_filename)[0], exist_ok=True)
+
+        with open(qualified_test_case_filename, "w") as fo:
+            fo.write(f"# {test_case_name}\n")
+
+            # TODO Fill out this method
+
+    def _write_test_results_summary(self, test_results, test_name, l_test_case_names_and_filenames, rootdir):
+        """Writes out the summary of the test to a .md-format file. If special formatting is desired for an
+        individual test, this method or the methods it calls can be overridden by child classes.
+
+        Parameters
+        ----------
+        l_test_case_names_and_filenames
+        test_results : TestResults
+        test_name : str
+            The name of this test.
+        l_test_case_names_and_filenames : Sequence[NameAndFileName]
+            The names and file names of each test case associated with this test.
+        rootdir : str
+
+        Returns
+        -------
+        test_filename : str
+            The filename of the created .md file containing the summary of this test, relative to "public" directory
+            within `rootdir`
+
+        """
+
+        test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
+
+        qualified_test_filename = os.path.join(rootdir, PUBLIC_DIR, test_filename)
+
+        # Ensure the folder for this exists
+        os.makedirs(os.path.split(qualified_test_filename)[0], exist_ok=True)
+
+        with open(qualified_test_filename, "w") as fo:
+            fo.write(f"# {test_name}\n")
+
+            self._write_product_metadata(test_results, fo)
+
+            self._write_test_metadata(test_results, fo)
+
+            self._write_test_case_table(test_results, l_test_case_names_and_filenames, fo)
+
+        return test_filename
+
+    def _write_product_metadata(self, test_results, fo):
+        """Writes metadata related to the test's data product to an open filehandle
+
+        Parameters
+        ----------
+        test_results : TestResults
+        fo : TextIO
+            A filehandle for the desired file, opened for writing text output
+        """
+        pass
+
+    def _write_test_metadata(self, test_results, fo):
+        """Writes metadata related to the test itself to an open filehandle
+
+        Parameters
+        ----------
+        test_results : TestResults
+        fo : TextIO
+        """
+        pass
+
+    def _write_test_case_table(self, test_results, l_test_case_names_and_filenames, fo):
+        """Writes a table containing test case information and links to their pages to an open filehandle.
+
+        Parameters
+        ----------
+        test_results : TestResults
+        l_test_case_names_and_filenames : Sequence[NameAndFileName]
+        fo : TextIO
+        """
+        pass

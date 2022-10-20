@@ -439,7 +439,8 @@ class TestSummaryWriter:
         if test_results.obs_mode is not None:
             fo.write(f"**Observation Mode:** {test_results.obs_mode}\n\n")
 
-    def _write_test_case_table(self, test_results, l_test_case_meta, fo):
+    @staticmethod
+    def _write_test_case_table(test_results, l_test_case_meta, fo):
         """Writes a table containing test case information and links to their pages to an open filehandle.
 
         Parameters

@@ -27,12 +27,12 @@ import json
 import os
 from argparse import ArgumentParser
 from logging import getLogger
-from typing import Dict, List, TYPE_CHECKING, Tuple
+from typing import Dict, List, TYPE_CHECKING
 
 from summary import update_summary
 from test_report_summary import build_test_report_summary
 from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
-from utility.test_writing import BUILD_FUNCTION_TYPE, TestSummaryWriter
+from utility.test_writing import BUILD_FUNCTION_TYPE, TestMeta, TestSummaryWriter
 
 if TYPE_CHECKING:
     import Namespace  # noqa F401
@@ -130,7 +130,7 @@ def run_build_from_args(args):
 
     d_manifest = read_manifest(os.path.join(args.rootdir, args.manifest))
 
-    l_test_meta: List[Tuple[str, str]] = []
+    l_test_meta: List[TestMeta] = []
 
     # Call the build function for each file in the manifest
     for key, value in d_manifest.items():

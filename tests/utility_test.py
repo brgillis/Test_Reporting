@@ -28,6 +28,8 @@ from test_data.common import TEST_TARBALL_FILENAME, TEST_XML_FILENAME
 from utility.constants import TEST_DATA_DIR
 from utility.misc import extract_tarball, hash_any
 
+TEST_MAX_LEN = 16
+
 
 def test_extract_tarball(rootdir, tmpdir):
     """Unit test of the `extract_tarball` method.
@@ -77,8 +79,6 @@ def test_extract_tarball(rootdir, tmpdir):
 def test_hash_any():
     """Unit test of the `hash_any` method.
     """
-
-    TEST_MAX_LEN = 16
 
     hash_str = hash_any("foo", max_length=TEST_MAX_LEN)
 

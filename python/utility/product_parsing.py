@@ -31,6 +31,7 @@ from xml.etree.ElementTree import Element
 
 logger = getLogger(__name__)
 
+
 @dataclass
 class Tags:
     """A special dataclass which defines the XML tags which we wish to read data from. The name of each attribute in

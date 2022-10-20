@@ -245,11 +245,11 @@ def create_from_xml_element(output_type, element):
     if base_output_type not in S_XML_OBJECT_TYPES:
         try:
             constructor = get_constructor(base_output_type)
-            return constructor(element.text)
         except Exception as e:
             logger.warning("Could not convert value %s to type %s; will be stored as a string. Exception was: %s",
                            element.text, base_output_type, e)
-            return str(element.text)
+            constructor = str
+        return constructor(element.text)
 
     # We use the type's meta-info to find what attributes it has and their types, and use this to recursively
     # construct it
@@ -273,10 +273,7 @@ def create_from_xml_element(output_type, element):
             sub_element = recursive_element_find(element, attr_tag)
             d_attrs[attr_name] = create_from_xml_element(attr_type, sub_element)
 
-    try:
-        return base_output_type(**d_attrs)
-    except Exception as e:
-        print(str(e))
+    return base_output_type(**d_attrs)
 
 
 def parse_xml_product(filename):

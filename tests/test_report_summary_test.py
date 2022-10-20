@@ -22,7 +22,7 @@ Unit tests of creating the test report summary file.
 
 import os
 
-from test_data.common import L_SUMMARY_WRITE_OUTPUT
+from test_data.common import L_TEST_META
 from test_report_summary import build_test_report_summary
 from utility.constants import PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
 
@@ -40,7 +40,7 @@ def test_build_summary(project_copy):
     """
 
     build_test_report_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
-                              l_summary_write_output=L_SUMMARY_WRITE_OUTPUT,
+                              l_test_meta=L_TEST_META,
                               rootdir=project_copy)
 
     qualified_test_report_summary_filename = os.path.join(project_copy, PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME)

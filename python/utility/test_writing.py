@@ -35,30 +35,35 @@ from utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
     from utility.product_parsing import SingleTestResult, TestResults  # noqa F401
-    from typing import TextIO  # noqa F401
+    from typing import Sequence, TextIO  # noqa F401
 
 TMPDIR_MAXLEN = 16
 
 logger = getLogger(__name__)
 
 
-class NameAndFileName(NamedTuple):
-    """Basic named tuple to contain output of a name of a test/testcase and its associated filename.
+class TestCaseMeta(NamedTuple):
+    """Named tuple to contain output of a name of a test/testcase and its associated filename, plus optionally
+    whether or not it passed.
     """
     name: str
     filename: str
+    passed: Optional[bool] = None
 
 
-class SummaryWriteOutput(NamedTuple):
+class TestMeta(NamedTuple):
     """Named tuple to contain output of a test case's name and filename, and a list of the same for all associated
     test cases.
     """
-    test_name_and_filename: NameAndFileName
-    l_test_case_names_and_filenames: List[NameAndFileName]
+    name: str
+    filename: str
+    l_test_case_meta: Sequence[TestCaseMeta]
+    num_passed: int = -1
+    num_failed: int = -1
 
 
 VALUE_TYPE = Union[str, Dict[str, str]]
-BUILD_FUNCTION_TYPE = Optional[Callable[[VALUE_TYPE, str], List[SummaryWriteOutput]]]
+BUILD_FUNCTION_TYPE = Optional[Callable[[VALUE_TYPE, str], List[TestMeta]]]
 
 
 class TestSummaryWriter:
@@ -67,6 +72,16 @@ class TestSummaryWriter:
     """
 
     test_name: Optional[str] = None
+
+    def __init__(self, test_name: Optional[str] = None):
+        """Initializer for TestSummaryWriter, which allows specifying the test name.
+
+        Parameters
+        ----------
+        test_name : str or None
+            The name of the test, which will be used for titling its page in the output.
+        """
+        self.test_name = test_name if test_name is not None else self.test_name
 
     def __call__(self, value, rootdir):
         """Template method which implements basic writing the summary of output for the test as a whole. Portions of
@@ -84,7 +99,7 @@ class TestSummaryWriter:
 
         Returns
         -------
-        l_summary_write_output : List[SummaryWriteOutput]
+        l_test_meta : List[TestMeta]
             A list of objects, each containing the test name and filename and a list of the same for associated
             tests. If the input `value` is a filename, this will be a single-element list. If the input `value` is
             instead a dict, this will have multiple elements, depending on the number of elements in the dict.
@@ -93,19 +108,19 @@ class TestSummaryWriter:
 
         # Figure out how to interpret `value` by checking if it's a str or dict, and then iterate over call to
         # process each individual tarball
-        l_summary_write_output: List[SummaryWriteOutput]
+        l_test_meta: List[TestMeta]
         if isinstance(value, str):
-            l_summary_write_output = self._summarize_results_tarball(value, rootdir, tag=None)
+            l_test_meta = self._summarize_results_tarball(value, rootdir, tag=None)
         elif isinstance(value, dict):
-            l_summary_write_output = []
+            l_test_meta = []
             for sub_key, sub_value in value.items():
-                l_summary_write_output += self._summarize_results_tarball(sub_value, rootdir, tag=sub_key)
+                l_test_meta += self._summarize_results_tarball(sub_value, rootdir, tag=sub_key)
         else:
             raise ValueError("Value in manifest is of unrecognized type.\n"
                              f"Value was: {value}\n"
                              f"Type was: {type(value)}")
 
-        return l_summary_write_output
+        return l_test_meta
 
     def _summarize_results_tarball(self, results_tarball_filename, rootdir, tag=None):
         """Writes summary markdown files for the test results contained in a tarball of the test results product and
@@ -122,7 +137,7 @@ class TestSummaryWriter:
 
         Returns
         -------
-        l_summary_write_output : List[SummaryWriteOutput]
+        l_test_meta : List[TestMeta]
             A list of objects containing the test name and filename and a list of the same for associated tests.
         """
 
@@ -135,14 +150,14 @@ class TestSummaryWriter:
         # We use a try-finally block here to ensure the created tmpdir is removed after use
         try:
             qualified_results_tarball_filename = os.path.join(rootdir, DATA_DIR, results_tarball_filename)
-            l_summary_write_output = self._summarize_results_tarball_with_tmpdir(qualified_results_tarball_filename,
-                                                                                 qualified_tmpdir,
-                                                                                 rootdir,
-                                                                                 tag=tag)
+            l_test_meta = self._summarize_results_tarball_with_tmpdir(qualified_results_tarball_filename,
+                                                                      qualified_tmpdir,
+                                                                      rootdir,
+                                                                      tag=tag)
         finally:
             shutil.rmtree(qualified_tmpdir)
 
-        return l_summary_write_output
+        return l_test_meta
 
     @staticmethod
     def _make_tmpdir(results_tarball_filename, rootdir):
@@ -189,7 +204,7 @@ class TestSummaryWriter:
 
         Returns
         -------
-        l_summary_write_output : List[SummaryWriteOutput]
+        l_test_meta : List[TestMeta]
         """
 
         extract_tarball(qualified_results_tarball_filename, qualified_tmpdir)
@@ -201,7 +216,7 @@ class TestSummaryWriter:
         # Make sure the required subdir exists before we start writing anything
         os.makedirs(os.path.join(rootdir, PUBLIC_DIR, TEST_REPORTS_SUBDIR))
 
-        l_summary_write_output: List[SummaryWriteOutput] = []
+        l_test_meta: List[TestMeta] = []
 
         for i, qualified_product_filename in enumerate(l_qualified_product_filenames):
 
@@ -223,18 +238,24 @@ class TestSummaryWriter:
 
             # We write the pages for the test cases first, so we know about and can link to them from the test
             # summary page
-            l_test_case_names_and_filenames = self._write_all_test_case_results(test_results, test_name_tail, rootdir)
+            l_test_case_meta = self._write_all_test_case_results(test_results, test_name_tail, rootdir)
 
-            test_filename = self._write_test_results_summary(
-                test_results=test_results,
-                test_name=test_name,
-                l_test_case_names_and_filenames=l_test_case_names_and_filenames,
-                rootdir=rootdir)
+            # Calculate the number of test cases which passed and the number which failed
+            num_passed = sum([1 for x in l_test_case_meta if x.passed])
+            num_failed = len(l_test_case_meta) - num_passed
 
-            l_summary_write_output.append(SummaryWriteOutput(NameAndFileName(test_name, test_filename),
-                                                             l_test_case_names_and_filenames))
+            test_filename = self._write_test_results_summary(test_results=test_results,
+                                                             test_name=test_name,
+                                                             l_test_case_meta=l_test_case_meta,
+                                                             rootdir=rootdir)
 
-        return l_summary_write_output
+            l_test_meta.append(TestMeta(name=test_name,
+                                        filename=test_filename,
+                                        l_test_case_meta=l_test_case_meta,
+                                        num_passed=num_passed,
+                                        num_failed=num_failed))
+
+        return l_test_meta
 
     @staticmethod
     def _find_product_filenames(qualified_tmpdir):
@@ -271,13 +292,13 @@ class TestSummaryWriter:
 
         Returns
         -------
-        l_test_case_names_and_filenames : Sequence[NameAndFileName]
+        l_test_case_names_and_filenames : Sequence[TestCaseMeta]
             The names and generated file names of each test case associated with this test.
         """
 
-        # We handle naming the test cases in this method so we can check for the presence of duplicates
+        # We handle naming the test cases in this method, so we can check for the presence of duplicates
         d_test_name_instances: Dict[str, int] = {}
-        l_test_case_names_and_filenames: List[NameAndFileName] = []
+        l_test_case_names_and_filenames: List[TestCaseMeta] = []
         for test_case_results in test_results.l_test_results:
 
             test_case_id = test_case_results.test_id
@@ -290,7 +311,10 @@ class TestSummaryWriter:
 
             test_case_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_case_name}.md")
 
-            l_test_case_names_and_filenames.append(NameAndFileName(test_case_name, test_case_filename))
+            l_test_case_names_and_filenames.append(TestCaseMeta(name=test_case_name,
+                                                                filename=test_case_filename,
+                                                                passed=(test_case_results.global_result ==
+                                                                        "PASSED")))
 
             # Now we defer to a sub-method to write the results, so the formatting in that bit can be easily overridden
             self._write_individual_test_case_results(test_case_results, test_case_name, test_case_filename, rootdir)
@@ -324,17 +348,16 @@ class TestSummaryWriter:
 
             # TODO Fill out this method
 
-    def _write_test_results_summary(self, test_results, test_name, l_test_case_names_and_filenames, rootdir):
+    def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, rootdir):
         """Writes out the summary of the test to a .md-format file. If special formatting is desired for an
         individual test, this method or the methods it calls can be overridden by child classes.
 
         Parameters
         ----------
-        l_test_case_names_and_filenames
         test_results : TestResults
         test_name : str
             The name of this test.
-        l_test_case_names_and_filenames : Sequence[NameAndFileName]
+        l_test_case_meta : Sequence[TestCaseMeta]
             The names and file names of each test case associated with this test.
         rootdir : str
 
@@ -364,7 +387,7 @@ class TestSummaryWriter:
 
             fo.write("\n")
 
-            self._write_test_case_table(test_results, l_test_case_names_and_filenames, fo)
+            self._write_test_case_table(test_results, l_test_case_meta, fo)
 
         return test_filename
 
@@ -416,13 +439,13 @@ class TestSummaryWriter:
         if test_results.obs_mode is not None:
             fo.write(f"**Observation Mode:** {test_results.obs_mode}\n\n")
 
-    def _write_test_case_table(self, test_results, l_test_case_names_and_filenames, fo):
+    def _write_test_case_table(self, test_results, l_test_case_meta, fo):
         """Writes a table containing test case information and links to their pages to an open filehandle.
 
         Parameters
         ----------
         test_results : TestResults
-        l_test_case_names_and_filenames : Sequence[NameAndFileName]
+        l_test_case_meta : Sequence[TestCaseMeta]
         fo : TextIO
         """
 
@@ -431,10 +454,10 @@ class TestSummaryWriter:
         fo.write("| **Test Case** | **Result** |\n")
         fo.write("| :------------ | :--------- |\n")
 
-        for (test_case_name_and_filename, test_case_results) in zip(l_test_case_names_and_filenames,
-                                                                    test_results.l_test_results):
-            test_case_name = test_case_name_and_filename.name
-            html_filename = f"{test_case_name_and_filename.filename[:-3]}.html"
+        for (test_case_meta, test_case_results) in zip(l_test_case_meta,
+                                                       test_results.l_test_results):
+            test_case_name = test_case_meta.name
+            html_filename = f"{test_case_meta.filename[:-3]}.html"
 
             test_line = f"| [{test_case_name}]({html_filename}) | {test_case_results.global_result} |\n"
             fo.write(test_line)

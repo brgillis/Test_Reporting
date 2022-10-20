@@ -26,12 +26,12 @@ from typing import TYPE_CHECKING
 from utility.constants import AUX_DIR, PUBLIC_DIR, TEST_REPORT_TEMPLATE_FILENAME
 
 if TYPE_CHECKING:
-    from typing import List  # noqa F401
-    from utility.test_writing import SummaryWriteOutput  # noqa F401
+    from typing import Sequence  # noqa F401
+    from utility.test_writing import TestMeta  # noqa F401
 
 
 def build_test_report_summary(test_report_summary_filename,
-                              l_summary_write_output,
+                              l_test_meta,
                               rootdir):
     """Builds a markdown file containing the summary of the Test Reports section at the desired location, containing a
     table linking to the individual pages.
@@ -41,7 +41,7 @@ def build_test_report_summary(test_report_summary_filename,
     test_report_summary_filename : str
         The desired filename of the Markdown (.md) file to be created, containing the summary of the Test Reports
         section
-    l_summary_write_output : List[SummaryWriteOutput]
+    l_test_meta : Sequence[TestMeta]
         A list of objects, each containing the test name and filename, and a list of test case names and filenames
     rootdir: str
         The root directory of this project (or during unit testing, a copied instance of this project).
@@ -59,13 +59,11 @@ def build_test_report_summary(test_report_summary_filename,
                 fo.write(line)
 
         # Now, add a line for each test
-        for summary_write_output in l_summary_write_output:
+        for test_meta in l_test_meta:
 
-            test_name, test_md_filename = summary_write_output.test_name_and_filename
-
-            if not test_md_filename.endswith('.md'):
+            if not test_meta.filename.endswith('.md'):
                 raise ValueError("Filenames of test reports passed to `build_test_report_summary` must end with '.md'.")
-            test_html_filename = f"{test_md_filename[:-3]}.html"
+            test_html_filename = f"{test_meta.filename[:-3]}.html"
 
-            test_line = f"|[{test_name}]({test_html_filename})|\n"
+            test_line = f"|[{test_meta.name}]({test_html_filename})|\n"
             fo.write(test_line)

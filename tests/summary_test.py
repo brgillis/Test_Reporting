@@ -23,7 +23,7 @@ Unit tests of updating the SUMMARY.md file
 import os
 
 from summary import update_summary
-from test_data.common import L_SUMMARY_WRITE_OUTPUT
+from test_data.common import L_TEST_META
 from utility.constants import PUBLIC_DIR, SUMMARY_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 
 EX_TEST_SUMMARY_STR = f"* [Test Reports]({TEST_REPORT_SUMMARY_FILENAME})\n"
@@ -44,7 +44,7 @@ def test_build_summary(project_copy):
     """
 
     update_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
-                   l_summary_write_output=L_SUMMARY_WRITE_OUTPUT,
+                   l_test_meta=L_TEST_META,
                    rootdir=project_copy)
 
     qualified_summary_filename = os.path.join(project_copy, PUBLIC_DIR, SUMMARY_FILENAME)

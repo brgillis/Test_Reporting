@@ -1,10 +1,10 @@
 """
-:file: summary.py
+:file: utility/constants.py
 
 :date: 10/13/2022
 :author: Bryan Gillis
 
-Functions to handle updating the SUMMARY.md file.
+Functions to handle building a new test report summary file.
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -28,6 +28,45 @@ from utility.constants import PUBLIC_DIR, SUMMARY_FILENAME
 if TYPE_CHECKING:
     from typing import Sequence  # noqa F401
     from utility.test_writing import TestMeta  # noqa F401
+
+
+def build_test_report_summary(test_report_summary_filename,
+                              l_test_meta,
+                              rootdir):
+    """Builds a markdown file containing the summary of the Test Reports section at the desired location, containing a
+    table linking to the individual pages.
+
+    Parameters
+    ----------
+    test_report_summary_filename : str
+        The desired filename of the Markdown (.md) file to be created, containing the summary of the Test Reports
+        section
+    l_test_meta : Sequence[TestMeta]
+        A list of objects, each containing the test name and filename, and a list of test case names and filenames
+    rootdir: str
+        The root directory of this project (or during unit testing, a copied instance of this project).
+    """
+
+    qualified_test_report_summary_filename = os.path.join(rootdir, PUBLIC_DIR, test_report_summary_filename)
+
+    # Open the file we want to write
+    with open(qualified_test_report_summary_filename, 'w') as fo:
+
+        # First, add all the boilerplate lines to the top
+        fo.write("# Testing Reports\n\n")
+        fo.write("This section contains automatically-generated reports on the validation test results products "
+                 "contained in the \"data\" directory of this project.\n\n")
+        fo.write("| **Test ID** | **Num Passed** | **Num Failed** |\n")
+        fo.write("|:------------|:---------------|:---------------|\n")
+
+        # Now, add a line for each test
+        for test_meta in l_test_meta:
+
+            _check_md_filename(test_meta.filename)
+            test_html_filename = f"{test_meta.filename[:-3]}.html"
+
+            test_line = f"|[{test_meta.name}]({test_html_filename})|{test_meta.num_passed}|{test_meta.num_failed}|\n"
+            fo.write(test_line)
 
 
 def update_summary(test_report_summary_filename,
@@ -57,15 +96,18 @@ def update_summary(test_report_summary_filename,
         # Add a line for each test
         for test_meta in l_test_meta:
 
-            if not test_meta.filename.endswith('.md'):
-                raise ValueError("Filenames of test reports passed to `update_summary` must end with '.md'.")
-
             fo.write(f"  * [{test_meta.name}]({test_meta.filename})\n")
 
             # Add a line for each test case, grouped after the associated test
             for test_case_name, test_case_md_filename, passed in test_meta.l_test_case_meta:
 
-                if not test_case_md_filename.endswith('.md'):
-                    raise ValueError("Filenames of test reports passed to `update_summary` must end with '.md'.")
+                _check_md_filename(test_case_md_filename)
 
                 fo.write(f"    * [{test_case_name}]({test_case_md_filename})\n")
+
+
+def _check_md_filename(filename):
+    """Private method to check that a filename ends with `.md'.
+    """
+    if not filename.endswith('.md'):
+        raise ValueError(f"Filename '{filename}' must end with '.md'.")

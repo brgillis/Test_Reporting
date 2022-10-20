@@ -59,7 +59,7 @@ class SupplementaryInfo:
 @dataclass
 class RequirementResults:
     req_id: str
-    meas_value: str
+    meas_value: str # TODO This needs to be a class
     req_result: str
     req_comment: Optional[str] = None
     l_supp_info: List[SupplementaryInfo] = field(default_factory=list)

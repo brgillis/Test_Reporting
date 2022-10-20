@@ -366,6 +366,9 @@ class TestSummaryWriter:
                     fo.write("```\n")
                     fo.write(supp_info.info_value)
                     fo.write("```\n\n")
+                    
+            fo.write(f"## Figures\n\n")
+            fo.write("(Automatic generation of this section is not yet ready)")
 
     def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, rootdir):
         """Writes out the summary of the test to a .md-format file. If special formatting is desired for an

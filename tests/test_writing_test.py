@@ -23,7 +23,7 @@ Unit tests of writing test reports.
 import os
 from typing import Set
 
-from test_data.common import TEST_TARBALL_FILENAME
+from testing.common import TEST_TARBALL_FILENAME
 from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
 from utility.test_writing import TestSummaryWriter
 

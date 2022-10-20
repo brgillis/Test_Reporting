@@ -22,7 +22,7 @@ Unit tests of creating the test report summary file.
 
 import os
 
-from test_data.common import L_TEST_META
+from testing.common import L_TEST_META
 from utility.constants import PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
 from utility.test_report_summary import build_test_report_summary
 

@@ -344,9 +344,28 @@ class TestSummaryWriter:
         os.makedirs(os.path.split(qualified_test_case_filename)[0], exist_ok=True)
 
         with open(qualified_test_case_filename, "w") as fo:
+
             fo.write(f"# {test_case_name}\n\n")
 
-            # TODO Fill out this method
+            fo.write(f"## General Information\n\n")
+            fo.write(f"**Test Case ID:** {test_case_results.test_id}\n\n")
+            fo.write(f"**Description:** {test_case_results.test_description}\n\n")
+            fo.write(f"**Result:** {test_case_results.global_result}\n\n")
+            if test_case_results.analysis_result.ana_comment is not None:
+                fo.write(f"**Comments:** {test_case_results.analysis_result.ana_comment}\n\n")
+
+            fo.write(f"## Detailed Results\n\n")
+            for req in test_case_results.l_requirements:
+                fo.write("### Requirement: {req.req_id}\n\n")
+                fo.write(f"**Measured Value**: {req.meas_value}\n\n")
+                if req.req_comment is not None:
+                    fo.write(f"**Comments**: {req.req_comment}\n\n")
+                fo.write("---\n\n")
+                for supp_info in req.l_supp_info:
+                    fo.write(f"**{supp_info.info_key}**: {supp_info.info_description}\n\n")
+                    fo.write("```\n")
+                    fo.write(supp_info.info_value)
+                    fo.write("```\n\n")
 
     def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, rootdir):
         """Writes out the summary of the test to a .md-format file. If special formatting is desired for an

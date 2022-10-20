@@ -347,7 +347,7 @@ class TestSummaryWriter:
 
             fo.write(f"# {test_case_name}\n\n")
 
-            fo.write(f"## General Information\n\n")
+            fo.write("## General Information\n\n")
             fo.write(f"**Test Case ID:** {test_case_results.test_id}\n\n")
             fo.write(f"**Description:** {test_case_results.test_description}\n\n")
             fo.write(f"**Result:** {test_case_results.global_result}\n\n")

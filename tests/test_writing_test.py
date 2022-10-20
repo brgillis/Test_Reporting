@@ -77,4 +77,16 @@ def test_write_summary(project_copy):
         assert test_case_filename.endswith(".md")
 
         # Check existence of file
-        assert os.path.isfile(os.path.join(project_copy, PUBLIC_DIR, test_case_filename))
+        qualified_test_case_filename = os.path.join(project_copy, PUBLIC_DIR, test_case_filename)
+        assert os.path.isfile(qualified_test_case_filename)
+
+        # Read in the file and check the data in it
+        with open(qualified_test_case_filename, "r") as fi:
+            l_lines = fi.readlines()
+            assert l_lines[0] == f"# {test_case_name}\n"
+            assert l_lines[1] == "\n"
+            assert l_lines[2] == "## General Information\n"
+            assert l_lines[3] == "\n"
+            assert "**Test Case ID:** " in l_lines[4]
+            # We don't do in-depth checks pas this, as we don't want to make it too burdensome to update this test
+            # whenever the format is changed

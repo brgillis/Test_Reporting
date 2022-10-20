@@ -246,11 +246,12 @@ def create_from_xml_element(output_type, element):
     if base_output_type not in S_XML_OBJECT_TYPES:
         try:
             constructor = get_constructor(base_output_type)
+            output = constructor(element.text)
         except Exception as e:
             logger.warning("Could not convert value %s to type %s; will be stored as a string. Exception was: %s",
                            element.text, base_output_type, e)
-            constructor = str
-        return constructor(element.text)
+            output = str(element.text)
+        return output
 
     # We use the type's meta-info to find what attributes it has and their types, and use this to recursively
     # construct it

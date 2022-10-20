@@ -33,55 +33,6 @@ logger = getLogger(__name__)
 
 
 @dataclass
-class Tags:
-    """A special dataclass which defines the XML tags which we wish to read data from. The name of each attribute in
-    this class corresponds to the name of the attribute in the associated dataclass which will store the information
-    contained within that entry.
-    """
-
-    # Data stored in the SupplementaryInfo dataclass
-    info_key: str = "Key"
-    info_description: str = "Description"
-    info_value: str = "StringValue"
-
-    # Data stored in the RequirementResults dataclass
-    req_id = "Requirement.Id"
-    meas_value = "Requirement.MeasuredValue"
-    req_result = "Requirement.ValidationResult"
-    req_comment = "Requirement.Comment"
-    l_supp_info = "Requirement.SupplementaryInformation.Parameter"
-
-    # Data stored in the AnalysisResult dataclass
-    ana_result = "Result"
-    textfiles_tarball = "AnalysisFiles.TextFiles.FileName"
-    figures_tarball = "AnalysisFiles.Figures.FileName"
-    ana_comment = "Comment"
-
-    # Data stored in the SingleTestResult dataclass
-    test_id = "TestId"
-    test_description = "TestDescription"
-    global_result = "GlobalResult"
-    l_requirements = "ValidatedRequirements"
-    analysis_result = "AnalysisResult"
-
-    # Data stored in the TestResults dataclass
-    product_id = "Header.ProductId"
-    dataset_release = "Header.DataSetRelease"
-    plan_id = "Header.PlanId"
-    ppo_id = "Header.PPOId"
-    pipeline_definition_id = "Header.PipelineDefinitionId"
-    creation_date = "Header.CreationDate"
-    exp_product_id = "Data.ExposureProductId"
-    obs_id = "Data.ObservationId"
-    pnt_id = "Data.PointingId"
-    obs_mode = "Data.ObservationMode"
-    n_exp = "Data.NumberExposures"
-    tile_id = "Data.TileId"
-    source_pipeline = "Data.SourcePipeline"
-    l_test_results = "Data.ValidationTestList"
-
-
-@dataclass
 class SupplementaryInfo:
     info_key: str
     info_description: str
@@ -300,51 +251,23 @@ def _element_find(element, tag, find_all=False, output_type=None):
     return _element_find(element.find(head), tail, find_all=find_all, output_type=output_type)
 
 
-def _construct_datetime(s):
+def _construct_datetime(s: str) -> datetime:
     """Converts a string value, formatted like "YYYY-MM-DDTHH:MM:SS.408Z", into a datetime object.
-
-    Parameters
-    ----------
-    s : str
-        The string value to be converted
-
-    Returns
-    -------
-    dt : datetime
-        The datetime object equivalent of the input string
     """
 
-    dt = datetime.fromisoformat(s.replace('Z', '+00:00'))
-
-    return dt
+    return datetime.fromisoformat(s.replace('Z', '+00:00'))
 
 
-def _e_to_str(e):
+def _e_to_str(e: Optional[Element]) -> Optional[str]:
     """Tries to convert an XML element to a string. Returns None if None is provided
-
-    Parameters
-    ----------
-    e : Element or None
-
-    Returns
-    -------
-    str or None
     """
     if e is None:
         return None
     return e.text
 
 
-def _e_to_int(e):
+def _e_to_int(e: Optional[Element]) -> Optional[int]:
     """Tries to convert an XML element to an int. Returns None if None is provided
-
-    Parameters
-    ----------
-    e : Element or None
-
-    Returns
-    -------
-    int or None
     """
     if e is None:
         return None
@@ -367,6 +290,4 @@ def parse_xml_product(filename):
 
     tree = ElementTree.parse(filename)
 
-    test_results = TestResults.make_from_element(tree.getroot())
-
-    return test_results
+    return TestResults.make_from_element(tree.getroot())

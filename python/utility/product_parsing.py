@@ -288,10 +288,7 @@ def _element_find(element, tag, find_all=False, output_type=None):
                 l_output = [_e_to_int(output) for output in l_output]
             return l_output
         else:
-            try:
-                output = element.find(tag)
-            except Exception as e:
-                print(str(e))
+            output = element.find(tag)
             if output_type is str:
                 output = _e_to_str(output)
             elif output_type is int:

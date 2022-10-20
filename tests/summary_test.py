@@ -23,8 +23,8 @@ Unit tests of updating the SUMMARY.md file
 import os
 
 from test_data.common import L_TEST_META
-from test_report_summary import update_summary
 from utility.constants import PUBLIC_DIR, SUMMARY_FILENAME, TEST_REPORT_SUMMARY_FILENAME
+from utility.test_report_summary import update_summary
 
 EX_TEST_SUMMARY_STR = f"* [Test Reports]({TEST_REPORT_SUMMARY_FILENAME})\n"
 EX_TEST_STR_1 = "  * [T1](T1.md)\n"

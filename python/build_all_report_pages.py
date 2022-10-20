@@ -29,8 +29,8 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import Dict, List, TYPE_CHECKING
 
-from test_report_summary import build_test_report_summary, update_summary
 from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
+from utility.test_report_summary import build_test_report_summary, update_summary
 from utility.test_writing import BUILD_FUNCTION_TYPE, TestMeta, TestSummaryWriter
 
 if TYPE_CHECKING:

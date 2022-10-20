@@ -21,12 +21,17 @@ Functions to handle building a new test report summary file.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import os
+from typing import TYPE_CHECKING
 
 from utility.constants import AUX_DIR, PUBLIC_DIR, TEST_REPORT_TEMPLATE_FILENAME
 
+if TYPE_CHECKING:
+    from typing import Sequence  # noqa F401
+    from utility.test_writing import TestMeta  # noqa F401
+
 
 def build_test_report_summary(test_report_summary_filename,
-                              l_test_and_file_names,
+                              l_test_meta,
                               rootdir):
     """Builds a markdown file containing the summary of the Test Reports section at the desired location, containing a
     table linking to the individual pages.
@@ -36,9 +41,8 @@ def build_test_report_summary(test_report_summary_filename,
     test_report_summary_filename : str
         The desired filename of the Markdown (.md) file to be created, containing the summary of the Test Reports
         section
-    l_test_and_file_names : List[Tuple[str,str]]
-        A list of tuples, each containing a string for the name of a test in the first element and the name of the
-        markdown file (relative to the reports directory) in the second element.
+    l_test_meta : Sequence[TestMeta]
+        A list of objects, each containing the test name and filename, and a list of test case names and filenames
     rootdir: str
         The root directory of this project (or during unit testing, a copied instance of this project).
     """
@@ -55,11 +59,11 @@ def build_test_report_summary(test_report_summary_filename,
                 fo.write(line)
 
         # Now, add a line for each test
-        for test_name, md_filename in l_test_and_file_names:
+        for test_meta in l_test_meta:
 
-            if not md_filename.endswith('.md'):
+            if not test_meta.filename.endswith('.md'):
                 raise ValueError("Filenames of test reports passed to `build_test_report_summary` must end with '.md'.")
-            html_filename = f"{md_filename[:-3]}.html"
+            test_html_filename = f"{test_meta.filename[:-3]}.html"
 
-            test_line = f"|[{test_name}]({html_filename})|\n"
+            test_line = f"|[{test_meta.name}]({test_html_filename})|{test_meta.num_passed}|{test_meta.num_failed}|\n"
             fo.write(test_line)

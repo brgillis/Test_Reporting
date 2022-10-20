@@ -21,12 +21,17 @@ Functions to handle updating the SUMMARY.md file.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import os
+from typing import TYPE_CHECKING
 
 from utility.constants import PUBLIC_DIR, SUMMARY_FILENAME
 
+if TYPE_CHECKING:
+    from typing import Sequence  # noqa F401
+    from utility.test_writing import TestMeta  # noqa F401
+
 
 def update_summary(test_report_summary_filename,
-                   l_test_and_file_names,
+                   l_test_meta,
                    rootdir):
     """Builds a markdown file containing the summary of the Test Reports section at the desired location, containing a
     table linking to the individual pages.
@@ -35,9 +40,8 @@ def update_summary(test_report_summary_filename,
     ----------
     test_report_summary_filename : str
         The filename of the Markdown (.md) file containing the summary of the Test Reports section
-    l_test_and_file_names : List[Tuple[str,str]]
-        A list of tuples, each containing a string for the name of a test in the first element and the name of the
-        markdown file (relative to the reports directory) in the second element.
+    l_test_meta : Sequence[TestMeta]
+        A list of objects, each containing the test name and filename, and a list of test case names and filenames
     rootdir: str
         The root directory of this project (or during unit testing, a copied instance of this project).
     """
@@ -51,9 +55,17 @@ def update_summary(test_report_summary_filename,
         fo.write(f"* [Test Reports]({test_report_summary_filename})\n")
 
         # Add a line for each test
-        for test_name, md_filename in l_test_and_file_names:
+        for test_meta in l_test_meta:
 
-            if not md_filename.endswith('.md'):
+            if not test_meta.filename.endswith('.md'):
                 raise ValueError("Filenames of test reports passed to `update_summary` must end with '.md'.")
 
-            fo.write(f"  * [{test_name}]({md_filename})\n")
+            fo.write(f"  * [{test_meta.name}]({test_meta.filename})\n")
+
+            # Add a line for each test case, grouped after the associated test
+            for test_case_name, test_case_md_filename, passed in test_meta.l_test_case_meta:
+
+                if not test_case_md_filename.endswith('.md'):
+                    raise ValueError("Filenames of test reports passed to `update_summary` must end with '.md'.")
+
+                fo.write(f"    * [{test_case_name}]({test_case_md_filename})\n")

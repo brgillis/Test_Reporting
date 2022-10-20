@@ -356,7 +356,7 @@ class TestSummaryWriter:
 
             fo.write(f"## Detailed Results\n\n")
             for req in test_case_results.l_requirements:
-                fo.write("### Requirement: {req.req_id}\n\n")
+                fo.write(f"### Requirement: {req.req_id}\n\n")
                 fo.write(f"**Measured Value**: {req.meas_value}\n\n")
                 if req.req_comment is not None:
                     fo.write(f"**Comments**: {req.req_comment}\n\n")
@@ -366,7 +366,7 @@ class TestSummaryWriter:
                     fo.write("```\n")
                     fo.write(supp_info.info_value)
                     fo.write("```\n\n")
-                    
+
             fo.write(f"## Figures\n\n")
             fo.write("(Automatic generation of this section is not yet ready)")
 

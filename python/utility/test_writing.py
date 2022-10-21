@@ -347,12 +347,30 @@ class TestSummaryWriter:
 
             fo.write(f"# {test_case_name}\n\n")
 
+            # Write the table of contents for this file
+            fo.write("## Table of Contents\n\n")
+
+            fo.write("1. [General Information](#general-information)\n")
+            fo.write("2. [Detailed Results](#detailed-results)\n")
+
+            # We can't guarantee that supplementary info keys will be unique between different requirements,
+            # so to ensure we have unique links for each, we keep a counter and add it to the name of each
+            supp_info_counter = 0
+
+            for req_index, req in enumerate(test_case_results.l_requirements):
+                fo.write(f"  {req_index + 1}. [Requirement: {req.req_id}](#requirement-{req.req_id.lower()})\n")
+                for supp_info_index, supp_info in enumerate(req.l_supp_info):
+                    fo.write(f"    {supp_info_index + 1}. [{supp_info.info_key}](#si-{supp_info_counter})\n")
+                    supp_info_counter += 1
+
             fo.write("## General Information\n\n")
             fo.write(f"**Test Case ID:** {test_case_results.test_id}\n\n")
             fo.write(f"**Description:** {test_case_results.test_description}\n\n")
             fo.write(f"**Result:** {test_case_results.global_result}\n\n")
             if test_case_results.analysis_result.ana_comment is not None:
                 fo.write(f"**Comments:** {test_case_results.analysis_result.ana_comment}\n\n")
+
+            supp_info_counter = 0
 
             fo.write(f"## Detailed Results\n\n")
             for req in test_case_results.l_requirements:
@@ -361,9 +379,10 @@ class TestSummaryWriter:
                 fo.write(f"**Measured Value**: {req.meas_value.value}\n\n")
                 if req.req_comment is not None:
                     fo.write(f"**Comments**: {req.req_comment}\n\n")
-                fo.write("---\n\n")
                 for supp_info in req.l_supp_info:
-                    fo.write(f"**{supp_info.info_key}**: {supp_info.info_description}\n\n")
+                    fo.write(f"#### **{supp_info.info_key}** <a name=\"si-{supp_info_counter}\"></a>")
+                    supp_info_counter += 1
+                    fo.write(f"{supp_info.info_description}\n\n")
                     fo.write("```\n")
                     fo.write(supp_info.info_value)
                     fo.write("```\n\n")

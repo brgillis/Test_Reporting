@@ -85,8 +85,6 @@ def test_write_summary(project_copy):
             l_lines = fi.readlines()
             assert l_lines[0] == f"# {test_case_name}\n"
             assert l_lines[1] == "\n"
-            assert l_lines[2] == "## General Information\n"
-            assert l_lines[3] == "\n"
-            assert "**Test Case ID:** " in l_lines[4]
+            assert l_lines[2] == "## Table of Contents\n"
             # We don't do in-depth checks pas this, as we don't want to make it too burdensome to update this test
             # whenever the format is changed

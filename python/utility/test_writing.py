@@ -96,7 +96,7 @@ class MarkdownWriter:
 
         self._l_lines.append("#" * (depth + 2) + f" {heading} <a id=\"{label}\"></a>\n\n")
 
-        self._l_toc_lines.append("  " * depth + f" ({heading})[#{label}]\n")
+        self._l_toc_lines.append("  " * depth + f"1. ({heading})[#{label}]\n")
 
     def write(self, fo: TextIO):
         """Writes out the TOC and all lines.

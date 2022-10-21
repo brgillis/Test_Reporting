@@ -382,7 +382,7 @@ class TestSummaryWriter:
                 if req.req_comment is not None:
                     fo.write(f"**Comments**: {req.req_comment}\n\n")
                 for supp_info in req.l_supp_info:
-                    fo.write(f"#### **{supp_info.info_key}** <a name=\"si-{supp_info_counter}\"></a>\n\n")
+                    fo.write(f"#### {supp_info.info_key} <a name=\"si-{supp_info_counter}\"></a>\n\n")
                     supp_info_counter += 1
                     fo.write(f"{supp_info.info_description}\n\n")
                     fo.write("```\n")

@@ -456,7 +456,8 @@ class TestSummaryWriter:
         fo.write(f"**Source Pipeline:** {test_results.source_pipeline}\n\n")
 
         t = test_results.creation_date
-        fo.write(f"**Creation Date and Time:** {t.day} {t.month}, {t.year} at {t.time()}\n\n")
+        month_name = t.strftime("%b")
+        fo.write(f"**Creation Date and Time:** {t.day} {month_name}, {t.year} at {t.time()}\n\n")
 
     @staticmethod
     def _write_test_metadata(test_results, fo):

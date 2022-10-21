@@ -503,7 +503,10 @@ class TestSummaryWriter:
         for (test_case_meta, test_case_results) in zip(l_test_case_meta,
                                                        test_results.l_test_results):
             test_case_name = test_case_meta.name
-            html_filename = f"{test_case_meta.filename[:-3]}.html"
+
+            # Change suffix of filename from .md to .html and remove the beginning "TR/", since this will be linked from
+            # a file already in that folder
+            html_filename = f"{test_case_meta.filename[3:-3]}.html"
 
             test_line = f"| [{test_case_name}]({html_filename}) | {test_case_results.global_result} |\n"
             fo.write(test_line)

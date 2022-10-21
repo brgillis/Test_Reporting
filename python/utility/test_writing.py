@@ -357,7 +357,8 @@ class TestSummaryWriter:
             fo.write(f"## Detailed Results\n\n")
             for req in test_case_results.l_requirements:
                 fo.write(f"### Requirement: {req.req_id}\n\n")
-                fo.write(f"**Measured Value**: {req.meas_value}\n\n")
+                fo.write(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
+                fo.write(f"**Measured Value**: {req.meas_value.value}\n\n")
                 if req.req_comment is not None:
                     fo.write(f"**Comments**: {req.req_comment}\n\n")
                 fo.write("---\n\n")

@@ -394,7 +394,7 @@ class TestSummaryWriter:
 
         writer = MarkdownWriter(test_case_name)
 
-        writer.add_heading("General Information", depth=1)
+        writer.add_heading("General Information", depth=0)
         writer.add_line(f"**Test Case ID:** {test_case_results.test_id}\n\n")
         writer.add_line(f"**Description:** {test_case_results.test_description}\n\n")
         writer.add_line(f"**Result:** {test_case_results.global_result}\n\n")
@@ -405,15 +405,15 @@ class TestSummaryWriter:
         # so to ensure we have unique links for each, we keep a counter and add it to the name of each
         supp_info_counter = 0
 
-        writer.add_heading("Detailed Results", depth=1)
+        writer.add_heading("Detailed Results", depth=0)
         for req in test_case_results.l_requirements:
-            writer.add_heading("Requirement", depth=2)
+            writer.add_heading("Requirement", depth=1)
             writer.add_line(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
             writer.add_line(f"**Measured Value**: {req.meas_value.value}\n\n")
             if req.req_comment is not None:
                 writer.add_line(f"**Comments**: {req.req_comment}\n\n")
             for supp_info in req.l_supp_info:
-                writer.add_heading(f"{supp_info.info_key}", depth=3, label=f"si-{supp_info_counter}")
+                writer.add_heading(f"{supp_info.info_key}", depth=2, label=f"si-{supp_info_counter}")
                 supp_info_counter += 1
                 writer.add_line(f"{supp_info.info_description}\n\n")
                 writer.add_line("```\n")

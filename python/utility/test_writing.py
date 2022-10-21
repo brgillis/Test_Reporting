@@ -363,6 +363,8 @@ class TestSummaryWriter:
                     fo.write(f"    {supp_info_index + 1}. [{supp_info.info_key}](#si-{supp_info_counter})\n")
                     supp_info_counter += 1
 
+            fo.write("\n")
+
             fo.write("## General Information\n\n")
             fo.write(f"**Test Case ID:** {test_case_results.test_id}\n\n")
             fo.write(f"**Description:** {test_case_results.test_description}\n\n")

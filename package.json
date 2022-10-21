@@ -1,0 +1,19 @@
+{
+  "name": "test_reporting",
+  "version": "1.0.0",
+  "description": "Automatic generation of reports for validation tests.",
+  "main": "index.js",
+  "directories": {
+    "python": "python",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "PYTHONPATH=`pwd`/python pytest -v tests/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.euclid-sgs.uk:bgilles/test_reporting.git"
+  },
+  "author": "Bryan Gillis",
+  "license": "LGPL"
+}

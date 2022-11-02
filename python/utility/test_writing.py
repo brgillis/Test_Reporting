@@ -401,7 +401,8 @@ class TestSummaryWriter:
         with open(qualified_test_case_filename, "w") as fo:
             writer.write(fo)
 
-    def _add_test_case_meta(self, writer, test_case_results):
+    @staticmethod
+    def _add_test_case_meta(writer, test_case_results):
         """Adds lines for the metadata associated with an individual test case to a MarkdownWriter.
 
         Parameters
@@ -435,7 +436,8 @@ class TestSummaryWriter:
         self._add_test_case_supp_info(writer, test_case_results)
         self._add_test_case_figures(writer, test_case_results)
 
-    def _add_test_case_supp_info(self, writer, test_case_results):
+    @staticmethod
+    def _add_test_case_supp_info(writer, test_case_results):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter.
 
         Parameters
@@ -462,7 +464,8 @@ class TestSummaryWriter:
                 writer.add_line(supp_info.info_value)
                 writer.add_line("```\n\n")
 
-    def _add_test_case_figures(self, writer, test_case_results):
+    @staticmethod
+    def _add_test_case_figures(writer, test_case_results):
         """Prepares figures and adds lines for them to a MarkdownWriter.
 
         Parameters

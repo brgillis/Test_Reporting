@@ -66,6 +66,55 @@ VALUE_TYPE = Union[str, Dict[str, str]]
 BUILD_FUNCTION_TYPE = Optional[Callable[[VALUE_TYPE, str], List[TestMeta]]]
 
 
+class MarkdownWriter:
+    """Class to help with writing more-complicated Markdown files which include a Table of Contents.
+    """
+
+    def __init__(self, title: str):
+        self.title = title
+        self._l_lines: List[str] = []
+        self._l_toc_lines: List[str] = []
+
+    def add_line(self, line: str):
+        """Add a standard line to be written as part of the body text of the file.
+        """
+        self._l_lines.append(line)
+
+    def add_heading(self, heading: str, depth: int = 0, label: Optional[str] = None):
+        """Add a heading line to be written, which should also be linked from the table-of contents.
+        """
+
+        # Trim any ending newlines, and beginning #s and spaces
+        while heading.endswith("\n"):
+            heading = heading[:-1]
+        while heading.startswith("#"):
+            heading = heading[1:]
+        heading = heading.strip()
+
+        if label is None:
+            label = heading.lower().replace(" ", "-")
+
+        self._l_lines.append("#" * (depth + 2) + f" {heading} <a id=\"{label}\"></a>\n\n")
+
+        self._l_toc_lines.append("  " * depth + f"1. [{heading}](#{label})\n")
+
+    def write(self, fo: TextIO):
+        """Writes out the TOC and all lines.
+        """
+
+        fo.write(f"# {self.title}\n\n")
+
+        fo.write(f"## Table of Contents\n\n")
+
+        for line in self._l_toc_lines:
+            fo.write(line)
+
+        fo.write("\n")
+
+        for line in self._l_lines:
+            fo.write(line)
+
+
 class TestSummaryWriter:
     """Class to handle writing a markdown file containing the summary of a test case. See the documentation of this
     class's __call__ method for further details.
@@ -343,54 +392,39 @@ class TestSummaryWriter:
         # Ensure the folder for this exists
         os.makedirs(os.path.split(qualified_test_case_filename)[0], exist_ok=True)
 
+        writer = MarkdownWriter(test_case_name)
+
+        writer.add_heading("General Information", depth=0)
+        writer.add_line(f"**Test Case ID:** {test_case_results.test_id}\n\n")
+        writer.add_line(f"**Description:** {test_case_results.test_description}\n\n")
+        writer.add_line(f"**Result:** {test_case_results.global_result}\n\n")
+        if test_case_results.analysis_result.ana_comment is not None:
+            writer.add_line(f"**Comments:** {test_case_results.analysis_result.ana_comment}\n\n")
+
+        # We can't guarantee that supplementary info keys will be unique between different requirements,
+        # so to ensure we have unique links for each, we keep a counter and add it to the name of each
+        supp_info_counter = 0
+
+        writer.add_heading("Detailed Results", depth=0)
+        for req in test_case_results.l_requirements:
+            writer.add_heading("Requirement", depth=1)
+            writer.add_line(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
+            writer.add_line(f"**Measured Value**: {req.meas_value.value}\n\n")
+            if req.req_comment is not None:
+                writer.add_line(f"**Comments**: {req.req_comment}\n\n")
+            for supp_info in req.l_supp_info:
+                writer.add_heading(f"{supp_info.info_key}", depth=2, label=f"si-{supp_info_counter}")
+                supp_info_counter += 1
+                writer.add_line(f"{supp_info.info_description}\n\n")
+                writer.add_line("```\n")
+                writer.add_line(supp_info.info_value)
+                writer.add_line("```\n\n")
+
+        writer.add_line(f"## Figures\n\n")
+        writer.add_line("(Automatic generation of this section is not yet ready)")
+
         with open(qualified_test_case_filename, "w") as fo:
-
-            fo.write(f"# {test_case_name}\n\n")
-
-            # Write the table of contents for this file
-            fo.write("## Table of Contents\n\n")
-
-            fo.write("1. [General Information](#general-information)\n")
-            fo.write("2. [Detailed Results](#detailed-results)\n")
-
-            # We can't guarantee that supplementary info keys will be unique between different requirements,
-            # so to ensure we have unique links for each, we keep a counter and add it to the name of each
-            supp_info_counter = 0
-
-            for req_index, req in enumerate(test_case_results.l_requirements):
-                fo.write(f"  {req_index + 1}. [Requirement: {req.req_id}](#requirement-{req.req_id.lower()})\n")
-                for supp_info_index, supp_info in enumerate(req.l_supp_info):
-                    fo.write(f"    {supp_info_index + 1}. [{supp_info.info_key}](#si-{supp_info_counter})\n")
-                    supp_info_counter += 1
-
-            fo.write("\n")
-
-            fo.write("## General Information\n\n")
-            fo.write(f"**Test Case ID:** {test_case_results.test_id}\n\n")
-            fo.write(f"**Description:** {test_case_results.test_description}\n\n")
-            fo.write(f"**Result:** {test_case_results.global_result}\n\n")
-            if test_case_results.analysis_result.ana_comment is not None:
-                fo.write(f"**Comments:** {test_case_results.analysis_result.ana_comment}\n\n")
-
-            supp_info_counter = 0
-
-            fo.write(f"## Detailed Results\n\n")
-            for req in test_case_results.l_requirements:
-                fo.write(f"### Requirement: {req.req_id}\n\n")
-                fo.write(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
-                fo.write(f"**Measured Value**: {req.meas_value.value}\n\n")
-                if req.req_comment is not None:
-                    fo.write(f"**Comments**: {req.req_comment}\n\n")
-                for supp_info in req.l_supp_info:
-                    fo.write(f"#### {supp_info.info_key} <a id=\"si-{supp_info_counter}\"></a>\n\n")
-                    supp_info_counter += 1
-                    fo.write(f"{supp_info.info_description}\n\n")
-                    fo.write("```\n")
-                    fo.write(supp_info.info_value)
-                    fo.write("```\n\n")
-
-            fo.write(f"## Figures\n\n")
-            fo.write("(Automatic generation of this section is not yet ready)")
+            writer.write(fo)
 
     def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, rootdir):
         """Writes out the summary of the test to a .md-format file. If special formatting is desired for an
@@ -456,7 +490,8 @@ class TestSummaryWriter:
         fo.write(f"**Source Pipeline:** {test_results.source_pipeline}\n\n")
 
         t = test_results.creation_date
-        fo.write(f"**Creation Date and Time:** {t.day} {t.month}, {t.year} at {t.time()}\n\n")
+        month_name = t.strftime("%b")
+        fo.write(f"**Creation Date and Time:** {t.day} {month_name}, {t.year} at {t.time()}\n\n")
 
     @staticmethod
     def _write_test_metadata(test_results, fo):
@@ -502,7 +537,10 @@ class TestSummaryWriter:
         for (test_case_meta, test_case_results) in zip(l_test_case_meta,
                                                        test_results.l_test_results):
             test_case_name = test_case_meta.name
-            html_filename = f"{test_case_meta.filename[:-3]}.html"
+
+            # Change suffix of filename from .md to .html and remove the beginning "TR/", since this will be linked from
+            # a file already in that folder
+            html_filename = f"{test_case_meta.filename[3:-3]}.html"
 
             test_line = f"| [{test_case_name}]({html_filename}) | {test_case_results.global_result} |\n"
             fo.write(test_line)

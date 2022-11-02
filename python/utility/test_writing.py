@@ -561,7 +561,7 @@ class TestSummaryWriter:
         l_figure_labels_and_filenames = read_figure_labels_and_filenames(qualified_directory_filename)
 
         # Make sure a data subdir exists in the images dir
-        os.makedirs(os.path.join(rootdir, IMAGES_SUBDIR, DATA_DIR), exist_ok=True)
+        os.makedirs(os.path.join(rootdir, PUBLIC_DIR, IMAGES_SUBDIR, DATA_DIR), exist_ok=True)
 
         # Add a subsection for each figure to the writer
         for i, (label, filename) in enumerate(l_figure_labels_and_filenames):
@@ -571,7 +571,8 @@ class TestSummaryWriter:
                 label = f"Figure #{i}"
 
             # Copy the figure to the appropriate directory and get the relative filename for it
-            shutil.copy(os.path.join(figures_tmpdir, filename), os.path.join(rootdir, IMAGES_SUBDIR, filename))
+            shutil.copy(os.path.join(figures_tmpdir, filename),
+                        os.path.join(rootdir, PUBLIC_DIR, IMAGES_SUBDIR, filename))
             relative_figure_filename = f"../{IMAGES_SUBDIR}/{filename}"
 
             writer.add_heading(label, depth=1)

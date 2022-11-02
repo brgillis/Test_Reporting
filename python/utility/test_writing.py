@@ -209,13 +209,13 @@ class TestSummaryWriter:
         return l_test_meta
 
     @staticmethod
-    def _make_tmpdir(results_tarball_filename, rootdir):
-        """We'll need a temporary directory to extract files into, so create one. To minimize the risk of clashes in
-        case of future parallelization, we name it via hashing the filename
+    def _make_tmpdir(hashable, rootdir):
+        """We'll need a temporary directory to extract files into, so create one. Some unique hashable object must be
+        provided, whose hash will be used to generate a presumably-unique directory name.
 
         Parameters
         ----------
-        results_tarball_filename : str
+        hashable : Any
         rootdir : str
 
         Returns
@@ -225,7 +225,7 @@ class TestSummaryWriter:
 
         """
 
-        tmpdir = "tmp_" + hash_any(results_tarball_filename, max_length=TMPDIR_MAXLEN)
+        tmpdir = "tmp_" + hash_any(hashable, max_length=TMPDIR_MAXLEN)
 
         # If this already exists, raise an exception - better to fail then to run into unexpected results from thread
         # clashes
@@ -396,7 +396,7 @@ class TestSummaryWriter:
 
         self._add_test_case_meta(writer, test_case_results)
 
-        self._add_test_case_info_and_figures(test_case_results, writer)
+        self._add_test_case_info_and_figures(test_case_results, writer, rootdir)
 
         with open(qualified_test_case_filename, "w") as fo:
             writer.write(fo)
@@ -419,7 +419,7 @@ class TestSummaryWriter:
         if test_case_results.analysis_result.ana_comment is not None:
             writer.add_line(f"**Comments:** {test_case_results.analysis_result.ana_comment}\n\n")
 
-    def _add_test_case_info_and_figures(self, test_case_results, writer):
+    def _add_test_case_info_and_figures(self, test_case_results, writer, rootdir):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
         prepares figures, and also adds lines for them.
 
@@ -431,10 +431,11 @@ class TestSummaryWriter:
         ----------
         writer : MarkdownWriter
         test_case_results : SingleTestResult
+        rootdir : str
         """
 
         self._add_test_case_supp_info(writer, test_case_results)
-        self._add_test_case_figures(writer, test_case_results)
+        self._add_test_case_figures(writer, test_case_results, rootdir)
 
     @staticmethod
     def _add_test_case_supp_info(writer, test_case_results):
@@ -464,18 +465,28 @@ class TestSummaryWriter:
                 writer.add_line(supp_info.info_value)
                 writer.add_line("```\n\n")
 
-    @staticmethod
-    def _add_test_case_figures(writer, test_case_results):
+    def _add_test_case_figures(self, writer, test_case_results, rootdir):
         """Prepares figures and adds lines for them to a MarkdownWriter.
 
         Parameters
         ----------
         writer : MarkdownWriter
         test_case_results : SingleTestResult
+        rootdir : str
         """
 
-        writer.add_line(f"## Figures\n\n")
+        writer.add_heading("Figures", depth=0)
         writer.add_line("(Automatic generation of this section is not yet ready)")
+
+        ana_result = test_case_results.analysis_result
+
+        figures_tmpdir = self._make_tmpdir(ana_result, rootdir)
+
+        # We use a try-finally block here to ensure the created tmpdir is removed after use
+        try:
+            qualified_results_tarball_filename = os.path.join(rootdir, DATA_DIR, results_tarball_filename)
+        finally:
+            shutil.rmtree(figures_tmpdir)
 
     def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, rootdir):
         """Writes out the summary of the test to a .md-format file. If special formatting is desired for an

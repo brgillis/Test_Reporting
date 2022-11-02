@@ -533,17 +533,35 @@ class TestSummaryWriter:
 
         writer.add_heading("Figures", depth=0)
 
-        # Extract the textfiles and figures tarballs
-        qualified_figures_tarball_filename = os.path.join(tmpdir, DATA_DIR, ana_result.figures_tarball)
-        extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)
+        # Check if any figures are present
+        if ana_result.figures_tarball is None or ana_result.textfiles_tarball is None:
+            writer.add_line("N/A\n\n")
 
-        qualified_textfiles_tarball_filename = os.path.join(tmpdir, DATA_DIR, ana_result.textfiles_tarball)
+        # Extract the textfiles and figures tarballs
+        qualified_figures_tarball_filename = os.path.join(tmpdir, ana_result.figures_tarball)
+
+        if not os.path.isfile(qualified_figures_tarball_filename):
+            writer.add_line(f"**ERROR:** Figures tarball {qualified_figures_tarball_filename} expected but not "
+                            f"present.")
+            return
+
+        qualified_textfiles_tarball_filename = os.path.join(tmpdir, ana_result.textfiles_tarball)
+
+        if not os.path.isfile(qualified_textfiles_tarball_filename):
+            writer.add_line(f"**ERROR:** Textfiles tarball {qualified_textfiles_tarball_filename} expected but not "
+                            f"present.")
+            return
+
+        extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)
         extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)
 
         # Find the "directory" file which should have been in the tarball, and get the labels and filenames of
         # figures from it
         qualified_directory_filename = find_directory_filename(figures_tmpdir)
         l_figure_labels_and_filenames = read_figure_labels_and_filenames(qualified_directory_filename)
+
+        # Make sure a data subdir exists in the images dir
+        os.makedirs(os.path.join(rootdir, IMAGES_SUBDIR, DATA_DIR), exist_ok=True)
 
         # Add a subsection for each figure to the writer
         for i, (label, filename) in enumerate(l_figure_labels_and_filenames):

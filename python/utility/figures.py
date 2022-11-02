@@ -28,7 +28,7 @@ DIRECTORY_SEPARATOR = ": "
 
 
 def find_directory_filename(figures_tmpdir):
-    """
+    """Searches through a directory to find a possible directory file (which contains labels and filenames of figures).
 
     Parameters
     ----------
@@ -48,7 +48,7 @@ def find_directory_filename(figures_tmpdir):
 
     # Check we have exactly one possibility, otherwise raise an exception
     if len(l_possible_directory_filenames) == 1:
-        return l_possible_directory_filenames[0]
+        return os.path.join(figures_tmpdir, l_possible_directory_filenames[0])
     elif len(l_possible_directory_filenames) == 0:
         raise FileNotFoundError(f"No identifiable directory file found in directory {figures_tmpdir}.")
     else:
@@ -93,6 +93,8 @@ def read_figure_labels_and_filenames(qualified_directory_filename):
             figure_label, figure_filename = directory_line.split(DIRECTORY_SEPARATOR)
         else:
             figure_filename = directory_line
-        l_figure_labels_and_filenames.append((figure_label, figure_filename))
+
+        if figure_filename is not None and figure_filename != "None":
+            l_figure_labels_and_filenames.append((figure_label, figure_filename))
 
     return l_figure_labels_and_filenames

@@ -394,6 +394,23 @@ class TestSummaryWriter:
 
         writer = MarkdownWriter(test_case_name)
 
+        self._add_test_case_meta(writer, test_case_results)
+
+        self._add_test_case_info_and_figures(test_case_results, writer)
+
+        with open(qualified_test_case_filename, "w") as fo:
+            writer.write(fo)
+
+    def _add_test_case_meta(self, writer, test_case_results):
+        """Adds lines for the metadata associated with an individual test case to a MarkdownWriter.
+
+        Parameters
+        ----------
+        writer : MarkdownWriter
+            The writer object set up to write a markdown report on a test case
+        test_case_results : SingleTestResult
+        """
+
         writer.add_heading("General Information", depth=0)
         writer.add_line(f"**Test Case ID:** {test_case_results.test_id}\n\n")
         writer.add_line(f"**Description:** {test_case_results.test_description}\n\n")
@@ -401,10 +418,35 @@ class TestSummaryWriter:
         if test_case_results.analysis_result.ana_comment is not None:
             writer.add_line(f"**Comments:** {test_case_results.analysis_result.ana_comment}\n\n")
 
+    def _add_test_case_info_and_figures(self, test_case_results, writer):
+        """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
+        prepares figures, and also adds lines for them.
+
+        In the default implementation, this method performs these tasks sequentially and separately since nothing
+        can be assumed about how the supplementary info and figures relate. In child classes where the relationship is
+        know, this may be overridden to handle the two together if desired.
+
+        Parameters
+        ----------
+        writer : MarkdownWriter
+        test_case_results : SingleTestResult
+        """
+
+        self._add_test_case_supp_info(writer, test_case_results)
+        self._add_test_case_figures(writer, test_case_results)
+
+    def _add_test_case_supp_info(self, writer, test_case_results):
+        """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter.
+
+        Parameters
+        ----------
+        writer : MarkdownWriter
+        test_case_results : SingleTestResult
+        """
+
         # We can't guarantee that supplementary info keys will be unique between different requirements,
         # so to ensure we have unique links for each, we keep a counter and add it to the name of each
         supp_info_counter = 0
-
         writer.add_heading("Detailed Results", depth=0)
         for req in test_case_results.l_requirements:
             writer.add_heading("Requirement", depth=1)
@@ -420,11 +462,17 @@ class TestSummaryWriter:
                 writer.add_line(supp_info.info_value)
                 writer.add_line("```\n\n")
 
+    def _add_test_case_figures(self, writer, test_case_results):
+        """Prepares figures and adds lines for them to a MarkdownWriter.
+
+        Parameters
+        ----------
+        writer : MarkdownWriter
+        test_case_results : SingleTestResult
+        """
+
         writer.add_line(f"## Figures\n\n")
         writer.add_line("(Automatic generation of this section is not yet ready)")
-
-        with open(qualified_test_case_filename, "w") as fo:
-            writer.write(fo)
 
     def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, rootdir):
         """Writes out the summary of the test to a .md-format file. If special formatting is desired for an

@@ -27,17 +27,23 @@ from __future__ import annotations
 import os
 import shutil
 from logging import getLogger
-from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Union
+from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tuple, Union
 
-from utility.constants import DATA_DIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
+from utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
 from utility.misc import extract_tarball, hash_any
 from utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
-    from utility.product_parsing import SingleTestResult, TestResults  # noqa F401
+    from utility.product_parsing import AnalysisResult, SingleTestResult, TestResults  # noqa F401
     from typing import Sequence, TextIO  # noqa F401
 
+ERROR_LABEL = "**ERROR:** "
+
 TMPDIR_MAXLEN = 16
+
+DIRECTORY_EXT = ".txt"
+DIRECTORY_FIGURES_HEADER = "# Figures:"
+DIRECTORY_SEPARATOR = ": "
 
 logger = getLogger(__name__)
 
@@ -209,13 +215,13 @@ class TestSummaryWriter:
         return l_test_meta
 
     @staticmethod
-    def _make_tmpdir(results_tarball_filename, rootdir):
-        """We'll need a temporary directory to extract files into, so create one. To minimize the risk of clashes in
-        case of future parallelization, we name it via hashing the filename
+    def _make_tmpdir(hashable, rootdir):
+        """We'll need a temporary directory to extract files into, so create one. Some unique hashable object must be
+        provided, whose hash will be used to generate a presumably-unique directory name.
 
         Parameters
         ----------
-        results_tarball_filename : str
+        hashable : Any
         rootdir : str
 
         Returns
@@ -225,7 +231,7 @@ class TestSummaryWriter:
 
         """
 
-        tmpdir = "tmp_" + hash_any(results_tarball_filename, max_length=TMPDIR_MAXLEN)
+        tmpdir = "tmp_" + hash_any(hashable, max_length=TMPDIR_MAXLEN)
 
         # If this already exists, raise an exception - better to fail then to run into unexpected results from thread
         # clashes
@@ -287,7 +293,10 @@ class TestSummaryWriter:
 
             # We write the pages for the test cases first, so we know about and can link to them from the test
             # summary page
-            l_test_case_meta = self._write_all_test_case_results(test_results, test_name_tail, rootdir)
+            l_test_case_meta = self._write_all_test_case_results(test_results=test_results,
+                                                                 test_name_tail=test_name_tail,
+                                                                 rootdir=rootdir,
+                                                                 tmpdir=qualified_tmpdir)
 
             # Calculate the number of test cases which passed and the number which failed
             num_passed = sum([1 for x in l_test_case_meta if x.passed])
@@ -327,7 +336,7 @@ class TestSummaryWriter:
 
         return l_product_filenames
 
-    def _write_all_test_case_results(self, test_results, test_name_tail, rootdir):
+    def _write_all_test_case_results(self, test_results, test_name_tail, rootdir, tmpdir):
         """Writes out the results of all test cases to a .md-format file.
 
         Parameters
@@ -338,6 +347,7 @@ class TestSummaryWriter:
             The extra "tail" added to the end of the test name, which will also be added to the end of all test case
             names.
         rootdir : str
+        tmpdir : str
 
         Returns
         -------
@@ -366,11 +376,20 @@ class TestSummaryWriter:
                                                                         "PASSED")))
 
             # Now we defer to a sub-method to write the results, so the formatting in that bit can be easily overridden
-            self._write_individual_test_case_results(test_case_results, test_case_name, test_case_filename, rootdir)
+            self._write_individual_test_case_results(test_case_results=test_case_results,
+                                                     test_case_name=test_case_name,
+                                                     test_case_filename=test_case_filename,
+                                                     rootdir=rootdir,
+                                                     tmpdir=tmpdir)
 
         return l_test_case_names_and_filenames
 
-    def _write_individual_test_case_results(self, test_case_results, test_case_name, test_case_filename, rootdir):
+    def _write_individual_test_case_results(self,
+                                            test_case_results,
+                                            test_case_name,
+                                            test_case_filename,
+                                            rootdir,
+                                            tmpdir):
         """Writes out the results of all test cases to a .md-format file. If special formatting is desired for an
         individual test case, this method can be overridden.
 
@@ -385,6 +404,7 @@ class TestSummaryWriter:
             The desired filename for the report on this test case. This should be relative to the "public" directory
             in the rootdir and unique for each test case.
         rootdir : str
+        tmpdir : str
         """
 
         qualified_test_case_filename = os.path.join(rootdir, PUBLIC_DIR, test_case_filename)
@@ -394,6 +414,24 @@ class TestSummaryWriter:
 
         writer = MarkdownWriter(test_case_name)
 
+        self._add_test_case_meta(writer, test_case_results)
+
+        self._add_test_case_info_and_figures(test_case_results, writer, rootdir, tmpdir)
+
+        with open(qualified_test_case_filename, "w") as fo:
+            writer.write(fo)
+
+    @staticmethod
+    def _add_test_case_meta(writer, test_case_results):
+        """Adds lines for the metadata associated with an individual test case to a MarkdownWriter.
+
+        Parameters
+        ----------
+        writer : MarkdownWriter
+            The writer object set up to write a markdown report on a test case
+        test_case_results : SingleTestResult
+        """
+
         writer.add_heading("General Information", depth=0)
         writer.add_line(f"**Test Case ID:** {test_case_results.test_id}\n\n")
         writer.add_line(f"**Description:** {test_case_results.test_description}\n\n")
@@ -401,10 +439,72 @@ class TestSummaryWriter:
         if test_case_results.analysis_result.ana_comment is not None:
             writer.add_line(f"**Comments:** {test_case_results.analysis_result.ana_comment}\n\n")
 
+    def _add_test_case_info_and_figures(self, test_case_results, writer, rootdir, tmpdir):
+        """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
+        prepares figures, and also adds lines for them.
+
+        Parameters
+        ----------
+        writer : MarkdownWriter
+        test_case_results : SingleTestResult
+        rootdir : str
+        tmpdir : str
+        """
+
+        # Make a new tmpdir within the existing tmpdir for this batch of figures and textfiles (to avoid name clashes
+        # with other test cases)
+        figures_tmpdir = self._make_tmpdir(test_case_results, tmpdir)
+
+        try:
+            self._add_test_case_supp_info_and_figures_with_tmpdir(writer, test_case_results, rootdir, tmpdir,
+                                                                  figures_tmpdir)
+        finally:
+            shutil.rmtree(figures_tmpdir)
+
+    def _add_test_case_supp_info_and_figures_with_tmpdir(self,
+                                                         writer,
+                                                         test_case_results,
+                                                         rootdir,
+                                                         tmpdir,
+                                                         figures_tmpdir):
+        """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
+        prepares figures, and also adds lines for them, after a temporary directory has been created to store figures
+        data.
+
+        In the default implementation, this method performs these tasks sequentially and separately since nothing
+        can be assumed about how the supplementary info and figures relate. In child classes where the relationship is
+        know, this may be overridden to handle the two together if desired.
+
+        Parameters
+        ----------
+        writer : MarkdownWriter
+        test_case_results : SingleTestResult
+        rootdir : str
+        tmpdir : str
+            The fully-qualified path to the temporary directory containing all data for this test.
+        figures_tmpdir : str
+            The fully-qualified path to the temporary directory set up to contain figures data for this test case.
+        """
+        self._add_test_case_supp_info(writer, test_case_results)
+        self._add_test_case_figures(writer=writer,
+                                    ana_result=test_case_results.analysis_result,
+                                    rootdir=rootdir,
+                                    tmpdir=tmpdir,
+                                    figures_tmpdir=figures_tmpdir)
+
+    @staticmethod
+    def _add_test_case_supp_info(writer, test_case_results):
+        """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter.
+
+        Parameters
+        ----------
+        writer : MarkdownWriter
+        test_case_results : SingleTestResult
+        """
+
         # We can't guarantee that supplementary info keys will be unique between different requirements,
         # so to ensure we have unique links for each, we keep a counter and add it to the name of each
         supp_info_counter = 0
-
         writer.add_heading("Detailed Results", depth=0)
         for req in test_case_results.l_requirements:
             writer.add_heading("Requirement", depth=1)
@@ -420,11 +520,144 @@ class TestSummaryWriter:
                 writer.add_line(supp_info.info_value)
                 writer.add_line("```\n\n")
 
-        writer.add_line(f"## Figures\n\n")
-        writer.add_line("(Automatic generation of this section is not yet ready)")
+    def _add_test_case_figures(self, writer, ana_result, rootdir, tmpdir, figures_tmpdir):
+        """Prepares figures and adds lines for them to a MarkdownWriter, after a new temporary directory has been
+        created to store extracted files in.
 
-        with open(qualified_test_case_filename, "w") as fo:
-            writer.write(fo)
+        Parameters
+        ----------
+        writer : MarkdownWriter
+        ana_result : AnalysisResult
+            The AnalysisResult object containing the filenames of textfiles and figures tarballs for this test case.
+        rootdir : str
+        tmpdir : str
+            The fully-qualified path to the temporary directory containing all data for this test.
+        figures_tmpdir : str
+            The fully-qualified path to the temporary directory set up to contain figures data for this test case.
+        """
+
+        writer.add_heading("Figures", depth=0)
+
+        # Check if any figures are present
+        if ana_result.figures_tarball is None or ana_result.textfiles_tarball is None:
+            writer.add_line("N/A\n\n")
+
+        # Extract the textfiles and figures tarballs
+        qualified_figures_tarball_filename = os.path.join(tmpdir, ana_result.figures_tarball)
+
+        if not os.path.isfile(qualified_figures_tarball_filename):
+            writer.add_line(f"{ERROR_LABEL}Figures tarball {qualified_figures_tarball_filename} expected but not "
+                            f"present.\n\n")
+            return
+
+        qualified_textfiles_tarball_filename = os.path.join(tmpdir, ana_result.textfiles_tarball)
+
+        if not os.path.isfile(qualified_textfiles_tarball_filename):
+            writer.add_line(f"{ERROR_LABEL}Textfiles tarball {qualified_textfiles_tarball_filename} expected but not "
+                            f"present.\n\n")
+            return
+
+        extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)
+        extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)
+
+        # Find the "directory" file which should have been in the tarball, and get the labels and filenames of
+        # figures from it
+        qualified_directory_filename = self.find_directory_filename(figures_tmpdir)
+        l_figure_labels_and_filenames = self.read_figure_labels_and_filenames(qualified_directory_filename)
+
+        # Make sure a data subdir exists in the images dir
+        os.makedirs(os.path.join(rootdir, PUBLIC_DIR, IMAGES_SUBDIR, DATA_DIR), exist_ok=True)
+
+        # Add a subsection for each figure to the writer
+        for i, (label, filename) in enumerate(l_figure_labels_and_filenames):
+
+            # Make a label if we don't have one
+            if label is None:
+                label = f"Figure #{i}"
+
+            # Copy the figure to the appropriate directory and get the relative filename for it
+            shutil.copy(os.path.join(figures_tmpdir, filename),
+                        os.path.join(rootdir, PUBLIC_DIR, IMAGES_SUBDIR, filename))
+            relative_figure_filename = f"../{IMAGES_SUBDIR}/{filename}"
+
+            writer.add_heading(label, depth=1)
+            writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
+
+    @staticmethod
+    def find_directory_filename(figures_tmpdir):
+        """Searches through a directory to find a possible directory file (which contains labels and filenames of
+        figures).
+
+        Parameters
+        ----------
+        figures_tmpdir : str
+
+        Returns
+        -------
+        qualified_directory_filename : str
+        """
+
+        l_filenames = os.listdir(figures_tmpdir)
+
+        l_possible_directory_filenames: List[str] = []
+        for filename in l_filenames:
+            if filename.endswith(DIRECTORY_EXT):
+                l_possible_directory_filenames.append(filename)
+
+        # Check we have exactly one possibility, otherwise raise an exception
+        if len(l_possible_directory_filenames) == 1:
+            return os.path.join(figures_tmpdir, l_possible_directory_filenames[0])
+        elif len(l_possible_directory_filenames) == 0:
+            raise FileNotFoundError(f"No identifiable directory file found in directory {figures_tmpdir}.")
+        else:
+            raise ValueError(
+                f"Multiple possible directory files found in directory {figures_tmpdir}: "
+                f"{l_possible_directory_filenames}")
+
+    @staticmethod
+    def read_figure_labels_and_filenames(qualified_directory_filename):
+        """Reads a directory file, and returns a list of figure labels and filenames. Note that any figure label
+        might be
+        None if it's not supplied in the directory file.
+
+        Parameters
+        ----------
+        qualified_directory_filename : str
+            The fully-qualified path to the directory file.
+
+        Returns
+        -------
+        l_figure_labels_and_filenames: List[Tuple[str or None, str]]
+        """
+
+        # Use the directory to find labels for figures, if it has them. Otherwise, just use it as a list of the figures
+        with open(qualified_directory_filename, "r") as fi:
+            l_directory_lines = fi.readlines()
+
+        l_figure_labels_and_filenames: List[Tuple[Optional[str], str]] = []
+        figures_section_started = False
+        for directory_line in l_directory_lines:
+            directory_line = directory_line.strip()
+
+            # If we haven't started the figures section, check for the header which starts it and then start reading
+            # on the next iteration
+            if not figures_section_started:
+                if directory_line == DIRECTORY_FIGURES_HEADER:
+                    figures_section_started = True
+                continue
+
+            # If we get here, we're in the figures section
+            figure_label: Optional[str] = None
+            figure_filename: str
+            if DIRECTORY_SEPARATOR in directory_line:
+                figure_label, figure_filename = directory_line.split(DIRECTORY_SEPARATOR)
+            else:
+                figure_filename = directory_line
+
+            if figure_filename is not None and figure_filename != "None":
+                l_figure_labels_and_filenames.append((figure_label, figure_filename))
+
+        return l_figure_labels_and_filenames
 
     def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, rootdir):
         """Writes out the summary of the test to a .md-format file. If special formatting is desired for an

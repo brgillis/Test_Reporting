@@ -21,13 +21,39 @@ Unit tests of writing test reports.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import os
-from typing import Set
+import re
+from typing import List, Set, TYPE_CHECKING
+
+import pytest
 
 from testing.common import TEST_TARBALL_FILENAME
 from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.test_writing import TestSummaryWriter
+from utility.test_writing import (DIRECTORY_EXT, DIRECTORY_FIGURES_HEADER, DIRECTORY_SEPARATOR, ERROR_LABEL,
+                                  TestSummaryWriter, )
+
+if TYPE_CHECKING:
+    from py.path import local  # noqa F401
 
 EX_N_TEST_CASES = 24
+
+L_COMMON_MOCK_UNPACKED_FILENAMES = ["foo.bar",
+                                    "foo2.bar"
+                                    "foobar.foobar",
+                                    f"foo{DIRECTORY_EXT}.gz"]
+EX_DIRECTORY_FILENAME = f"foo{DIRECTORY_EXT}"
+EX_EXTRA_DIRECTORY_FILENAME = f"foo2{DIRECTORY_EXT}"
+
+L_MOCK_DIRECTORY_LABELS_AND_FILENAMES = [("foo", "foo.jpeg"),
+                                         ("bar", "bar.png"),
+                                         (None, "foobar.jpeg"),
+                                         (None, "foobar.png")]
+
+
+def _touch_file(qualified_filename: str) -> None:
+    """Creates an empty file with the give fully-qualified filename.
+    """
+    with open(qualified_filename, "w"):
+        pass
 
 
 def test_write_summary(project_copy):
@@ -81,10 +107,115 @@ def test_write_summary(project_copy):
         assert os.path.isfile(qualified_test_case_filename)
 
         # Read in the file and check the data in it
+        l_lines: List[str]
         with open(qualified_test_case_filename, "r") as fi:
             l_lines = fi.readlines()
-            assert l_lines[0] == f"# {test_case_name}\n"
-            assert l_lines[1] == "\n"
-            assert l_lines[2] == "## Table of Contents\n"
-            # We don't do in-depth checks pas this, as we don't want to make it too burdensome to update this test
-            # whenever the format is changed
+
+        assert l_lines[0] == f"# {test_case_name}\n"
+        assert l_lines[1] == "\n"
+        assert l_lines[2] == "## Table of Contents\n"
+        assert l_lines[-1] == "\n"
+
+        # The second-to-last line should be a figure, "N/A", or start with "**ERROR**". Check that it matches the
+        # expected format and any file that it points to exists
+
+        regex_match = re.match(r"^!\[(.*)]\(([a-zA-Z0-9./_\-]+)\)\n$", l_lines[-2])
+        if not regex_match:
+            assert l_lines[-2] == "N/A\n" or l_lines[-2].startswith(ERROR_LABEL)
+        else:
+            figure_label, figure_filename = regex_match.groups()
+
+            # Check that the label matches the section label
+            assert l_lines[-4].startswith(f"### {figure_label}")
+
+            test_case_path = os.path.split(qualified_test_case_filename)[0]
+            assert os.path.isfile(os.path.join(test_case_path, figure_filename))
+
+
+@pytest.fixture
+def mock_unpacked_dir(tmpdir):
+    """A Pytest fixture providing a directory containing a mock set of unpacked files.
+
+    Parameters
+    ----------
+    tmpdir : local
+        pytest's `tmpdir` fixture
+
+    Returns
+    -------
+    mock_unpacked_dir : str
+        Fully-qualified path to the directory containing mock unpacked data.
+    """
+
+    # Create empty files with the list of common filenames
+    for filename in L_COMMON_MOCK_UNPACKED_FILENAMES:
+        _touch_file(os.path.join(tmpdir, filename))
+
+    return tmpdir.strpath
+
+
+def test_find_directory_filename(mock_unpacked_dir):
+    """Unit test of the `TestSummaryWriter.find_directory_filename` method.
+
+    Parameters
+    ----------
+    mock_unpacked_dir : str
+        Pytest fixture providing the fully-qualified filename of a directory prepared with some mock files. This is
+        set up so that none of these files initially have the expected directory extension.
+    """
+
+    # As initially set up, there shouldn't be a directory, so check we get the expected exception
+    with pytest.raises(FileNotFoundError):
+        TestSummaryWriter.find_directory_filename(mock_unpacked_dir)
+
+    # Add a file with an appropriate filename and check that we find it
+    qualified_directory_filename = os.path.join(mock_unpacked_dir, EX_DIRECTORY_FILENAME)
+    _touch_file(qualified_directory_filename)
+    assert TestSummaryWriter.find_directory_filename(mock_unpacked_dir) == qualified_directory_filename
+
+    # Add an extra file with an appropriate filename and check that we get the expected exception from having too
+    # many candidate files
+    _touch_file(os.path.join(mock_unpacked_dir, EX_EXTRA_DIRECTORY_FILENAME))
+    with pytest.raises(ValueError):
+        TestSummaryWriter.find_directory_filename(mock_unpacked_dir)
+
+
+@pytest.fixture
+def mock_directory_file(tmpdir):
+    """A Pytest fixture providing a mock directory file.
+
+    Parameters
+    ----------
+    tmpdir : local
+
+    Returns
+    -------
+    mock_directory_file : str
+        Fully-qualified path to the generated mock directory file.
+    """
+
+    qualified_directory_filename = os.path.join(tmpdir, f"mock_dir{DIRECTORY_EXT}")
+
+    with open(qualified_directory_filename, 'w') as fo:
+        fo.write(f"{DIRECTORY_FIGURES_HEADER}\n")
+        for label, filename in L_MOCK_DIRECTORY_LABELS_AND_FILENAMES:
+            if label is None:
+                fo.write(f"{filename}\n")
+            else:
+                fo.write(f"{label}{DIRECTORY_SEPARATOR}{filename}\n")
+
+    return qualified_directory_filename
+
+
+def test_read_figure_labels_and_filenames(mock_directory_file):
+    """Unit test of the `TestSummaryWriter.read_figure_labels_and_filenames` method.
+
+    Parameters
+    ----------
+    mock_directory_file : str
+        Pytest fixture providing the filename of a mock directory file set up for this test.
+    """
+
+    l_labels_and_filenames = TestSummaryWriter.read_figure_labels_and_filenames(mock_directory_file)
+
+    assert l_labels_and_filenames == L_MOCK_DIRECTORY_LABELS_AND_FILENAMES

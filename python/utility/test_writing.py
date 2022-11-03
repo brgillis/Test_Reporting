@@ -37,6 +37,8 @@ if TYPE_CHECKING:
     from utility.product_parsing import AnalysisResult, SingleTestResult, TestResults  # noqa F401
     from typing import Sequence, TextIO  # noqa F401
 
+ERROR_LABEL = "**ERROR:** "
+
 TMPDIR_MAXLEN = 16
 
 DIRECTORY_EXT = ".txt"
@@ -544,15 +546,15 @@ class TestSummaryWriter:
         qualified_figures_tarball_filename = os.path.join(tmpdir, ana_result.figures_tarball)
 
         if not os.path.isfile(qualified_figures_tarball_filename):
-            writer.add_line(f"**ERROR:** Figures tarball {qualified_figures_tarball_filename} expected but not "
-                            f"present.")
+            writer.add_line(f"{ERROR_LABEL}Figures tarball {qualified_figures_tarball_filename} expected but not "
+                            f"present.\n\n")
             return
 
         qualified_textfiles_tarball_filename = os.path.join(tmpdir, ana_result.textfiles_tarball)
 
         if not os.path.isfile(qualified_textfiles_tarball_filename):
-            writer.add_line(f"**ERROR:** Textfiles tarball {qualified_textfiles_tarball_filename} expected but not "
-                            f"present.")
+            writer.add_line(f"{ERROR_LABEL}Textfiles tarball {qualified_textfiles_tarball_filename} expected but not "
+                            f"present.\n\n")
             return
 
         extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)

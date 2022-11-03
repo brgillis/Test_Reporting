@@ -21,13 +21,15 @@ Unit tests of writing test reports.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import os
-from typing import Set, TYPE_CHECKING
+import re
+from typing import List, Set, TYPE_CHECKING
 
 import pytest
 
 from testing.common import TEST_TARBALL_FILENAME
 from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.test_writing import DIRECTORY_EXT, DIRECTORY_FIGURES_HEADER, DIRECTORY_SEPARATOR, TestSummaryWriter
+from utility.test_writing import (DIRECTORY_EXT, DIRECTORY_FIGURES_HEADER, DIRECTORY_SEPARATOR, ERROR_LABEL,
+                                  TestSummaryWriter, )
 
 if TYPE_CHECKING:
     from py.path import local  # noqa F401
@@ -105,13 +107,29 @@ def test_write_summary(project_copy):
         assert os.path.isfile(qualified_test_case_filename)
 
         # Read in the file and check the data in it
+        l_lines: List[str]
         with open(qualified_test_case_filename, "r") as fi:
             l_lines = fi.readlines()
-            assert l_lines[0] == f"# {test_case_name}\n"
-            assert l_lines[1] == "\n"
-            assert l_lines[2] == "## Table of Contents\n"
-            # We don't do in-depth checks pas this, as we don't want to make it too burdensome to update this test
-            # whenever the format is changed
+
+        assert l_lines[0] == f"# {test_case_name}\n"
+        assert l_lines[1] == "\n"
+        assert l_lines[2] == "## Table of Contents\n"
+        assert l_lines[-1] == "\n"
+
+        # The second-to-last line should be a figure, "N/A", or start with "**ERROR**". Check that it matches the
+        # expected format and any file that it points to exists
+
+        regex_match = re.match(r"^!\[(.*)]\(([a-zA-Z0-9./_\-]+)\)\n$", l_lines[-2])
+        if not regex_match:
+            assert l_lines[-2] == "N/A\n" or l_lines[-2].startswith(ERROR_LABEL)
+        else:
+            figure_label, figure_filename = regex_match.groups()
+
+            # Check that the label matches the section label
+            assert l_lines[-4].startswith(f"### {figure_label}")
+
+            test_case_path = os.path.split(qualified_test_case_filename)[0]
+            assert os.path.isfile(os.path.join(test_case_path, figure_filename))
 
 
 @pytest.fixture

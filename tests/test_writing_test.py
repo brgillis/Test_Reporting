@@ -21,13 +21,32 @@ Unit tests of writing test reports.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import os
-from typing import Set
+from typing import Set, TYPE_CHECKING
+
+import pytest
 
 from testing.common import TEST_TARBALL_FILENAME
 from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.test_writing import TestSummaryWriter
+from utility.test_writing import DIRECTORY_EXT, TestSummaryWriter
+
+if TYPE_CHECKING:
+    from py.path import local  # noqa F401
 
 EX_N_TEST_CASES = 24
+
+L_COMMON_MOCK_UNPACKED_FILENAMES = ["foo.bar",
+                                    "foo2.bar"
+                                    "foobar.foobar",
+                                    f"foo{DIRECTORY_EXT}.gz"]
+EX_DIRECTORY_FILENAME = f"foo{DIRECTORY_EXT}"
+EX_EXTRA_DIRECTORY_FILENAME = f"foo2{DIRECTORY_EXT}"
+
+
+def _touch_file(qualified_filename: str) -> None:
+    """Creates an empty file with the give fully-qualified filename.
+    """
+    with open(qualified_filename, "w"):
+        pass
 
 
 def test_write_summary(project_copy):
@@ -88,3 +107,51 @@ def test_write_summary(project_copy):
             assert l_lines[2] == "## Table of Contents\n"
             # We don't do in-depth checks pas this, as we don't want to make it too burdensome to update this test
             # whenever the format is changed
+
+
+@pytest.fixture
+def mock_unpacked_dir(tmpdir):
+    """A Pytest fixture providing a directory containing a mock set of unpacked files.
+
+    Parameters
+    ----------
+    tmpdir : local
+        pytest's `tmpdir` fixture
+
+    Returns
+    -------
+    mock_unpacked_dir : str
+        Fully-qualified path to the directory containing mock unpacked data.
+    """
+
+    # Create empty files with the list of common filenames
+    for filename in L_COMMON_MOCK_UNPACKED_FILENAMES:
+        _touch_file(os.path.join(tmpdir, filename))
+
+    return tmpdir.strpath
+
+
+def test_find_directory_filename(mock_unpacked_dir):
+    """Unit test of the `TestSummaryWriter.find_directory_filename` method.
+
+    Parameters
+    ----------
+    mock_unpacked_dir : str
+        Pytest fixture providing the fully-qualified filename of a directory prepared with some mock files. This is
+        set up so that none of these files initially have the expected directory extension.
+    """
+
+    # As initially set up, there shouldn't be a directory, so check we get the expected exception
+    with pytest.raises(FileNotFoundError):
+        TestSummaryWriter.find_directory_filename(mock_unpacked_dir)
+
+    # Add a file with an appropriate filename and check that we find it
+    qualified_directory_filename = os.path.join(mock_unpacked_dir, EX_DIRECTORY_FILENAME)
+    _touch_file(qualified_directory_filename)
+    assert TestSummaryWriter.find_directory_filename(mock_unpacked_dir) == qualified_directory_filename
+
+    # Add an extra file with an appropriate filename and check that we get the expected exception from having too
+    # many candidate files
+    _touch_file(os.path.join(mock_unpacked_dir, EX_EXTRA_DIRECTORY_FILENAME))
+    with pytest.raises(ValueError):
+        TestSummaryWriter.find_directory_filename(mock_unpacked_dir)

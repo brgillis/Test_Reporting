@@ -27,7 +27,7 @@ import pytest
 
 from testing.common import TEST_TARBALL_FILENAME
 from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.test_writing import DIRECTORY_EXT, TestSummaryWriter
+from utility.test_writing import DIRECTORY_EXT, DIRECTORY_FIGURES_HEADER, DIRECTORY_SEPARATOR, TestSummaryWriter
 
 if TYPE_CHECKING:
     from py.path import local  # noqa F401
@@ -40,6 +40,11 @@ L_COMMON_MOCK_UNPACKED_FILENAMES = ["foo.bar",
                                     f"foo{DIRECTORY_EXT}.gz"]
 EX_DIRECTORY_FILENAME = f"foo{DIRECTORY_EXT}"
 EX_EXTRA_DIRECTORY_FILENAME = f"foo2{DIRECTORY_EXT}"
+
+L_MOCK_DIRECTORY_LABELS_AND_FILENAMES = [("foo", "foo.jpeg"),
+                                         ("bar", "bar.png"),
+                                         (None, "foobar.jpeg"),
+                                         (None, "foobar.png")]
 
 
 def _touch_file(qualified_filename: str) -> None:
@@ -155,3 +160,44 @@ def test_find_directory_filename(mock_unpacked_dir):
     _touch_file(os.path.join(mock_unpacked_dir, EX_EXTRA_DIRECTORY_FILENAME))
     with pytest.raises(ValueError):
         TestSummaryWriter.find_directory_filename(mock_unpacked_dir)
+
+
+@pytest.fixture
+def mock_directory_file(tmpdir):
+    """A Pytest fixture providing a mock directory file.
+
+    Parameters
+    ----------
+    tmpdir : local
+
+    Returns
+    -------
+    mock_directory_file : str
+        Fully-qualified path to the generated mock directory file.
+    """
+
+    qualified_directory_filename = os.path.join(tmpdir, f"mock_dir{DIRECTORY_EXT}")
+
+    with open(qualified_directory_filename, 'w') as fo:
+        fo.write(f"{DIRECTORY_FIGURES_HEADER}\n")
+        for label, filename in L_MOCK_DIRECTORY_LABELS_AND_FILENAMES:
+            if label is None:
+                fo.write(f"{filename}\n")
+            else:
+                fo.write(f"{label}{DIRECTORY_SEPARATOR}{filename}\n")
+
+    return qualified_directory_filename
+
+
+def test_read_figure_labels_and_filenames(mock_directory_file):
+    """Unit test of the `TestSummaryWriter.read_figure_labels_and_filenames` method.
+
+    Parameters
+    ----------
+    mock_directory_file : str
+        Pytest fixture providing the filename of a mock directory file set up for this test.
+    """
+
+    l_labels_and_filenames = TestSummaryWriter.read_figure_labels_and_filenames(mock_directory_file)
+
+    assert l_labels_and_filenames == L_MOCK_DIRECTORY_LABELS_AND_FILENAMES

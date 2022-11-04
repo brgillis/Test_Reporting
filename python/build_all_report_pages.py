@@ -29,7 +29,7 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import Dict, List, TYPE_CHECKING
 
-from implementations import D_BUILD_FUNCTIONS
+from implementations import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
 from utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 from utility.test_report_summary import build_test_report_summary, update_summary
 from utility.test_writing import TestMeta
@@ -133,11 +133,13 @@ def run_build_from_args(args):
     # Call the build function for each file in the manifest
     for key, value in d_manifest.items():
 
-        build_function = D_BUILD_FUNCTIONS.get(key)
+        build_function = D_BUILD_CALLABLES.get(key)
 
+        # Rather than using the default functionality of the dict's `get` method, we check explicitly so we can log
+        # in that case
         if not build_function:
-            logger.debug(f"No build function provided for key '{key}'")
-            continue
+            logger.info(f"No build function provided for key '{key}'; using default implementation.")
+            build_function = DEFAULT_BUILD_CALLABLE
 
         l_test_meta += build_function(value, args.rootdir)
 

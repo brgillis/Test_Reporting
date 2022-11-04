@@ -69,7 +69,7 @@ class TestMeta(NamedTuple):
 
 
 VALUE_TYPE = Union[str, Dict[str, str]]
-BUILD_FUNCTION_TYPE = Optional[Callable[[VALUE_TYPE, str], List[TestMeta]]]
+BUILD_CALLABLE_TYPE = Optional[Callable[[VALUE_TYPE, str], List[TestMeta]]]
 
 
 class MarkdownWriter:

@@ -33,7 +33,7 @@ from typing import Dict, List, TYPE_CHECKING
 
 from implementations import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
 from utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
-from utility.logging_utility import log_function_entry, log_function_exit
+from utility.logging_utility import log_entry_exit
 from utility.test_report_summary import build_test_report_summary, update_summary
 from utility.test_writing import TestMeta
 
@@ -43,6 +43,7 @@ if TYPE_CHECKING:
 logger = getLogger(__name__)
 
 
+@log_entry_exit(logger)
 def get_build_argument_parser():
     """Get an argument parser for this script.
 
@@ -52,9 +53,8 @@ def get_build_argument_parser():
         An argument parser set up with the allowed command-line arguments for this script.
     """
 
-    log_function_entry(logger)
-
     parser = ArgumentParser()
+
     parser.add_argument("--manifest", type=str, default=MANIFEST_FILENAME,
                         help="The name of the .json-format file manifest, containing the validation test results "
                              f"tarballs to have results pages built. Default: {MANIFEST_FILENAME}")
@@ -65,11 +65,10 @@ def get_build_argument_parser():
                         help="The desired level to log at. Allowed values are: 'DEBUG', 'INFO', 'WARNING', 'ERROR, "
                              "'CRITICAL'. Default: 'INFO'")
 
-    log_function_exit(logger)
-
     return parser
 
 
+@log_entry_exit(logger)
 def parse_args():
     """Parses arguments for this executable.
 
@@ -79,17 +78,14 @@ def parse_args():
         The parsed arguments.
     """
 
-    log_function_entry(logger)
-
     parser = get_build_argument_parser()
 
     args = parser.parse_args()
 
-    log_function_exit(logger)
-
     return args
 
 
+@log_entry_exit(logger)
 def read_manifest(qualified_manifest_filename):
     """Read in the .json-format manifest file.
 
@@ -104,18 +100,15 @@ def read_manifest(qualified_manifest_filename):
         The file manifest, stored as a dict
     """
 
-    log_function_entry(logger)
-
     with open(qualified_manifest_filename, "r") as fi:
         d_manifest = json.load(fi)
 
     logger.info(f"Successfully read in file manifest: {d_manifest}")
 
-    log_function_exit(logger)
-
     return d_manifest
 
 
+@log_entry_exit(logger)
 def main():
     """Standard entry-point function for this script.
     """
@@ -135,6 +128,7 @@ def main():
     logger.info("#")
 
 
+@log_entry_exit(logger)
 def run_build_from_args(args):
     """Workhorse function to perform primary execution of this script, using the provided parsed arguments.
 
@@ -143,8 +137,6 @@ def run_build_from_args(args):
     args : Namespace
         The parsed arguments for this script
     """
-
-    log_function_entry(logger)
 
     d_manifest = read_manifest(os.path.join(args.rootdir, args.manifest))
 
@@ -172,8 +164,6 @@ def run_build_from_args(args):
     update_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
                    l_test_meta=l_test_meta,
                    rootdir=args.rootdir)
-
-    log_function_exit(logger)
 
 
 if __name__ == "__main__":

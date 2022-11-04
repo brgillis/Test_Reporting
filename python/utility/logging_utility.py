@@ -20,7 +20,6 @@ Module for miscellaneous utility functions.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-import inspect
 import logging
 from typing import TYPE_CHECKING
 
@@ -28,66 +27,27 @@ if TYPE_CHECKING:
     from logging import Logger  # noqa F401
 
 
-def get_function_name(depth=1):
-    """Returns the name of the enclosing function at a desired depth. Code copied and extended from
-    https://stackoverflow.com/a/67488637/5099457.
+def log_entry_exit(logger, level=logging.DEBUG):
+    """Decorator which, when applied to a function, will log upon entry/exit of the function.
 
     Parameters
     ----------
-    depth : int, default=1
-        Int >=0 providing the name of the corresponding function in the stack. If depth==0, the name of this function
-        will always be returned. If depth==1, the name of the function calling this function will be returned. If
-        depth==2, the name of the function calling the function calling this function will be returned, etc.
+    logger : Logger
+    level : int
 
     Returns
     -------
-    function_name : str
-        The name of the function calling this function (or the corresponding in a  higher frame depth>1)
+    Callable
     """
-    return inspect.stack()[depth].function
 
+    def func_wrap(func):
+        def wrap(*args, **kwargs):
+            logger.log(level, f"Entering function `{func.__name__}`.")
+            output = func(*args, **kwargs)
+            logger.log(level, f"Exiting function `{func.__name__}`.")
 
-def log_function_action(logger, action, level=logging.DEBUG, depth=1):
-    """Logs an action relating to the function calling this, using the name of that function.
+            return output
 
-    Parameters
-    ----------
-    logger : Logger
-        The logger to use to log this action.
-    action : str
-        The action to log that we're performing (e.g. "Entering" or "Exiting")
-    level : int, default=logging.DEBUG
-        The level to log at (default DEBUG)
-    depth : int, default=1
-    """
-    logger.log(level, f"{action} function {get_function_name(depth + 1)}.")
+        return wrap
 
-
-def log_function_entry(logger, level=logging.DEBUG, depth=1):
-    """Logs entry of the function which calls this.
-
-    Parameters
-    ----------
-    logger : Logger
-    level : int, default=logging.DEBUG
-    depth : int, default=1
-    """
-    log_function_action(logger=logger,
-                        action="Entering",
-                        level=level,
-                        depth=depth + 1)
-
-
-def log_function_exit(logger, level=logging.DEBUG, depth=1):
-    """Logs exit of the function which calls this.
-
-    Parameters
-    ----------
-    logger : Logger
-    level : int, default=logging.DEBUG
-    depth : int, default=1
-    """
-    log_function_action(logger=logger,
-                        action="Exiting",
-                        level=level,
-                        depth=depth + 1)
+    return func_wrap

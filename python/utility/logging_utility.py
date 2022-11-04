@@ -42,9 +42,9 @@ def log_entry_exit(logger, level=logging.DEBUG):
 
     def func_wrap(func):
         def wrap(*args, **kwargs):
-            logger.log(level, f"Entering function `{func.__name__}`.")
+            logger.log(level, f"Entering method `{func.__qualname__}`.")
             output = func(*args, **kwargs)
-            logger.log(level, f"Exiting function `{func.__name__}`.")
+            logger.log(level, f"Exiting method `{func.__qualname__}`.")
 
             return output
 

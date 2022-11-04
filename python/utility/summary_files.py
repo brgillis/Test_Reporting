@@ -30,6 +30,7 @@ from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Union
 
 from utility.constants import DATA_DIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
+from utility.logging_utility import log_entry_exit
 from utility.misc import extract_tarball, hash_any
 from utility.product_parsing import parse_xml_product
 
@@ -73,6 +74,7 @@ class TestSummaryWriter:
 
     test_name: Optional[str] = None
 
+    @log_entry_exit(logger)
     def __init__(self, test_name: Optional[str] = None):
         """Initializer for TestSummaryWriter, which allows specifying the test name.
 
@@ -83,6 +85,7 @@ class TestSummaryWriter:
         """
         self.test_name = test_name if test_name is not None else self.test_name
 
+    @log_entry_exit(logger)
     def __call__(self, value, rootdir):
         """Template method which implements basic writing the summary of output for the test as a whole. Portions of
         this method which call protected methods can be overridden by child classes for customization.
@@ -122,6 +125,7 @@ class TestSummaryWriter:
 
         return l_test_meta
 
+    @log_entry_exit(logger)
     def _summarize_results_tarball(self, results_tarball_filename, rootdir, tag=None):
         """Writes summary markdown files for the test results contained in a tarball of the test results product and
         associated data.
@@ -160,6 +164,7 @@ class TestSummaryWriter:
         return l_test_meta
 
     @staticmethod
+    @log_entry_exit(logger)
     def _make_tmpdir(results_tarball_filename, rootdir):
         """We'll need a temporary directory to extract files into, so create one. To minimize the risk of clashes in
         case of future parallelization, we name it via hashing the filename
@@ -185,6 +190,7 @@ class TestSummaryWriter:
 
         return qualified_tmpdir
 
+    @log_entry_exit(logger)
     def _summarize_results_tarball_with_tmpdir(self,
                                                qualified_results_tarball_filename,
                                                qualified_tmpdir,
@@ -258,6 +264,7 @@ class TestSummaryWriter:
         return l_test_meta
 
     @staticmethod
+    @log_entry_exit(logger)
     def _find_product_filenames(qualified_tmpdir):
         """Finds the filenames of all .xml products in the provided directory. If certain .xml files should be
         ignored for a given test, this method can be overridden to handle that.
@@ -278,6 +285,7 @@ class TestSummaryWriter:
 
         return l_product_filenames
 
+    @log_entry_exit(logger)
     def _write_all_test_case_results(self, test_results, test_name_tail, rootdir):
         """Writes out the results of all test cases to a .md-format file.
 
@@ -321,6 +329,7 @@ class TestSummaryWriter:
 
         return l_test_case_names_and_filenames
 
+    @log_entry_exit(logger)
     def _write_individual_test_case_results(self, test_case_results, test_case_name, test_case_filename, rootdir):
         """Writes out the results of all test cases to a .md-format file. If special formatting is desired for an
         individual test case, this method can be overridden.
@@ -348,6 +357,7 @@ class TestSummaryWriter:
 
             # TODO Fill out this method
 
+    @log_entry_exit(logger)
     def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, rootdir):
         """Writes out the summary of the test to a .md-format file. If special formatting is desired for an
         individual test, this method or the methods it calls can be overridden by child classes.
@@ -392,6 +402,7 @@ class TestSummaryWriter:
         return test_filename
 
     @staticmethod
+    @log_entry_exit(logger)
     def _write_product_metadata(test_results, fo):
         """Writes metadata related to the test's data product to an open filehandle
 
@@ -415,6 +426,7 @@ class TestSummaryWriter:
         fo.write(f"**Creation Date and Time:** {t.day} {t.month}, {t.year} at {t.time()}\n\n")
 
     @staticmethod
+    @log_entry_exit(logger)
     def _write_test_metadata(test_results, fo):
         """Writes metadata related to the test itself to an open filehandle
 
@@ -440,6 +452,7 @@ class TestSummaryWriter:
             fo.write(f"**Observation Mode:** {test_results.obs_mode}\n\n")
 
     @staticmethod
+    @log_entry_exit(logger)
     def _write_test_case_table(test_results, l_test_case_meta, fo):
         """Writes a table containing test case information and links to their pages to an open filehandle.
 

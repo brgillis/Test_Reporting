@@ -22,10 +22,16 @@ Module for miscellaneous utility functions.
 
 import codecs
 import hashlib
+import logging
 import re
 import subprocess
 
+from utility.logging_utility import log_entry_exit
 
+logger = logging.getLogger(__name__)
+
+
+@log_entry_exit(logger)
 def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
     """Extracts a tarball into the provided directory, performing security checks on the provided filename.
 
@@ -54,6 +60,7 @@ def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
                          f"process was: {tar_results.stderr}")
 
 
+@log_entry_exit(logger)
 def hash_any(obj, max_length=None):
     """Hashes any immutable object into a base64 string of a given length.
 

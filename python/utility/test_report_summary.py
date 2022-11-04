@@ -20,16 +20,21 @@ Functions to handle building a new test report summary file.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+import logging
 import os
 from typing import TYPE_CHECKING
 
 from utility.constants import PUBLIC_DIR, SUMMARY_FILENAME
+from utility.logging_utility import log_entry_exit
 
 if TYPE_CHECKING:
     from typing import Sequence  # noqa F401
     from utility.test_writing import TestMeta  # noqa F401
 
+logger = logging.getLogger(__name__)
 
+
+@log_entry_exit(logger)
 def build_test_report_summary(test_report_summary_filename,
                               l_test_meta,
                               rootdir):
@@ -69,6 +74,7 @@ def build_test_report_summary(test_report_summary_filename,
             fo.write(test_line)
 
 
+@log_entry_exit(logger)
 def update_summary(test_report_summary_filename,
                    l_test_meta,
                    rootdir):
@@ -106,6 +112,7 @@ def update_summary(test_report_summary_filename,
                 fo.write(f"    * [{test_case_name}]({test_case_md_filename})\n")
 
 
+@log_entry_exit(logger)
 def _check_md_filename(filename):
     """Private method to check that a filename ends with `.md'.
     """

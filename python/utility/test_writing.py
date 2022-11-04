@@ -30,6 +30,7 @@ from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tuple, Union
 
 from utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
+from utility.logging_utility import log_entry_exit
 from utility.misc import extract_tarball, hash_any
 from utility.product_parsing import parse_xml_product
 
@@ -76,16 +77,19 @@ class MarkdownWriter:
     """Class to help with writing more-complicated Markdown files which include a Table of Contents.
     """
 
+    @log_entry_exit(logger)
     def __init__(self, title: str):
         self.title = title
         self._l_lines: List[str] = []
         self._l_toc_lines: List[str] = []
 
+    @log_entry_exit(logger)
     def add_line(self, line: str):
         """Add a standard line to be written as part of the body text of the file.
         """
         self._l_lines.append(line)
 
+    @log_entry_exit(logger)
     def add_heading(self, heading: str, depth: int = 0, label: Optional[str] = None):
         """Add a heading line to be written, which should also be linked from the table-of contents.
         """
@@ -104,6 +108,7 @@ class MarkdownWriter:
 
         self._l_toc_lines.append("  " * depth + f"1. [{heading}](#{label})\n")
 
+    @log_entry_exit(logger)
     def write(self, fo: TextIO):
         """Writes out the TOC and all lines.
         """
@@ -128,6 +133,7 @@ class TestSummaryWriter:
 
     test_name: Optional[str] = None
 
+    @log_entry_exit(logger)
     def __init__(self, test_name: Optional[str] = None):
         """Initializer for TestSummaryWriter, which allows specifying the test name.
 
@@ -138,6 +144,7 @@ class TestSummaryWriter:
         """
         self.test_name = test_name if test_name is not None else self.test_name
 
+    @log_entry_exit(logger)
     def __call__(self, value, rootdir):
         """Template method which implements basic writing the summary of output for the test as a whole. Portions of
         this method which call protected methods can be overridden by child classes for customization.
@@ -177,6 +184,7 @@ class TestSummaryWriter:
 
         return l_test_meta
 
+    @log_entry_exit(logger)
     def _summarize_results_tarball(self, results_tarball_filename, rootdir, tag=None):
         """Writes summary markdown files for the test results contained in a tarball of the test results product and
         associated data.
@@ -215,6 +223,7 @@ class TestSummaryWriter:
         return l_test_meta
 
     @staticmethod
+    @log_entry_exit(logger)
     def _make_tmpdir(hashable, rootdir):
         """We'll need a temporary directory to extract files into, so create one. Some unique hashable object must be
         provided, whose hash will be used to generate a presumably-unique directory name.
@@ -240,6 +249,7 @@ class TestSummaryWriter:
 
         return qualified_tmpdir
 
+    @log_entry_exit(logger)
     def _summarize_results_tarball_with_tmpdir(self,
                                                qualified_results_tarball_filename,
                                                qualified_tmpdir,
@@ -316,6 +326,7 @@ class TestSummaryWriter:
         return l_test_meta
 
     @staticmethod
+    @log_entry_exit(logger)
     def _find_product_filenames(qualified_tmpdir):
         """Finds the filenames of all .xml products in the provided directory. If certain .xml files should be
         ignored for a given test, this method can be overridden to handle that.
@@ -336,6 +347,7 @@ class TestSummaryWriter:
 
         return l_product_filenames
 
+    @log_entry_exit(logger)
     def _write_all_test_case_results(self, test_results, test_name_tail, rootdir, tmpdir):
         """Writes out the results of all test cases to a .md-format file.
 
@@ -384,6 +396,7 @@ class TestSummaryWriter:
 
         return l_test_case_names_and_filenames
 
+    @log_entry_exit(logger)
     def _write_individual_test_case_results(self,
                                             test_case_results,
                                             test_case_name,
@@ -422,6 +435,7 @@ class TestSummaryWriter:
             writer.write(fo)
 
     @staticmethod
+    @log_entry_exit(logger)
     def _add_test_case_meta(writer, test_case_results):
         """Adds lines for the metadata associated with an individual test case to a MarkdownWriter.
 
@@ -439,6 +453,7 @@ class TestSummaryWriter:
         if test_case_results.analysis_result.ana_comment is not None:
             writer.add_line(f"**Comments:** {test_case_results.analysis_result.ana_comment}\n\n")
 
+    @log_entry_exit(logger)
     def _add_test_case_info_and_figures(self, test_case_results, writer, rootdir, tmpdir):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
         prepares figures, and also adds lines for them.
@@ -461,6 +476,7 @@ class TestSummaryWriter:
         finally:
             shutil.rmtree(figures_tmpdir)
 
+    @log_entry_exit(logger)
     def _add_test_case_supp_info_and_figures_with_tmpdir(self,
                                                          writer,
                                                          test_case_results,
@@ -493,6 +509,7 @@ class TestSummaryWriter:
                                     figures_tmpdir=figures_tmpdir)
 
     @staticmethod
+    @log_entry_exit(logger)
     def _add_test_case_supp_info(writer, test_case_results):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter.
 
@@ -520,6 +537,7 @@ class TestSummaryWriter:
                 writer.add_line(supp_info.info_value)
                 writer.add_line("```\n\n")
 
+    @log_entry_exit(logger)
     def _add_test_case_figures(self, writer, ana_result, rootdir, tmpdir, figures_tmpdir):
         """Prepares figures and adds lines for them to a MarkdownWriter, after a new temporary directory has been
         created to store extracted files in.
@@ -584,6 +602,7 @@ class TestSummaryWriter:
             writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
 
     @staticmethod
+    @log_entry_exit(logger)
     def find_directory_filename(figures_tmpdir):
         """Searches through a directory to find a possible directory file (which contains labels and filenames of
         figures).
@@ -615,6 +634,7 @@ class TestSummaryWriter:
                 f"{l_possible_directory_filenames}")
 
     @staticmethod
+    @log_entry_exit(logger)
     def read_figure_labels_and_filenames(qualified_directory_filename):
         """Reads a directory file, and returns a list of figure labels and filenames. Note that any figure label
         might be
@@ -659,6 +679,7 @@ class TestSummaryWriter:
 
         return l_figure_labels_and_filenames
 
+    @log_entry_exit(logger)
     def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, rootdir):
         """Writes out the summary of the test to a .md-format file. If special formatting is desired for an
         individual test, this method or the methods it calls can be overridden by child classes.
@@ -703,6 +724,7 @@ class TestSummaryWriter:
         return test_filename
 
     @staticmethod
+    @log_entry_exit(logger)
     def _write_product_metadata(test_results, fo):
         """Writes metadata related to the test's data product to an open filehandle
 
@@ -727,6 +749,7 @@ class TestSummaryWriter:
         fo.write(f"**Creation Date and Time:** {t.day} {month_name}, {t.year} at {t.time()}\n\n")
 
     @staticmethod
+    @log_entry_exit(logger)
     def _write_test_metadata(test_results, fo):
         """Writes metadata related to the test itself to an open filehandle
 
@@ -752,6 +775,7 @@ class TestSummaryWriter:
             fo.write(f"**Observation Mode:** {test_results.obs_mode}\n\n")
 
     @staticmethod
+    @log_entry_exit(logger)
     def _write_test_case_table(test_results, l_test_case_meta, fo):
         """Writes a table containing test case information and links to their pages to an open filehandle.
 

@@ -32,6 +32,7 @@ from typing import Dict, List, TYPE_CHECKING
 
 from implementations import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
 from utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
+from utility.logging_utility import log_function_entry, log_function_exit
 from utility.test_report_summary import build_test_report_summary, update_summary
 from utility.test_writing import TestMeta
 
@@ -50,17 +51,17 @@ def get_build_argument_parser():
         An argument parser set up with the allowed command-line arguments for this script.
     """
 
-    logger.debug(f"Entering `{__name__}.get_build_argument_parser`.")
+    log_function_entry(logger)
 
     parser = ArgumentParser()
     parser.add_argument("--manifest", type=str, default=MANIFEST_FILENAME,
                         help="The name of the .json-format file manifest, containing the validation test results "
-                             "tarballs to have results pages built.")
+                             f"tarballs to have results pages built. Default: {MANIFEST_FILENAME}")
     parser.add_argument("--rootdir", type=str, default=os.getcwd(),
                         help="The root directory of this project, or a copied instance thereof. Will default to the "
                              "current directory if not provided.")
 
-    logger.debug(f"Exiting `{__name__}.get_build_argument_parser`.")
+    log_function_exit(logger)
 
     return parser
 
@@ -74,13 +75,13 @@ def parse_args():
         The parsed arguments.
     """
 
-    logger.debug(f"Entering `{__name__}.parse_args`.")
+    log_function_entry(logger)
 
     parser = get_build_argument_parser()
 
     args = parser.parse_args()
 
-    logger.debug(f"Exiting `{__name__}.parse_args`.")
+    log_function_exit(logger)
 
     return args
 
@@ -99,14 +100,14 @@ def read_manifest(qualified_manifest_filename):
         The file manifest, stored as a dict
     """
 
-    logger.debug(f"Entering `{__name__}.read_manifest`.")
+    log_function_entry(logger)
 
     with open(qualified_manifest_filename, "r") as fi:
         d_manifest = json.load(fi)
 
     logger.info(f"Successfully read in file manifest: {d_manifest}")
 
-    logger.debug(f"Exiting `{__name__}.read_manifest`.")
+    log_function_exit(logger)
 
     return d_manifest
 
@@ -115,13 +116,13 @@ def main():
     """Standard entry-point function for this script.
     """
 
-    logger.debug(f"Entering `{__name__}.main`.")
+    log_function_entry(logger)
 
     args = parse_args()
 
     run_build_from_args(args)
 
-    logger.debug(f"Exiting `{__name__}.main`.")
+    log_function_exit(logger)
 
 
 def run_build_from_args(args):
@@ -133,7 +134,7 @@ def run_build_from_args(args):
         The parsed arguments for this script
     """
 
-    logger.debug(f"Entering `{__name__}.run_build_from_args`.")
+    log_function_entry(logger)
 
     d_manifest = read_manifest(os.path.join(args.rootdir, args.manifest))
 
@@ -162,17 +163,17 @@ def run_build_from_args(args):
                    l_test_meta=l_test_meta,
                    rootdir=args.rootdir)
 
-    logger.debug(f"Exiting `{__name__}.run_build_from_args`.")
+    log_function_exit(logger)
 
 
 if __name__ == "__main__":
 
     logger.info("#")
-    logger.info(f"# Beginning execution of script `{__name__}`")
+    logger.info(f"# Beginning execution of script `{__file__}`")
     logger.info("#")
 
     main()
 
     logger.info("#")
-    logger.info(f"# Finished execution of script `{__name__}`")
+    logger.info(f"# Finished execution of script `{__file__}`")
     logger.info("#")

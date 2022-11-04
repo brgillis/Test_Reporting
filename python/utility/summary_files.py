@@ -220,7 +220,7 @@ class TestSummaryWriter:
                                          for product_filename in l_product_filenames]
 
         # Make sure the required subdir exists before we start writing anything
-        os.makedirs(os.path.join(rootdir, PUBLIC_DIR, TEST_REPORTS_SUBDIR))
+        os.makedirs(os.path.join(rootdir, PUBLIC_DIR, TEST_REPORTS_SUBDIR), exist_ok=True)
 
         l_test_meta: List[TestMeta] = []
 

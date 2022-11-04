@@ -60,7 +60,8 @@ def build_test_report_summary(test_report_summary_filename,
         # First, add all the boilerplate lines to the top
         fo.write("# Testing Reports\n\n")
         fo.write("This section contains automatically-generated reports on the validation test results products "
-                 "contained in the \"data\" directory of this project.\n\n")
+                 "contained in the \"data\" directory of this project. The reports can be found linked in the "
+                 "following table:\n\n")
         fo.write("| **Test ID** | **Num Passed** | **Num Failed** |\n")
         fo.write("|:------------|:---------------|:---------------|\n")
 
@@ -70,16 +71,18 @@ def build_test_report_summary(test_report_summary_filename,
             _check_md_filename(test_meta.filename)
             test_html_filename = f"{test_meta.filename[:-3]}.html"
 
-            test_line = f"|[{test_meta.name}]({test_html_filename})|{test_meta.num_passed}|{test_meta.num_failed}|\n"
-            fo.write(test_line)
+            fo.write(f"| [{test_meta.name}]({test_html_filename}) "
+                     f"| {test_meta.num_passed} "
+                     f"| {test_meta.num_failed} |\n")
+
+        fo.write("The log file for building these test reports can be found [here](build.log).")
 
 
 @log_entry_exit(logger)
 def update_summary(test_report_summary_filename,
                    l_test_meta,
                    rootdir):
-    """Builds a markdown file containing the summary of the Test Reports section at the desired location, containing a
-    table linking to the individual pages.
+    """Updates the markdown file containing the summary bullet-point-list of files to be compiled in this project.
 
     Parameters
     ----------

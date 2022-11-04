@@ -7,7 +7,8 @@
 :author: Bryan Gillis
 
 This python script is run to construct report pages for all validation tests. It reads in the file manifest, and then
-calls appropriate functions to construct pages for each test results xml file.
+calls appropriate functions to construct pages for each test results xml file. This script is called automatically as
+part of the continuous-integration pipeline to build report pages.
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -49,13 +50,18 @@ def get_build_argument_parser():
         An argument parser set up with the allowed command-line arguments for this script.
     """
 
+    logger.debug(f"Entering `{__name__}.get_build_argument_parser`.")
+
     parser = ArgumentParser()
     parser.add_argument("--manifest", type=str, default=MANIFEST_FILENAME,
                         help="The name of the .json-format file manifest, containing the validation test results "
                              "tarballs to have results pages built.")
-    parser.add_argument("--rootdir", type=str, default=None,
+    parser.add_argument("--rootdir", type=str, default=os.getcwd(),
                         help="The root directory of this project, or a copied instance thereof. Will default to the "
                              "current directory if not provided.")
+
+    logger.debug(f"Exiting `{__name__}.get_build_argument_parser`.")
+
     return parser
 
 
@@ -65,15 +71,16 @@ def parse_args():
     Returns
     -------
     args : Namespace
-        The parsed arguments
+        The parsed arguments.
     """
+
+    logger.debug(f"Entering `{__name__}.parse_args`.")
 
     parser = get_build_argument_parser()
 
     args = parser.parse_args()
 
-    if args.rootdir is None:
-        args.rootdir = os.getcwd()
+    logger.debug(f"Exiting `{__name__}.parse_args`.")
 
     return args
 
@@ -92,14 +99,14 @@ def read_manifest(qualified_manifest_filename):
         The file manifest, stored as a dict
     """
 
-    logger.debug("Entering `read_manifest`.")
+    logger.debug(f"Entering `{__name__}.read_manifest`.")
 
     with open(qualified_manifest_filename, "r") as fi:
         d_manifest = json.load(fi)
 
     logger.info(f"Successfully read in file manifest: {d_manifest}")
 
-    logger.debug("Exiting `read_manifest`.")
+    logger.debug(f"Exiting `{__name__}.read_manifest`.")
 
     return d_manifest
 
@@ -108,13 +115,13 @@ def main():
     """Standard entry-point function for this script.
     """
 
-    logger.debug("Entering `main`.")
+    logger.debug(f"Entering `{__name__}.main`.")
 
     args = parse_args()
 
     run_build_from_args(args)
 
-    logger.debug("Exiting `main`.")
+    logger.debug(f"Exiting `{__name__}.main`.")
 
 
 def run_build_from_args(args):
@@ -125,6 +132,8 @@ def run_build_from_args(args):
     args : Namespace
         The parsed arguments for this script
     """
+
+    logger.debug(f"Entering `{__name__}.run_build_from_args`.")
 
     d_manifest = read_manifest(os.path.join(args.rootdir, args.manifest))
 
@@ -153,6 +162,17 @@ def run_build_from_args(args):
                    l_test_meta=l_test_meta,
                    rootdir=args.rootdir)
 
+    logger.debug(f"Exiting `{__name__}.run_build_from_args`.")
+
 
 if __name__ == "__main__":
+
+    logger.info("#")
+    logger.info(f"# Beginning execution of script `{__name__}`")
+    logger.info("#")
+
     main()
+
+    logger.info("#")
+    logger.info(f"# Finished execution of script `{__name__}`")
+    logger.info("#")

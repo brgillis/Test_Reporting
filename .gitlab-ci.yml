@@ -20,7 +20,7 @@ build:
   stage: build
   image: python:3.9
   script:
-    - ./python/build_all_report_pages.py
+    - ./python/build_all_report_pages.py > public/build.log
   artifacts:
     paths:
       - public

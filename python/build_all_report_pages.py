@@ -25,6 +25,7 @@ part of the continuous-integration pipeline to build report pages.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import json
+import logging
 import os
 from argparse import ArgumentParser
 from logging import getLogger
@@ -58,8 +59,11 @@ def get_build_argument_parser():
                         help="The name of the .json-format file manifest, containing the validation test results "
                              f"tarballs to have results pages built. Default: {MANIFEST_FILENAME}")
     parser.add_argument("--rootdir", type=str, default=os.getcwd(),
-                        help="The root directory of this project, or a copied instance thereof. Will default to the "
-                             "current directory if not provided.")
+                        help="The root directory of this project, or a copied instance thereof. Default: (Current "
+                             "directory)")
+    parser.add_argument("--log-level", type=str, default="INFO",
+                        help="The desired level to log at. Allowed values are: 'DEBUG', 'INFO', 'WARNING', 'ERROR, "
+                             "'CRITICAL'. Default: 'INFO'")
 
     log_function_exit(logger)
 
@@ -116,13 +120,19 @@ def main():
     """Standard entry-point function for this script.
     """
 
-    log_function_entry(logger)
-
     args = parse_args()
+
+    logging.basicConfig(level=args.log_level)
+
+    logger.info("#")
+    logger.info(f"# Beginning execution of script `{__file__}`")
+    logger.info("#")
 
     run_build_from_args(args)
 
-    log_function_exit(logger)
+    logger.info("#")
+    logger.info(f"# Finished execution of script `{__file__}`")
+    logger.info("#")
 
 
 def run_build_from_args(args):
@@ -168,12 +178,4 @@ def run_build_from_args(args):
 
 if __name__ == "__main__":
 
-    logger.info("#")
-    logger.info(f"# Beginning execution of script `{__file__}`")
-    logger.info("#")
-
     main()
-
-    logger.info("#")
-    logger.info(f"# Finished execution of script `{__file__}`")
-    logger.info("#")

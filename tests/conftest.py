@@ -38,12 +38,11 @@ L_FILES_MODIFIED = (os.path.join(PUBLIC_DIR, SUMMARY_FILENAME),
 S_EXCLUDE = {*L_FILES_MODIFIED, DATA_DIR, TEST_DATA_DIR}
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(autouse=True)
 def log_debug():
     """Fixture to ensure all tests are run at the DEBUG logging level, to catch any bugs in debug log commands.
     """
-    logging.basicConfig()
-    logging.getLogger().setLevel(logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG)
 
 
 @pytest.fixture(scope="session")

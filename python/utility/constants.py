@@ -43,17 +43,3 @@ WORKDIR = "workdir"
 # Desired filenames and directories to use for created markdown files to report test results
 TEST_REPORT_SUMMARY_FILENAME = "Test_Reports.md"
 REPORT_SUBDIR = "reports"
-
-# Primary keys within the manifest JSON file
-CTI_GAL_KEY = "cti_gal"
-
-S_MANIFEST_PRIMARY_KEYS = {CTI_GAL_KEY,
-                           }
-
-# Secondary keys within the manifest JSON file
-OBS_KEY = "obs"
-EXP_KEY = "exp"
-
-S_MANIFEST_SECONDARY_KEYS = {OBS_KEY,
-                             EXP_KEY,
-                             }

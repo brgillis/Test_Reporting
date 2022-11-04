@@ -29,14 +29,13 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import Dict, List, TYPE_CHECKING
 
-from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
+from implementations import D_BUILD_FUNCTIONS
+from utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 from utility.test_report_summary import build_test_report_summary, update_summary
-from utility.test_writing import BUILD_FUNCTION_TYPE, TestMeta, TestSummaryWriter
+from utility.test_writing import TestMeta
 
 if TYPE_CHECKING:
     import Namespace  # noqa F401
-
-D_BUILD_FUNCTIONS: Dict[str, BUILD_FUNCTION_TYPE] = {CTI_GAL_KEY: TestSummaryWriter()}
 
 logger = getLogger(__name__)
 

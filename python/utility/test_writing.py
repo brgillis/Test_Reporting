@@ -30,8 +30,7 @@ from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tuple, Union
 
 from utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.logging_utility import log_entry_exit
-from utility.misc import extract_tarball, hash_any
+from utility.misc import extract_tarball, hash_any, log_entry_exit
 from utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:

@@ -29,7 +29,7 @@ from typing import Any, List, Optional, Type
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 
-from utility.logging_utility import log_entry_exit
+from utility.misc import log_entry_exit
 
 logger = getLogger(__name__)
 

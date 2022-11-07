@@ -25,7 +25,7 @@ import os
 from typing import TYPE_CHECKING
 
 from utility.constants import PUBLIC_DIR, SUMMARY_FILENAME
-from utility.logging_utility import log_entry_exit
+from utility.misc import log_entry_exit
 
 if TYPE_CHECKING:
     from typing import Sequence  # noqa F401

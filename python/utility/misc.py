@@ -26,9 +26,33 @@ import logging
 import re
 import subprocess
 
-from utility.logging_utility import log_entry_exit
-
 logger = logging.getLogger(__name__)
+
+
+def log_entry_exit(logger, level=logging.DEBUG):
+    """Decorator which, when applied to a function, will log upon entry/exit of the function.
+
+    Parameters
+    ----------
+    logger : Logger
+    level : int
+
+    Returns
+    -------
+    Callable
+    """
+
+    def func_wrap(func):
+        def wrap(*args, **kwargs):
+            logger.log(level, f"Entering method `{func.__qualname__}`.")
+            output = func(*args, **kwargs)
+            logger.log(level, f"Exiting method `{func.__qualname__}`.")
+
+            return output
+
+        return wrap
+
+    return func_wrap
 
 
 @log_entry_exit(logger)

@@ -62,7 +62,7 @@ y_err = <value>
 (where each `<value>` is some number), and you wish it to be displayed outside of a code block as:
 
 ```
-### Result Values
+#### Result Values
 
 x = <value> +/- <value>
 
@@ -83,9 +83,9 @@ def _add_test_case_supp_info(writer, req, req_i):
     '''Specialized implementation to write out the x and y values +/- their errors.
 
     # Add a heading for this section. The depth here is 2 (2 layes deeper than depth 0, which corresponds to the
-    # highest level of heading, with just one "#". We don't need any "#" or linebreak at the end when adding the
-    # heading. We use the Requirement index in the label here to make sure it's unique. The label won't be shown;
-    # it's just used behind the scenes to form a link from the Table of Contents.
+    # highest level of heading within the body, which is labelled as "##". We don't need any "#" or linebreak at the
+    end when adding the heading. We use the Requirement index in the label here to make sure it's unique. The label
+    # won't be shown; it's just used behind the scenes to form a link from the Table of Contents.
     writer.add_heading(f"Result Values", depth=2, label=f"req-{req_i}-si")
 
     # Here we implement custom parsing of the SupplementaryInfo to get the values we want
@@ -107,6 +107,78 @@ def _add_test_case_supp_info(writer, req, req_i):
     # And that's all we need to do here. The writer will be called after everything in the file is added to it. It
     # waits until that point, so it will have all the headings which it will link from the Table of Contents at the
     # top and can write that first.
+```
+
+**Use Case #2: Formatting SupplementaryInfo and Figures together**
+
+One possibility is that multiple figures will be associated with the information contained in a single
+SupplementaryInfo block, and you wish for each of the figures to be displayed alongside the corresponding pieces of
+information. For instance, the SupplementaryInfo might look like:
+
+```
+Bin 1:
+slope = <value>
+slope_err = <value>
+intercept = <value>
+intercept_err = <value>
+
+Bin 2:
+slope = <value>
+slope_err = <value>
+intercept = <value>
+intercept_err = <value>
+```
+
+(where each `<value>` is some number), and one figure is provided for each bin.
+
+In this case, you'll need to override a method a bit higher up in the callstack:
+`_add_test_case_details_and_figures_with_tmpdir`. This handles the writing of both the SupplementaryInfo and Figures
+sections. In the default implementation, it does it sequentially in separate sections, but here you'll want it to be
+done in a single section. The overridden implementation might look something like:
+
+```
+def _add_test_case_details_and_figures_with_tmpdir(self,
+                                                   writer,
+                                                   test_case_results,
+                                                   rootdir,
+                                                   tmpdir,
+                                                   figures_tmpdir):
+    writer.add_heading("Results and Figures", depth=1)
+
+    # Dig out the data for each bin from the SupplementaryInfo
+    req = test_case_results.l_requirements[0]
+    supp_info_str = req.supp_info.info_value.strip()
+    bin_1_str, bin_2_str = supp_info_str.split('\n\n')
+
+    # Get the figure label and filename for each bin
+    l_figure_labels_and_filenames = self._prepare_figures(ana_result, rootdir, tmpdir, figures_tmpdir)
+    d_figure_filenames = {figure_label: figure_filename for (figure_label, figure_filename) in
+                          l_figure_labels_and_filenames}
+
+    # Write info for each bin
+    for bin_i, bin_str in enumerate((bin_1_str, bin_2_str)):
+
+        filename = d_figure_filenames[f'bin-{bin_i}']
+
+        # Copy the figure to the appropriate directory and get the relative filename for it
+        shutil.copy(os.path.join(figures_tmpdir, filename),
+                    os.path.join(rootdir, PUBLIC_DIR, IMAGES_SUBDIR, filename))
+        relative_figure_filename = f"../{IMAGES_SUBDIR}/{filename}"
+
+        label = f'Bin {bin_i}'
+
+        writer.add_heading(label, depth=1)
+
+        writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
+
+        l_bin_info_lines = bin_str.split('\n')
+        slope = l_bin_info_lines[1].split(' = ')[1]
+        slope_err = l_bin_info_lines[2].split(' = ')[1]
+        intercept = l_bin_info_lines[3].split(' = ')[1]
+        intercept_err = l_bin_info_lines[4].split(' = ')[1]
+
+        writer.add_line(f'slope = {slope} +/- {slope_err}'\n\n)
+        writer.add_line(f'intercept = {intercept} +/- {intercept_err}'\n\n)
 ```
 """
 
@@ -677,20 +749,51 @@ class TestSummaryWriter:
         if ana_result.figures_tarball is None or ana_result.textfiles_tarball is None:
             writer.add_line("N/A\n\n")
 
+        l_figure_labels_and_filenames = self._prepare_figures(ana_result, rootdir, tmpdir, figures_tmpdir)
+
+        # Check we prepared successfully; if not, return so we don't hit any further errors
+        if not l_figure_labels_and_filenames:
+            writer.add_line("N/A\n\n")
+            return
+
+        # Add a subsection for each figure to the writer
+        for i, (label, filename) in enumerate(l_figure_labels_and_filenames):
+
+            # Make a label if we don't have one
+            if label is None:
+                label = f"Figure #{i}"
+
+            relative_figure_filename = self._move_figure_to_public(filename, rootdir, figures_tmpdir)
+
+            writer.add_heading(label, depth=1)
+            writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
+
+    @staticmethod
+    def _move_figure_to_public(filename, rootdir, figures_tmpdir):
+        """Copy the figure to the appropriate directory and get the relative filename for it.
+        """
+        shutil.copy(os.path.join(figures_tmpdir, filename),
+                    os.path.join(rootdir, PUBLIC_DIR, IMAGES_SUBDIR, filename))
+        relative_figure_filename = f"../{IMAGES_SUBDIR}/{filename}"
+        return relative_figure_filename
+
+    def _prepare_figures(self, ana_result, rootdir, tmpdir, figures_tmpdir):
+        """Performs standard steps to prepare figures - unpacking them, reading the directory file, and setting up
+        expected output directory.
+        """
+
         # Extract the textfiles and figures tarballs
         qualified_figures_tarball_filename = os.path.join(tmpdir, ana_result.figures_tarball)
-
         if not os.path.isfile(qualified_figures_tarball_filename):
-            writer.add_line(f"{ERROR_LABEL}Figures tarball {qualified_figures_tarball_filename} expected but not "
-                            f"present.\n\n")
-            return
+            logger.error(f"Figures tarball {qualified_figures_tarball_filename} expected but not "
+                         f"present.\n\n")
+            return None
 
         qualified_textfiles_tarball_filename = os.path.join(tmpdir, ana_result.textfiles_tarball)
-
         if not os.path.isfile(qualified_textfiles_tarball_filename):
-            writer.add_line(f"{ERROR_LABEL}Textfiles tarball {qualified_textfiles_tarball_filename} expected but not "
-                            f"present.\n\n")
-            return
+            logger.error(f"Textfiles tarball {qualified_textfiles_tarball_filename} expected but not "
+                         f"present.\n\n")
+            return None
 
         extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)
         extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)
@@ -703,20 +806,7 @@ class TestSummaryWriter:
         # Make sure a data subdir exists in the images dir
         os.makedirs(os.path.join(rootdir, PUBLIC_DIR, IMAGES_SUBDIR, DATA_DIR), exist_ok=True)
 
-        # Add a subsection for each figure to the writer
-        for i, (label, filename) in enumerate(l_figure_labels_and_filenames):
-
-            # Make a label if we don't have one
-            if label is None:
-                label = f"Figure #{i}"
-
-            # Copy the figure to the appropriate directory and get the relative filename for it
-            shutil.copy(os.path.join(figures_tmpdir, filename),
-                        os.path.join(rootdir, PUBLIC_DIR, IMAGES_SUBDIR, filename))
-            relative_figure_filename = f"../{IMAGES_SUBDIR}/{filename}"
-
-            writer.add_heading(label, depth=1)
-            writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
+        return l_figure_labels_and_filenames
 
     @staticmethod
     @log_entry_exit(logger)

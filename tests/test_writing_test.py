@@ -121,7 +121,7 @@ def test_write_summary(project_copy):
 
         regex_match = re.match(r"^!\[(.*)]\(([a-zA-Z0-9./_\-]+)\)\n$", l_lines[-2])
         if not regex_match:
-            assert l_lines[-2] == "N/A\n" or l_lines[-2].startswith(ERROR_LABEL)
+            assert l_lines[-2] == "N/A\n"
         else:
             figure_label, figure_filename = regex_match.groups()
 

@@ -31,15 +31,11 @@ PYTHON_DIR = "python"
 
 PUBLIC_DIR = "public"
 IMAGES_SUBDIR = "images"
-TEST_REPORTS_SUBDIR = "TR"
 SUMMARY_FILENAME = "SUMMARY.md"
 
 TESTS_DIR = "tests"
 TEST_DATA_DIR = "test_data"
 
-# Temporary work directory
-WORKDIR = "workdir"
-
 # Desired filenames and directories to use for created markdown files to report test results
 TEST_REPORT_SUMMARY_FILENAME = "Test_Reports.md"
-REPORT_SUBDIR = "reports"
+TEST_REPORTS_SUBDIR = "TR"

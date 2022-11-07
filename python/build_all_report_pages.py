@@ -9,6 +9,11 @@
 This python script is run to construct report pages for all validation tests. It reads in the file manifest, and then
 calls appropriate functions to construct pages for each test results xml file. This script is called automatically as
 part of the continuous-integration pipeline to build report pages.
+
+It generally shouldn't be necessary to modify this file when adding new files to be reported on or new custom
+implementations of building report pages. The former can be done by editing the manifest file in the root directory
+of this project, and the latter by adding new modules for the new implementations and updating the
+`implementations.py` module (see instructions in that module).
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -92,12 +97,12 @@ def read_manifest(qualified_manifest_filename):
     Parameters
     ----------
     qualified_manifest_filename : str
-        The fully-qualified filename of the .json-format manifest file
+        The fully-qualified filename of the .json-format manifest file.
 
     Returns
     -------
     d_manifest : Dict[str, str or Dict[str, str or None] or None]
-        The file manifest, stored as a dict
+        The file manifest, stored as a dict.
     """
 
     with open(qualified_manifest_filename, "r") as fi:
@@ -108,7 +113,6 @@ def read_manifest(qualified_manifest_filename):
     return d_manifest
 
 
-@log_entry_exit(logger)
 def main():
     """Standard entry-point function for this script.
     """
@@ -135,7 +139,7 @@ def run_build_from_args(args):
     Parameters
     ----------
     args : Namespace
-        The parsed arguments for this script
+        The parsed arguments for this script.
     """
 
     d_manifest = read_manifest(os.path.join(args.rootdir, args.manifest))
@@ -145,15 +149,15 @@ def run_build_from_args(args):
     # Call the build function for each file in the manifest
     for key, value in d_manifest.items():
 
-        build_function = D_BUILD_CALLABLES.get(key)
+        build_callable = D_BUILD_CALLABLES.get(key)
 
         # Rather than using the default functionality of the dict's `get` method, we check explicitly so we can log
         # in that case
-        if not build_function:
-            logger.info(f"No build function provided for key '{key}'; using default implementation.")
-            build_function = DEFAULT_BUILD_CALLABLE
+        if not build_callable:
+            logger.info(f"No build callable provided for key '{key}'; using default implementation.")
+            build_callable = DEFAULT_BUILD_CALLABLE
 
-        l_test_meta += build_function(value, args.rootdir)
+        l_test_meta += build_callable(value, args.rootdir)
 
     # Build the summary page for test reports
     build_test_report_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,

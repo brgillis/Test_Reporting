@@ -7,6 +7,107 @@
 This python module provides functionality for writing the test summary markdown files. To allow customization for
 individual unit tests, a callable class, TestSummaryWriter, is used, with its call being a template method where
 sub-methods it calls can be overridden.
+
+The functionality provided here covers the most general case of reporting results from a SheValidationTestResults
+data product where no information is known about the test it's reporting on or the format of information contained
+within its SupplementaryInfo, TextFiles, or Figures. It displays all the SupplementaryInfo in one section and all
+the Figures in another (at present, nothing is done with TextFiles as no tests yet use them).
+
+For specific tests, the format of this data is likely to be known, and so this is set up to be customizable following
+the instructions below.
+
+Instructions
+------------
+
+The code provided in this module uses a design pattern called the "Template Method". This is used for cases where the
+same series of steps will be undertaken each time, but child classes may wish to handle the details of each step
+differently. This is implemented by using a parent class (defined here), with methods to perform each step of the
+process. Any of these methods can be overridden by child classes to alter the functionality, and so these
+instructions cannot cover all possibilities. Instead, we will provide examples resembling likely use cases.
+
+Be warned that documentation has a tendency to get out of sync with code, so use the code as the ultimate arbiter,
+not this documentation.
+
+For any of these cases, you will need to start by defining in a new module a child class of the TestSummaryWriter
+class defined here, which overrides select methods, i.e.:
+
+```
+class SpecificTestWriter(TestSummaryWriter):
+
+    test_name = "Specific-Test"
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_test_case_details(writer, test_case_results):
+        '''Specialized implementation of formatting SupplementaryInfo for this test.
+        '''
+        ...
+
+    ...
+```
+
+**Use Case #1: Formatting SupplementaryInfo**
+
+In the default implementation here, all SupplementaryInfo stored within a product will be printed as-is in a code block
+with no modification. Let's say that for a specific test, you know that there will always be exactly one
+SupplementaryInfo entry and it will be formatted as:
+
+```
+x = <value>
+x_err = <value>
+y = <value>
+y_err = <value>
+```
+
+(where each `<value>` is some number), and you wish it to be displayed outside of a code block as:
+
+```
+### Result Values
+
+x = <value> +/- <value>
+
+y = <value> +/- <value>
+```
+
+To do this, you would find the method here which handles the writing of SupplementaryInfo:
+`_add_test_case_supp_info`. See the documentation of this method for detailed information on it, but to summarize,
+it takes as arguments a `writer`, which is an object used to write sections of the Markdown file with support for
+section headings and auto-generating a Table of Contents, `req`, which is a `RequirementResults`
+object storing the results for this test case (see the definition of that class for details), and `req_i`,
+which is the index of this requirement (which is used to ensure unique labeling of sections for links from the Table
+of Contents). You could then use these to write the child implementation as e.g.:
+
+```
+@staticmethod
+def _add_test_case_supp_info(writer, req, req_i):
+    '''Specialized implementation to write out the x and y values +/- their errors.
+
+    # Add a heading for this section. The depth here is 2 (2 layes deeper than depth 0, which corresponds to the
+    # highest level of heading, with just one "#". We don't need any "#" or linebreak at the end when adding the
+    # heading. We use the Requirement index in the label here to make sure it's unique. The label won't be shown;
+    # it's just used behind the scenes to form a link from the Table of Contents.
+    writer.add_heading(f"Result Values", depth=2, label=f"req-{req_i}-si")
+
+    # Here we implement custom parsing of the SupplementaryInfo to get the values we want
+    supp_info_str = req.l_supp_info[0].strip()
+
+    l_supp_info_lines = supp_info.split('\n')
+    x = l_supp_info_lines[0].split(' = ')[1]
+    x_err = l_supp_info_lines[1].split(' = ')[1]
+    y = l_supp_info_lines[2].split(' = ')[1]
+    y_err = l_supp_info_lines[3].split(' = ')[1]
+
+    # Now we add lines to the writer. `writer.add_line` functions just like `fo.write` where `fo` is a filehandle
+    # opened to write or append text. Since we just added a heading, it will automatically have two line breaks after
+    # it, so we don't need to handle those ourselves. Remember that this is a MarkDown file, which requires double
+    # linebreaks if you wish for things to appear on separate lines.
+    writer.add_line(f'x = {x} +/- {x_err}'\n\n)
+    writer.add_line(f'y = {y} +/- {y_err}'\n\n)
+
+    # And that's all we need to do here. The writer will be called after everything in the file is added to it. It
+    # waits until that point, so it will have all the headings which it will link from the Table of Contents at the
+    # top and can write that first.
+```
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -34,7 +135,7 @@ from utility.misc import extract_tarball, hash_any, log_entry_exit
 from utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
-    from utility.product_parsing import AnalysisResult, SingleTestResult, TestResults  # noqa F401
+    from utility.product_parsing import AnalysisResult, RequirementResults, SingleTestResult, TestResults  # noqa F401
     from typing import Sequence, TextIO  # noqa F401
 
 ERROR_LABEL = "**ERROR:** "
@@ -428,7 +529,7 @@ class TestSummaryWriter:
 
         self._add_test_case_meta(writer, test_case_results)
 
-        self._add_test_case_info_and_figures(test_case_results, writer, rootdir, tmpdir)
+        self._add_test_case_details_and_figures(test_case_results, writer, rootdir, tmpdir)
 
         with open(qualified_test_case_filename, "w") as fo:
             writer.write(fo)
@@ -453,7 +554,7 @@ class TestSummaryWriter:
             writer.add_line(f"**Comments:** {test_case_results.analysis_result.ana_comment}\n\n")
 
     @log_entry_exit(logger)
-    def _add_test_case_info_and_figures(self, test_case_results, writer, rootdir, tmpdir):
+    def _add_test_case_details_and_figures(self, test_case_results, writer, rootdir, tmpdir):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
         prepares figures, and also adds lines for them.
 
@@ -470,18 +571,18 @@ class TestSummaryWriter:
         figures_tmpdir = self._make_tmpdir(test_case_results, tmpdir)
 
         try:
-            self._add_test_case_supp_info_and_figures_with_tmpdir(writer, test_case_results, rootdir, tmpdir,
-                                                                  figures_tmpdir)
+            self._add_test_case_details_and_figures_with_tmpdir(writer, test_case_results, rootdir, tmpdir,
+                                                                figures_tmpdir)
         finally:
             shutil.rmtree(figures_tmpdir)
 
     @log_entry_exit(logger)
-    def _add_test_case_supp_info_and_figures_with_tmpdir(self,
-                                                         writer,
-                                                         test_case_results,
-                                                         rootdir,
-                                                         tmpdir,
-                                                         figures_tmpdir):
+    def _add_test_case_details_and_figures_with_tmpdir(self,
+                                                       writer,
+                                                       test_case_results,
+                                                       rootdir,
+                                                       tmpdir,
+                                                       figures_tmpdir):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
         prepares figures, and also adds lines for them, after a temporary directory has been created to store figures
         data.
@@ -500,17 +601,16 @@ class TestSummaryWriter:
         figures_tmpdir : str
             The fully-qualified path to the temporary directory set up to contain figures data for this test case.
         """
-        self._add_test_case_supp_info(writer, test_case_results)
+        self._add_test_case_details(writer, test_case_results)
         self._add_test_case_figures(writer=writer,
                                     ana_result=test_case_results.analysis_result,
                                     rootdir=rootdir,
                                     tmpdir=tmpdir,
                                     figures_tmpdir=figures_tmpdir)
 
-    @staticmethod
     @log_entry_exit(logger)
-    def _add_test_case_supp_info(writer, test_case_results):
-        """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter.
+    def _add_test_case_details(self, writer, test_case_results):
+        """Adds a section for detailed results of an individual test case to a MarkdownWriter.
 
         Parameters
         ----------
@@ -520,21 +620,39 @@ class TestSummaryWriter:
 
         # We can't guarantee that supplementary info keys will be unique between different requirements,
         # so to ensure we have unique links for each, we keep a counter and add it to the name of each
-        supp_info_counter = 0
         writer.add_heading("Detailed Results", depth=0)
-        for req in test_case_results.l_requirements:
-            writer.add_heading("Requirement", depth=1)
+        for req_i, req in enumerate(test_case_results.l_requirements):
+            writer.add_heading("Requirement", depth=1, label=f"req-{req_i}")
             writer.add_line(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
             writer.add_line(f"**Measured Value**: {req.meas_value.value}\n\n")
             if req.req_comment is not None:
                 writer.add_line(f"**Comments**: {req.req_comment}\n\n")
-            for supp_info in req.l_supp_info:
-                writer.add_heading(f"{supp_info.info_key}", depth=2, label=f"si-{supp_info_counter}")
-                supp_info_counter += 1
-                writer.add_line(f"{supp_info.info_description}\n\n")
-                writer.add_line("```\n")
-                writer.add_line(supp_info.info_value)
-                writer.add_line("```\n\n")
+            self._add_test_case_supp_info(writer, req, req_i)
+
+    @staticmethod
+    def _add_test_case_supp_info(writer, req, req_i):
+        """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter.
+
+        Parameters
+        ----------
+        writer : MarkdownWriter
+        req : RequirementResults
+            The object containing the results for a specific requirement.
+        req_i : int
+            The index of the requirement (used to ensure unique labelling of sections).
+        """
+
+        for supp_info_i, supp_info in enumerate(req.l_supp_info):
+            writer.add_heading(f"{supp_info.info_key}", depth=2, label=f"req-{req_i}-si-{supp_info_i}")
+            writer.add_line(f"{supp_info.info_description}\n\n")
+            writer.add_line("```\n")
+
+            # Trim excess line breaks from the supplementary info's beginning and end
+            supp_info_str = supp_info.info_value.strip()
+
+            writer.add_line(supp_info_str)
+
+            writer.add_line("\n```\n\n")
 
     @log_entry_exit(logger)
     def _add_test_case_figures(self, writer, ana_result, rootdir, tmpdir, figures_tmpdir):

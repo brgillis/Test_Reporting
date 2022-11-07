@@ -1,10 +1,10 @@
 """
-:file: utility/constants.py
+:file: utility/summary_files.py
 
 :date: 10/13/2022
 :author: Bryan Gillis
 
-Functions to handle building a new test report summary file.
+Functions to handle building and updating summary files for the test reports that have been generated.
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -115,9 +115,8 @@ def update_summary(test_report_summary_filename,
                 fo.write(f"    * [{test_case_name}]({test_case_md_filename})\n")
 
 
-@log_entry_exit(logger)
 def _check_md_filename(filename):
-    """Private method to check that a filename ends with `.md'.
+    """Private method to check that a filename ends with `.md' and raise an exception if not.
     """
     if not filename.endswith('.md'):
         raise ValueError(f"Filename '{filename}' must end with '.md'.")

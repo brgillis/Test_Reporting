@@ -346,7 +346,6 @@ def _element_find(element, tag, find_all=False, output_type=None):
     return _element_find(element.find(head), tail, find_all=find_all, output_type=output_type)
 
 
-@log_entry_exit(logger)
 def _construct_datetime(s: str) -> datetime:
     """Converts a string value, formatted like "YYYY-MM-DDTHH:MM:SS.408Z", into a datetime object.
     """
@@ -354,7 +353,6 @@ def _construct_datetime(s: str) -> datetime:
     return datetime.fromisoformat(s.replace('Z', '+00:00'))
 
 
-@log_entry_exit(logger)
 def _e_to_type(e: Optional[Element], t: Type) -> Optional[str]:
     """Tries to convert an XML element to the provided type. Returns None if None is provided
     """

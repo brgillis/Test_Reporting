@@ -227,12 +227,15 @@ class TocMarkdownWriter:
 
         fo.write(f"# {self.title}\n\n")
 
-        fo.write(f"## Table of Contents\n\n")
+        # Only write a Table of Contents if there's more than one heading; otherwise it's not worth it
+        if len(self._l_toc_lines) > 1:
 
-        for line in self._l_toc_lines:
-            fo.write(line)
+            fo.write(f"## Table of Contents\n\n")
 
-        fo.write("\n")
+            for line in self._l_toc_lines:
+                fo.write(line)
+
+            fo.write("\n")
 
         for line in self._l_lines:
             fo.write(line)

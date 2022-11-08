@@ -4,7 +4,7 @@
 :date: 10/18/2022
 :author: Bryan Gillis
 
-Module for miscellaneous utility functions used in this project.
+Module for miscellaneous utility functions and classes used in this project.
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -20,12 +20,14 @@ Module for miscellaneous utility functions used in this project.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+from __future__ import annotations
+
 import codecs
 import hashlib
 import logging
 import re
 import subprocess
-from typing import TYPE_CHECKING
+from typing import List, TYPE_CHECKING, TextIO
 
 if TYPE_CHECKING:
     from logging import Logger
@@ -34,13 +36,13 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def log_entry_exit(logger, level=logging.DEBUG):
+def log_entry_exit(my_logger, level=logging.DEBUG):
     """Decorator which, when applied to a function, will log upon entry/exit of the function the name of the
     function, the arguments provided to it, and the output of it.
 
     Parameters
     ----------
-    logger : Logger
+    my_logger : Logger
         The logger to use for logging the info about this function.
     level : int, default=logging.DEBUG
         The level at which to log. Default: DEBUG
@@ -52,10 +54,10 @@ def log_entry_exit(logger, level=logging.DEBUG):
 
     def func_wrap(func):
         def wrap(*args, **kwargs):
-            logger.log(level, "Entering method `%s` with positional arguments `%s` and keyword arguments `%s`.",
-                       func.__qualname__, args, kwargs)
+            my_logger.log(level, "Entering method `%s` with positional arguments `%s` and keyword arguments `%s`.",
+                          func.__qualname__, args, kwargs)
             output = func(*args, **kwargs)
-            logger.log(level, "Exiting method `%s` with output `%s`.", func.__qualname__, output)
+            my_logger.log(level, "Exiting method `%s` with output `%s`.", func.__qualname__, output)
 
             return output
 
@@ -135,3 +137,105 @@ def hash_any(obj, max_length=None):
         full_hash = full_hash[:max_length]
 
     return full_hash
+
+
+class TocMarkdownWriter:
+    """Class to help with writing Markdown files which include a Table of Contents.
+    """
+
+    @log_entry_exit(logger)
+    def __init__(self, title):
+        """Initializes this writer, setting the desired title of the page.
+
+        Parameters
+        ----------
+        title : str
+            The desired title for this page. This does not need to include any leading '#'s or surrounding whitespace.
+        """
+
+        # Strip any leading '#' and any enclosing whitespace from the title, so we can be sure it's properly formatted
+        while title.startswith('#'):
+            title = title[1:]
+        self.title = title.strip()
+
+        self._l_lines: List[str] = []
+        self._l_toc_lines: List[str] = []
+
+    @log_entry_exit(logger)
+    def add_line(self, line):
+        """Add a standard line to be written as part of the body text of the file. Note that this class does not
+        automatically add linebreaks after lines, so the line added here must include any desired linebreaks. This
+        can be thought of as acting like the `write` method of a filehandle opened to write or append.
+
+        Parameters
+        ----------
+        line : str
+            The line to be written, including any desired linebreaks afterwards.
+        """
+        self._l_lines.append(line)
+
+    @log_entry_exit(logger)
+    def add_heading(self, heading, depth):
+        """Add a heading line to be included at this point in the file, which will also be linked from the table-of
+        contents.
+
+        Parameters
+        ----------
+        heading : str
+            The heading to be added both to the Table of Contents and the section header in the body of the file.
+            This should not include any leading '#'s or surrounding whitespace.
+        depth : int
+            Integer >= 0 specifying the depth of the heading. Depth 0 corresponds to the highest allowed depth within
+            the body of the file (a heading starting with '## '), and each increase of depth by 1 corresponds to a
+            section which will have an extra '#' in its header, so e.g. depth 2 would start with '#### '.
+        """
+
+        # Trim any beginning '#'s and spaces, as those will be added automatically at the proper depth
+        input_heading = heading
+        hash_counter = 0
+        while heading.startswith("#"):
+            heading = heading[1:]
+            hash_counter += 1
+
+        # If any '#'s were included, check that they're consistent with the specified depth, and raise an exception
+        # if not as it will be unclear what the user desired in this case.
+        if (hash_counter > 0) and (hash_counter != depth + 2):
+            raise ValueError(f"Heading '{input_heading}' has inconsistent number of '#'s with specified depth ("
+                             f"{depth}). Heading should be supplied without any leading '#'s, with depth used to "
+                             "control this.")
+
+        heading = heading.strip()
+
+        # Make sure the label for this heading is unique by appending to it a counter of the number of headings
+        # already in the document
+        label = f"{heading.lower().replace(' ', '-')}-{len(self._l_toc_lines)}"
+
+        # Add a line for this heading both in the main list of lines (so it will be written at the proper location)
+        # and in the lines for the Table of Contents, both formatted properly and with the label linking them
+        self._l_lines.append("#" * (depth + 2) + f" {heading} <a id=\"{label}\"></a>\n\n")
+        self._l_toc_lines.append("  " * depth + f"1. [{heading}](#{label})\n")
+
+    @log_entry_exit(logger)
+    def write(self, fo: TextIO):
+        """Writes out the TOC and all lines added to this object.
+
+        Parameters
+        ----------
+        fo : TextIO
+            The text filehandle to write to.
+        """
+
+        fo.write(f"# {self.title}\n\n")
+
+        # Only write a Table of Contents if there's more than one heading; otherwise it's not worth it
+        if len(self._l_toc_lines) > 1:
+
+            fo.write(f"## Table of Contents\n\n")
+
+            for line in self._l_toc_lines:
+                fo.write(line)
+
+            fo.write("\n")
+
+        for line in self._l_lines:
+            fo.write(line)

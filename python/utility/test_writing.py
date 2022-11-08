@@ -38,7 +38,7 @@ from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tuple, Union
 
 from utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.misc import extract_tarball, hash_any, log_entry_exit
+from utility.misc import TocMarkdownWriter, extract_tarball, hash_any, log_entry_exit
 from utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
@@ -76,105 +76,6 @@ class TestMeta(NamedTuple):
 
 # Define the expected type for callables used to build test reports, now that the output type from it is defined above
 BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]], str], List[TestMeta]]
-
-
-class TocMarkdownWriter:
-    """Class to help with writing Markdown files which include a Table of Contents.
-    """
-
-    @log_entry_exit(logger)
-    def __init__(self, title):
-        """Initializes this writer, setting the desired title of the page.
-
-        Parameters
-        ----------
-        title : str
-            The desired title for this page. This does not need to include any leading '#'s or surrounding whitespace.
-        """
-
-        # Strip any leading '#' and any enclosing whitespace from the title, so we can be sure it's properly formatted
-        while title.startswith('#'):
-            title = title[1:]
-        self.title = title.strip()
-
-        self._l_lines: List[str] = []
-        self._l_toc_lines: List[str] = []
-
-    @log_entry_exit(logger)
-    def add_line(self, line):
-        """Add a standard line to be written as part of the body text of the file. Note that this class does not
-        automatically add linebreaks after lines, so the line added here must include any desired linebreaks. This
-        can be thought of as acting like the `write` method of a filehandle opened to write or append.
-
-        Parameters
-        ----------
-        line : str
-            The line to be written, including any desired linebreaks afterwards.
-        """
-        self._l_lines.append(line)
-
-    @log_entry_exit(logger)
-    def add_heading(self, heading, depth):
-        """Add a heading line to be included at this point in the file, which will also be linked from the table-of
-        contents.
-
-        Parameters
-        ----------
-        heading : str
-            The heading to be added both to the Table of Contents and the section header in the body of the file.
-            This should not include any leading '#'s or surrounding whitespace.
-        depth : int
-            Integer >= 0 specifying the depth of the heading. Depth 0 corresponds to the highest allowed depth within
-            the body of the file (a heading starting with '## '), and each increase of depth by 1 corresponds to a
-            section which will have an extra '#' in its header, so e.g. depth 2 would start with '#### '.
-        """
-
-        # Trim any beginning '#'s and spaces, as those will be added automatically at the proper depth
-        input_heading = heading
-        hash_counter = 0
-        while heading.startswith("#"):
-            heading = heading[1:]
-            hash_counter += 1
-
-        # If any '#'s were included, check that they're consistent with the specified depth, and raise an exception
-        # if not as it will be unclear what the user desired in this case.
-        if (hash_counter > 0) and (hash_counter != depth + 2):
-            raise ValueError(f"Heading '{input_heading}' has inconsistent number of '#'s with specified depth ("
-                             f"{depth}). Heading should be supplied without any leading '#'s, with depth used to "
-                             "control this.")
-
-        heading = heading.strip()
-
-        # Make sure the label for this heading is unique by appending to it a counter of the number of headings
-        # already in the document
-        label = f"{heading.lower().replace(' ', '-')}-{len(self._l_toc_lines)}"
-
-        # Add a line for this heading both in the main list of lines (so it will be written at the proper location)
-        # and in the lines for the Table of Contents, both formatted properly and with the label linking them
-        self._l_lines.append("#" * (depth + 2) + f" {heading} <a id=\"{label}\"></a>\n\n")
-        self._l_toc_lines.append("  " * depth + f"1. [{heading}](#{label})\n")
-
-    @log_entry_exit(logger)
-    def write(self, fo: TextIO):
-        """Writes out the TOC and all lines added to this object.
-
-        Parameters
-        ----------
-        fo : TextIO
-            The text filehandle to write to.
-        """
-
-        fo.write(f"# {self.title}\n\n")
-
-        fo.write(f"## Table of Contents\n\n")
-
-        for line in self._l_toc_lines:
-            fo.write(line)
-
-        fo.write("\n")
-
-        for line in self._l_lines:
-            fo.write(line)
 
 
 class TestSummaryWriter:
@@ -536,15 +437,13 @@ class TestSummaryWriter:
                                                                  rootdir=rootdir,
                                                                  tmpdir=qualified_tmpdir)
 
-            # Calculate the number of test cases which passed and the number which failed
-            num_passed = sum([1 for x in l_test_case_meta if x.passed])
-            num_failed = len(l_test_case_meta) - num_passed
 
             test_filename = self._write_test_results_summary(test_results=test_results,
                                                              test_name=test_name,
                                                              l_test_case_meta=l_test_case_meta,
                                                              rootdir=rootdir)
 
+            num_passed, num_failed = self._calc_num_passed_failed(l_test_case_meta)
             l_test_meta.append(TestMeta(name=test_name,
                                         filename=test_filename,
                                         l_test_case_meta=l_test_case_meta,
@@ -552,6 +451,26 @@ class TestSummaryWriter:
                                         num_failed=num_failed))
 
         return l_test_meta
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _calc_num_passed_failed(l_test_case_meta):
+        """Calculates the number of test cases which have passed and failed from the provided list of TestCaseMeta.
+
+        Parameters
+        ----------
+        l_test_case_meta : Sequence[TestCaseMeta]
+
+        Returns
+        -------
+        num_passed : int
+        num_failed : int
+        """
+
+        num_passed = sum([1 for x in l_test_case_meta if x.passed])
+        num_failed = len(l_test_case_meta) - num_passed
+
+        return num_passed, num_failed
 
     @staticmethod
     @log_entry_exit(logger)
@@ -1014,91 +933,91 @@ class TestSummaryWriter:
 
         logger.info(f"Writing test results summary to {qualified_test_filename}.")
 
+        writer = TocMarkdownWriter(test_name)
+
+        self._write_product_metadata(test_results, writer)
+        self._write_test_metadata(test_results, writer)
+        self._write_test_case_table(test_results, l_test_case_meta, writer)
+
         # Ensure the folder for this exists
         os.makedirs(os.path.split(qualified_test_filename)[0], exist_ok=True)
 
         with open(qualified_test_filename, "w") as fo:
-            fo.write(f"# {test_name}\n\n")
-
-            self._write_product_metadata(test_results, fo)
-
-            fo.write("\n")
-
-            self._write_test_metadata(test_results, fo)
-
-            fo.write("\n")
-
-            self._write_test_case_table(test_results, l_test_case_meta, fo)
+            writer.write(fo)
 
         return test_filename
 
     @staticmethod
     @log_entry_exit(logger)
-    def _write_product_metadata(test_results, fo):
+    def _write_product_metadata(test_results, writer):
         """Writes metadata related to the test's data product to an open filehandle
 
         Parameters
         ----------
         test_results : TestResults
-        fo : TextIO
-            A filehandle for the desired file, opened for writing text output
+        writer : TocMarkdownWriter
+            A writer to handle storing heading and lines we wish to be written out to a file
         """
 
-        fo.write(f"## Product Metadata\n\n")
+        writer.add_heading(f"Product Metadata", depth=0)
 
-        fo.write(f"**Product ID:** {test_results.product_id}\n\n")
-        fo.write(f"**Dataset Release:** {test_results.dataset_release}\n\n")
-        fo.write(f"**Plan ID:** {test_results.plan_id}\n\n")
-        fo.write(f"**PPO ID:** {test_results.ppo_id}\n\n")
-        fo.write(f"**Pipeline Definition ID:** {test_results.pipeline_definition_id}\n\n")
-        fo.write(f"**Source Pipeline:** {test_results.source_pipeline}\n\n")
+        writer.add_line(f"**Product ID:** {test_results.product_id}\n\n")
+        writer.add_line(f"**Dataset Release:** {test_results.dataset_release}\n\n")
+        writer.add_line(f"**Plan ID:** {test_results.plan_id}\n\n")
+        writer.add_line(f"**PPO ID:** {test_results.ppo_id}\n\n")
+        writer.add_line(f"**Pipeline Definition ID:** {test_results.pipeline_definition_id}\n\n")
+        writer.add_line(f"**Source Pipeline:** {test_results.source_pipeline}\n\n")
 
         t = test_results.creation_date
         month_name = t.strftime("%b")
-        fo.write(f"**Creation Date and Time:** {t.day} {month_name}, {t.year} at {t.time()}\n\n")
+        writer.add_line(f"**Creation Date and Time:** {t.day} {month_name}, {t.year} at {t.time()}\n\n")
 
     @staticmethod
     @log_entry_exit(logger)
-    def _write_test_metadata(test_results, fo):
+    def _write_test_metadata(test_results, writer):
         """Writes metadata related to the test itself to an open filehandle
 
         Parameters
         ----------
         test_results : TestResults
-        fo : TextIO
+        writer : TocMarkdownWriter
         """
 
-        fo.write("## Test Metadata\n\n")
+        writer.add_heading(f"Test Metadata", depth=0)
 
         if test_results.exp_product_id is not None:
-            fo.write(f"**Exposure Product ID:** {test_results.exp_product_id}\n\n")
+            writer.add_line(f"**Exposure Product ID:** {test_results.exp_product_id}\n\n")
         if test_results.obs_id is not None:
-            fo.write(f"**Observation ID:** {test_results.obs_id}\n\n")
+            writer.add_line(f"**Observation ID:** {test_results.obs_id}\n\n")
         if test_results.pnt_id is not None:
-            fo.write(f"**Pointing ID:** {test_results.pnt_id}\n\n")
+            writer.add_line(f"**Pointing ID:** {test_results.pnt_id}\n\n")
         if test_results.n_exp is not None:
-            fo.write(f"**Number of Exposures:** {test_results.n_exp}\n\n")
+            writer.add_line(f"**Number of Exposures:** {test_results.n_exp}\n\n")
         if test_results.tile_id is not None:
-            fo.write(f"**Tile ID:** {test_results.tile_id}\n\n")
+            writer.add_line(f"**Tile ID:** {test_results.tile_id}\n\n")
         if test_results.obs_mode is not None:
-            fo.write(f"**Observation Mode:** {test_results.obs_mode}\n\n")
+            writer.add_line(f"**Observation Mode:** {test_results.obs_mode}\n\n")
 
-    @staticmethod
     @log_entry_exit(logger)
-    def _write_test_case_table(test_results, l_test_case_meta, fo):
+    def _write_test_case_table(self, test_results, l_test_case_meta, writer):
         """Writes a table containing test case information and links to their pages to an open filehandle.
 
         Parameters
         ----------
         test_results : TestResults
         l_test_case_meta : Sequence[TestCaseMeta]
-        fo : TextIO
+        writer : TocMarkdownWriter
         """
 
-        fo.write("## Test Cases\n\n")
+        writer.add_heading("Test Cases", depth=0)
 
-        fo.write("| **Test Case** | **Result** |\n")
-        fo.write("| :------------ | :--------- |\n")
+        num_passed, num_failed = self._calc_num_passed_failed(l_test_case_meta)
+
+        writer.add_line(f"Number of Test Cases passed: {num_passed}\n\n")
+        writer.add_line(f"Number of Test Cases failed: {num_failed}\n\n")
+
+        writer.add_line("| **Test Case** | **Result** |\n")
+        writer.add_line("| :------------ | :--------- |\n")
 
         for (test_case_meta, test_case_results) in zip(l_test_case_meta,
                                                        test_results.l_test_results):
@@ -1109,4 +1028,4 @@ class TestSummaryWriter:
             html_filename = f"{test_case_meta.filename[3:-3]}.html"
 
             test_line = f"| [{test_case_name}]({html_filename}) | {test_case_results.global_result} |\n"
-            fo.write(test_line)
+            writer.add_line(test_line)

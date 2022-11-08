@@ -32,6 +32,8 @@ if TYPE_CHECKING:
     from _pytest.tmpdir import TempdirFactory  # noqa F401
     from collections.abc import Collection  # noqa F401
 
+CTI_GAL_MANIFEST_FILENAME = "cti_gal_manifest.json"
+
 L_FILES_MODIFIED = (os.path.join(PUBLIC_DIR, SUMMARY_FILENAME),
                     )
 
@@ -164,7 +166,7 @@ def project_copy(rootdir, tmpdir_factory):
 
 @pytest.fixture
 def test_manifest(project_copy):
-    """Pytest fixture to get the filename of the manifest to use for testing purposes.
+    """Pytest fixture to get the filename of the manifest to use for testing the default builder.
 
     Returns
     -------
@@ -173,3 +175,16 @@ def test_manifest(project_copy):
 
     """
     return os.path.join(project_copy, DATA_DIR, MANIFEST_FILENAME)
+
+
+@pytest.fixture
+def cti_gal_manifest(project_copy):
+    """Pytest fixture to get the filename of a manifest to use for testing the CTI-Gal builder.
+
+    Returns
+    -------
+    cti_gal_manifest : str
+        The fully-qualified path to the CTI-Gal manifest
+
+    """
+    return os.path.join(project_copy, DATA_DIR, CTI_GAL_MANIFEST_FILENAME)

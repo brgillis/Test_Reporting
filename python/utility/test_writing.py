@@ -536,15 +536,13 @@ class TestSummaryWriter:
                                                                  rootdir=rootdir,
                                                                  tmpdir=qualified_tmpdir)
 
-            # Calculate the number of test cases which passed and the number which failed
-            num_passed = sum([1 for x in l_test_case_meta if x.passed])
-            num_failed = len(l_test_case_meta) - num_passed
 
             test_filename = self._write_test_results_summary(test_results=test_results,
                                                              test_name=test_name,
                                                              l_test_case_meta=l_test_case_meta,
                                                              rootdir=rootdir)
 
+            num_passed, num_failed = self._calc_num_passed_failed(l_test_case_meta)
             l_test_meta.append(TestMeta(name=test_name,
                                         filename=test_filename,
                                         l_test_case_meta=l_test_case_meta,
@@ -552,6 +550,26 @@ class TestSummaryWriter:
                                         num_failed=num_failed))
 
         return l_test_meta
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _calc_num_passed_failed(l_test_case_meta):
+        """Calculates the number of test cases which have passed and failed from the provided list of TestCaseMeta.
+
+        Parameters
+        ----------
+        l_test_case_meta : Sequence[TestCaseMeta]
+
+        Returns
+        -------
+        num_passed : int
+        num_failed : int
+        """
+
+        num_passed = sum([1 for x in l_test_case_meta if x.passed])
+        num_failed = len(l_test_case_meta) - num_passed
+
+        return num_passed, num_failed
 
     @staticmethod
     @log_entry_exit(logger)
@@ -1083,9 +1101,8 @@ class TestSummaryWriter:
         if test_results.obs_mode is not None:
             fo.write(f"**Observation Mode:** {test_results.obs_mode}\n\n")
 
-    @staticmethod
     @log_entry_exit(logger)
-    def _write_test_case_table(test_results, l_test_case_meta, fo):
+    def _write_test_case_table(self, test_results, l_test_case_meta, fo):
         """Writes a table containing test case information and links to their pages to an open filehandle.
 
         Parameters
@@ -1096,6 +1113,11 @@ class TestSummaryWriter:
         """
 
         fo.write("## Test Cases\n\n")
+
+        num_passed, num_failed = self._calc_num_passed_failed(l_test_case_meta)
+
+        fo.write(f"Number of Test Cases passed: {num_passed}\n\n")
+        fo.write(f"Number of Test Cases failed: {num_failed}\n\n")
 
         fo.write("| **Test Case** | **Result** |\n")
         fo.write("| :------------ | :--------- |\n")

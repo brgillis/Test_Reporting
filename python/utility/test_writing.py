@@ -527,6 +527,8 @@ class TestSummaryWriter:
             else:
                 test_name = f"{self.test_name}{test_name_tail}"
 
+            logger.info(f"Building report for test {test_name}.")
+
             # We write the pages for the test cases first, so we know about and can link to them from the test
             # summary page
             l_test_case_meta = self._write_all_test_case_results(test_results=test_results,
@@ -647,6 +649,8 @@ class TestSummaryWriter:
         """
 
         qualified_test_case_filename = os.path.join(rootdir, PUBLIC_DIR, test_case_filename)
+
+        logger.info(f"Writing results for test case {test_case_name} ro {qualified_test_case_filename}.")
 
         # Ensure the folder for this exists
         os.makedirs(os.path.split(qualified_test_case_filename)[0], exist_ok=True)
@@ -1007,6 +1011,8 @@ class TestSummaryWriter:
         test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
 
         qualified_test_filename = os.path.join(rootdir, PUBLIC_DIR, test_filename)
+
+        logger.info(f"Writing test results summary to {qualified_test_filename}.")
 
         # Ensure the folder for this exists
         os.makedirs(os.path.split(qualified_test_filename)[0], exist_ok=True)

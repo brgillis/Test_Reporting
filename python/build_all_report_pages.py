@@ -151,11 +151,14 @@ def run_build_from_args(args):
 
         build_callable = D_BUILD_CALLABLES.get(key)
 
-        # Rather than using the default functionality of the dict's `get` method, we check explicitly so we can log
+        # Rather than using the default functionality of the dict's `get` method, we check explicitly, so we can log
         # in that case
         if not build_callable:
-            logger.info(f"No build callable provided for key '{key}'; using default implementation.")
+            logger.info(f"No build callable provided for key '{key}'; using default implementation "
+                        f"{DEFAULT_BUILD_CALLABLE} to construct test report from data: {value}.")
             build_callable = DEFAULT_BUILD_CALLABLE
+        else:
+            logger.info(f"Using build callable {build_callable} to construct test report from data: {value}.")
 
         l_test_meta += build_callable(value, args.rootdir)
 

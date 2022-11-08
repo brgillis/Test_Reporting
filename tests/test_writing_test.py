@@ -28,7 +28,7 @@ import pytest
 
 from testing.common import TEST_TARBALL_FILENAME
 from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.test_writing import (DIRECTORY_EXT, DIRECTORY_FIGURES_HEADER, DIRECTORY_SEPARATOR, ERROR_LABEL,
+from utility.test_writing import (DIRECTORY_FILE_EXT, DIRECTORY_FILE_FIGURES_HEADER, DIRECTORY_FILE_SEPARATOR,
                                   TestSummaryWriter, )
 
 if TYPE_CHECKING:
@@ -39,9 +39,9 @@ EX_N_TEST_CASES = 24
 L_COMMON_MOCK_UNPACKED_FILENAMES = ["foo.bar",
                                     "foo2.bar"
                                     "foobar.foobar",
-                                    f"foo{DIRECTORY_EXT}.gz"]
-EX_DIRECTORY_FILENAME = f"foo{DIRECTORY_EXT}"
-EX_EXTRA_DIRECTORY_FILENAME = f"foo2{DIRECTORY_EXT}"
+                                    f"foo{DIRECTORY_FILE_EXT}.gz"]
+EX_DIRECTORY_FILENAME = f"foo{DIRECTORY_FILE_EXT}"
+EX_EXTRA_DIRECTORY_FILENAME = f"foo2{DIRECTORY_FILE_EXT}"
 
 L_MOCK_DIRECTORY_LABELS_AND_FILENAMES = [("foo", "foo.jpeg"),
                                          ("bar", "bar.png"),
@@ -194,15 +194,15 @@ def mock_directory_file(tmpdir):
         Fully-qualified path to the generated mock directory file.
     """
 
-    qualified_directory_filename = os.path.join(tmpdir, f"mock_dir{DIRECTORY_EXT}")
+    qualified_directory_filename = os.path.join(tmpdir, f"mock_dir{DIRECTORY_FILE_EXT}")
 
     with open(qualified_directory_filename, 'w') as fo:
-        fo.write(f"{DIRECTORY_FIGURES_HEADER}\n")
+        fo.write(f"{DIRECTORY_FILE_FIGURES_HEADER}\n")
         for label, filename in L_MOCK_DIRECTORY_LABELS_AND_FILENAMES:
             if label is None:
                 fo.write(f"{filename}\n")
             else:
-                fo.write(f"{label}{DIRECTORY_SEPARATOR}{filename}\n")
+                fo.write(f"{label}{DIRECTORY_FILE_SEPARATOR}{filename}\n")
 
     return qualified_directory_filename
 

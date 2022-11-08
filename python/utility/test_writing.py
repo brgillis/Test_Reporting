@@ -38,7 +38,7 @@ from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tuple, Union
 
 from utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.misc import extract_tarball, hash_any, log_entry_exit
+from utility.misc import TocMarkdownWriter, extract_tarball, hash_any, log_entry_exit
 from utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
@@ -76,105 +76,6 @@ class TestMeta(NamedTuple):
 
 # Define the expected type for callables used to build test reports, now that the output type from it is defined above
 BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]], str], List[TestMeta]]
-
-
-class TocMarkdownWriter:
-    """Class to help with writing Markdown files which include a Table of Contents.
-    """
-
-    @log_entry_exit(logger)
-    def __init__(self, title):
-        """Initializes this writer, setting the desired title of the page.
-
-        Parameters
-        ----------
-        title : str
-            The desired title for this page. This does not need to include any leading '#'s or surrounding whitespace.
-        """
-
-        # Strip any leading '#' and any enclosing whitespace from the title, so we can be sure it's properly formatted
-        while title.startswith('#'):
-            title = title[1:]
-        self.title = title.strip()
-
-        self._l_lines: List[str] = []
-        self._l_toc_lines: List[str] = []
-
-    @log_entry_exit(logger)
-    def add_line(self, line):
-        """Add a standard line to be written as part of the body text of the file. Note that this class does not
-        automatically add linebreaks after lines, so the line added here must include any desired linebreaks. This
-        can be thought of as acting like the `write` method of a filehandle opened to write or append.
-
-        Parameters
-        ----------
-        line : str
-            The line to be written, including any desired linebreaks afterwards.
-        """
-        self._l_lines.append(line)
-
-    @log_entry_exit(logger)
-    def add_heading(self, heading, depth):
-        """Add a heading line to be included at this point in the file, which will also be linked from the table-of
-        contents.
-
-        Parameters
-        ----------
-        heading : str
-            The heading to be added both to the Table of Contents and the section header in the body of the file.
-            This should not include any leading '#'s or surrounding whitespace.
-        depth : int
-            Integer >= 0 specifying the depth of the heading. Depth 0 corresponds to the highest allowed depth within
-            the body of the file (a heading starting with '## '), and each increase of depth by 1 corresponds to a
-            section which will have an extra '#' in its header, so e.g. depth 2 would start with '#### '.
-        """
-
-        # Trim any beginning '#'s and spaces, as those will be added automatically at the proper depth
-        input_heading = heading
-        hash_counter = 0
-        while heading.startswith("#"):
-            heading = heading[1:]
-            hash_counter += 1
-
-        # If any '#'s were included, check that they're consistent with the specified depth, and raise an exception
-        # if not as it will be unclear what the user desired in this case.
-        if (hash_counter > 0) and (hash_counter != depth + 2):
-            raise ValueError(f"Heading '{input_heading}' has inconsistent number of '#'s with specified depth ("
-                             f"{depth}). Heading should be supplied without any leading '#'s, with depth used to "
-                             "control this.")
-
-        heading = heading.strip()
-
-        # Make sure the label for this heading is unique by appending to it a counter of the number of headings
-        # already in the document
-        label = f"{heading.lower().replace(' ', '-')}-{len(self._l_toc_lines)}"
-
-        # Add a line for this heading both in the main list of lines (so it will be written at the proper location)
-        # and in the lines for the Table of Contents, both formatted properly and with the label linking them
-        self._l_lines.append("#" * (depth + 2) + f" {heading} <a id=\"{label}\"></a>\n\n")
-        self._l_toc_lines.append("  " * depth + f"1. [{heading}](#{label})\n")
-
-    @log_entry_exit(logger)
-    def write(self, fo: TextIO):
-        """Writes out the TOC and all lines added to this object.
-
-        Parameters
-        ----------
-        fo : TextIO
-            The text filehandle to write to.
-        """
-
-        fo.write(f"# {self.title}\n\n")
-
-        fo.write(f"## Table of Contents\n\n")
-
-        for line in self._l_toc_lines:
-            fo.write(line)
-
-        fo.write("\n")
-
-        for line in self._l_lines:
-            fo.write(line)
 
 
 class TestSummaryWriter:

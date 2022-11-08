@@ -1032,95 +1032,91 @@ class TestSummaryWriter:
 
         logger.info(f"Writing test results summary to {qualified_test_filename}.")
 
+        writer = TocMarkdownWriter(test_name)
+
+        self._write_product_metadata(test_results, writer)
+        self._write_test_metadata(test_results, writer)
+        self._write_test_case_table(test_results, l_test_case_meta, writer)
+
         # Ensure the folder for this exists
         os.makedirs(os.path.split(qualified_test_filename)[0], exist_ok=True)
 
         with open(qualified_test_filename, "w") as fo:
-            fo.write(f"# {test_name}\n\n")
-
-            self._write_product_metadata(test_results, fo)
-
-            fo.write("\n")
-
-            self._write_test_metadata(test_results, fo)
-
-            fo.write("\n")
-
-            self._write_test_case_table(test_results, l_test_case_meta, fo)
+            writer.write(fo)
 
         return test_filename
 
     @staticmethod
     @log_entry_exit(logger)
-    def _write_product_metadata(test_results, fo):
+    def _write_product_metadata(test_results, writer):
         """Writes metadata related to the test's data product to an open filehandle
 
         Parameters
         ----------
         test_results : TestResults
-        fo : TextIO
-            A filehandle for the desired file, opened for writing text output
+        writer : TocMarkdownWriter
+            A writer to handle storing heading and lines we wish to be written out to a file
         """
 
-        fo.write(f"## Product Metadata\n\n")
+        writer.add_heading(f"Product Metadata", depth=0)
 
-        fo.write(f"**Product ID:** {test_results.product_id}\n\n")
-        fo.write(f"**Dataset Release:** {test_results.dataset_release}\n\n")
-        fo.write(f"**Plan ID:** {test_results.plan_id}\n\n")
-        fo.write(f"**PPO ID:** {test_results.ppo_id}\n\n")
-        fo.write(f"**Pipeline Definition ID:** {test_results.pipeline_definition_id}\n\n")
-        fo.write(f"**Source Pipeline:** {test_results.source_pipeline}\n\n")
+        writer.add_line(f"**Product ID:** {test_results.product_id}\n\n")
+        writer.add_line(f"**Dataset Release:** {test_results.dataset_release}\n\n")
+        writer.add_line(f"**Plan ID:** {test_results.plan_id}\n\n")
+        writer.add_line(f"**PPO ID:** {test_results.ppo_id}\n\n")
+        writer.add_line(f"**Pipeline Definition ID:** {test_results.pipeline_definition_id}\n\n")
+        writer.add_line(f"**Source Pipeline:** {test_results.source_pipeline}\n\n")
 
         t = test_results.creation_date
         month_name = t.strftime("%b")
-        fo.write(f"**Creation Date and Time:** {t.day} {month_name}, {t.year} at {t.time()}\n\n")
+        writer.add_line(f"**Creation Date and Time:** {t.day} {month_name}, {t.year} at {t.time()}\n\n")
 
     @staticmethod
     @log_entry_exit(logger)
-    def _write_test_metadata(test_results, fo):
+    def _write_test_metadata(test_results, writer):
         """Writes metadata related to the test itself to an open filehandle
 
         Parameters
         ----------
         test_results : TestResults
-        fo : TextIO
+        writer : TocMarkdownWriter
         """
 
-        fo.write("## Test Metadata\n\n")
+        writer.add_heading(f"Test Metadata", depth=0)
 
         if test_results.exp_product_id is not None:
-            fo.write(f"**Exposure Product ID:** {test_results.exp_product_id}\n\n")
+            writer.add_line(f"**Exposure Product ID:** {test_results.exp_product_id}\n\n")
         if test_results.obs_id is not None:
-            fo.write(f"**Observation ID:** {test_results.obs_id}\n\n")
+            writer.add_line(f"**Observation ID:** {test_results.obs_id}\n\n")
         if test_results.pnt_id is not None:
-            fo.write(f"**Pointing ID:** {test_results.pnt_id}\n\n")
+            writer.add_line(f"**Pointing ID:** {test_results.pnt_id}\n\n")
         if test_results.n_exp is not None:
-            fo.write(f"**Number of Exposures:** {test_results.n_exp}\n\n")
+            writer.add_line(f"**Number of Exposures:** {test_results.n_exp}\n\n")
         if test_results.tile_id is not None:
-            fo.write(f"**Tile ID:** {test_results.tile_id}\n\n")
+            writer.add_line(f"**Tile ID:** {test_results.tile_id}\n\n")
         if test_results.obs_mode is not None:
-            fo.write(f"**Observation Mode:** {test_results.obs_mode}\n\n")
+            writer.add_line(f"**Observation Mode:** {test_results.obs_mode}\n\n")
 
     @log_entry_exit(logger)
-    def _write_test_case_table(self, test_results, l_test_case_meta, fo):
+    def _write_test_case_table(self, test_results, l_test_case_meta, writer):
         """Writes a table containing test case information and links to their pages to an open filehandle.
 
         Parameters
         ----------
         test_results : TestResults
         l_test_case_meta : Sequence[TestCaseMeta]
-        fo : TextIO
+        writer : TocMarkdownWriter
         """
 
-        fo.write("## Test Cases\n\n")
+        writer.add_heading("Test Cases", depth=0)
 
         num_passed, num_failed = self._calc_num_passed_failed(l_test_case_meta)
 
-        fo.write(f"Number of Test Cases passed: {num_passed}\n\n")
-        fo.write(f"Number of Test Cases failed: {num_failed}\n\n")
+        writer.add_line(f"Number of Test Cases passed: {num_passed}\n\n")
+        writer.add_line(f"Number of Test Cases failed: {num_failed}\n\n")
 
-        fo.write("| **Test Case** | **Result** |\n")
-        fo.write("| :------------ | :--------- |\n")
+        writer.add_line("| **Test Case** | **Result** |\n")
+        writer.add_line("| :------------ | :--------- |\n")
 
         for (test_case_meta, test_case_results) in zip(l_test_case_meta,
                                                        test_results.l_test_results):
@@ -1131,4 +1127,4 @@ class TestSummaryWriter:
             html_filename = f"{test_case_meta.filename[3:-3]}.html"
 
             test_line = f"| [{test_case_name}]({html_filename}) | {test_case_results.global_result} |\n"
-            fo.write(test_line)
+            writer.add_line(test_line)

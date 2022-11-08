@@ -4,9 +4,24 @@
 :date: 10/14/2022
 :author: Bryan Gillis
 
-This python module provides functionality to help with parsing of SheValidationTestResult products. The goal of the
-functions here is to provide the relevant information in an output dataclass of defined format, which can then be
-written to output Markdown files.
+This python module provides functionality to help with parsing of SheValidationTestResults products. The goal of the
+functions here is to provide the relevant information in an output dataclass of defined format which can be easily
+inspected with an IDE or in a python instance to see its structure, rather than the raw XML element structure which
+requires the user to know its structure.
+
+This module defines a hierarchy of dataclasses (`TestResults` being at the top of the hierarchy), for which the data
+which was stored in the XML file can be accessed as simple attributes, e.g. `test_results.l_test_results[
+0].global_result`. Each of these dataclasses has a classmethod called `make_from_element` which is used to construct
+it from the XML element which contains the corresponding data.
+
+The `parse_xml_product` method is used to construct the full `TestResults` object hierarchically - its
+`make_from_element` method is called on the root element of the XML file, it reads in simple elements from the XML
+file directly (converting to the expected types) and constructs other dataclasses via their own `make_from_element`
+methods, which proceed similarly.
+
+If the structure of the SheValidationTestResults data products changes, this module will need to be updated to reflect
+those changes. Similarly, not all the XML file's metadata is currently being read in here; if some missing data
+is later needed, this will also have to be updated.
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -29,22 +44,33 @@ from typing import Any, List, Optional, Type
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 
+from utility.misc import log_entry_exit
+
 logger = getLogger(__name__)
 
 
 @dataclass
 class MeasuredValue:
+    """Dataclass containing information from a SheValidationTestResults data product, corresponding to one of the
+    `root.Data.ValidationTestList.ValidatedRequirements.Requirement.MeasuredValue` elements.
+    """
+
     parameter: str
     data_type: str
     value: Any
 
     @classmethod
+    @log_entry_exit(logger)
     def make_from_element(cls, e):
-        """Construct an instance of this class from a corresponding XML element.
+        """Construct an instance of this class from a corresponding XML element. In the case of this class,
+        it should be constructed from one of the
+        `root.Data.ValidationTestList.ValidatedRequirements.Requirement.MeasuredValue` elements of the ElementTree.
 
         Parameters
         ----------
         e : Element
+            A `root.Data.ValidationTestList.ValidatedRequirements.Requirement.MeasuredValue` element of the
+            ElementTree of an opened SheValidationTestResults XML data product.
 
         Returns
         -------
@@ -61,23 +87,32 @@ class MeasuredValue:
 
         return MeasuredValue(parameter=_element_find(e, "Parameter", output_type=str),
                              data_type=data_type,
-                             value=value,
-                             )
+                             value=value)
 
 
 @dataclass
 class SupplementaryInfo:
+    """Dataclass containing information from a SheValidationTestResults data product, corresponding to one of the
+    `root.Data.ValidationTestList.ValidatedRequirements.Requirement.SupplementaryInformation.Parameter` elements.
+    """
+
     info_key: str
     info_description: str
     info_value: str
 
     @classmethod
+    @log_entry_exit(logger)
     def make_from_element(cls, e):
-        """Construct an instance of this class from a corresponding XML element.
+        """Construct an instance of this class from a corresponding XML element. In the case of this class,
+        it should be constructed from one of the
+        `root.Data.ValidationTestList.ValidatedRequirements.Requirement.SupplementaryInformation.Parameter` elements
+        of the ElementTree.
 
         Parameters
         ----------
         e : Element
+            A `root.Data.ValidationTestList.ValidatedRequirements.Requirement.SupplementaryInformation.Parameter`
+            element of the ElementTree of an opened SheValidationTestResults XML data product.
 
         Returns
         -------
@@ -85,12 +120,15 @@ class SupplementaryInfo:
         """
         return SupplementaryInfo(info_key=_element_find(e, "Key", output_type=str),
                                  info_description=_element_find(e, "Description", output_type=str),
-                                 info_value=_element_find(e, "StringValue", output_type=str),
-                                 )
+                                 info_value=_element_find(e, "StringValue", output_type=str))
 
 
 @dataclass
 class RequirementResults:
+    """Dataclass containing information from a SheValidationTestResults data product, corresponding to one of the
+    `root.Data.ValidationTestList.ValidatedRequirements` elements.
+    """
+
     req_id: str
     meas_value: MeasuredValue
     req_result: str
@@ -98,12 +136,17 @@ class RequirementResults:
     l_supp_info: List[SupplementaryInfo] = field(default_factory=list)
 
     @classmethod
+    @log_entry_exit(logger)
     def make_from_element(cls, e):
-        """Construct an instance of this class from a corresponding XML element.
+        """Construct an instance of this class from a corresponding XML element. In the case of this class,
+        it should be constructed from one of the `root.Data.ValidationTestList.ValidatedRequirements` elements of the
+        ElementTree.
 
         Parameters
         ----------
         e : Element
+            A `root.Data.ValidationTestList.ValidatedRequirements` element of the ElementTree of an opened
+            SheValidationTestResults XML data product.
 
         Returns
         -------
@@ -118,24 +161,32 @@ class RequirementResults:
                                   meas_value=meas_value,
                                   req_result=_element_find(e, "Requirement.ValidationResult", output_type=str),
                                   req_comment=_element_find(e, "Requirement.Comment", output_type=str),
-                                  l_supp_info=l_supp_info,
-                                  )
+                                  l_supp_info=l_supp_info)
 
 
 @dataclass
 class AnalysisResult:
+    """Dataclass containing information from a SheValidationTestResults data product, corresponding to one of the
+    `root.Data.ValidationTestList.AnalysisResult` elements.
+    """
+
     ana_result: str
     textfiles_tarball: Optional[str] = None
     figures_tarball: Optional[str] = None
     ana_comment: Optional[str] = None
 
     @classmethod
+    @log_entry_exit(logger)
     def make_from_element(cls, e):
-        """Construct an instance of this class from a corresponding XML element.
+        """Construct an instance of this class from a corresponding XML element. In the case of this class,
+        it should be constructed from one of the `root.Data.ValidationTestList.AnalysisResult` elements of the
+        ElementTree.
 
         Parameters
         ----------
         e : Element
+            A `root.Data.ValidationTestList.AnalysisResult` element of the ElementTree of an opened
+            SheValidationTestResults XML data product.
 
         Returns
         -------
@@ -144,12 +195,14 @@ class AnalysisResult:
         return AnalysisResult(ana_result=_element_find(e, "Result", output_type=str),
                               textfiles_tarball=_element_find(e, "AnalysisFiles.TextFiles.FileName", output_type=str),
                               figures_tarball=_element_find(e, "AnalysisFiles.Figures.FileName", output_type=str),
-                              ana_comment=_element_find(e, "Comment", output_type=str),
-                              )
+                              ana_comment=_element_find(e, "Comment", output_type=str))
 
 
 @dataclass
 class SingleTestResult:
+    """Dataclass containing information from a SheValidationTestResults data product, corresponding to one of the
+    `root.Data.ValidationTestList` elements.
+    """
 
     # Attributes specially added to the SHE implementation
     test_id: str
@@ -160,12 +213,16 @@ class SingleTestResult:
     analysis_result: Optional[AnalysisResult] = None
 
     @classmethod
+    @log_entry_exit(logger)
     def make_from_element(cls, e):
-        """Construct an instance of this class from a corresponding XML element.
+        """Construct an instance of this class from a corresponding XML element. In the case of this class,
+        it should be constructed from one of the `root.Data.ValidationTestList` elements of the ElementTree.
 
         Parameters
         ----------
         e : Element
+            A `root.Data.ValidationTestList` element of the ElementTree of an opened SheValidationTestResults XML data
+            product.
 
         Returns
         -------
@@ -180,12 +237,13 @@ class SingleTestResult:
                                 test_description=_element_find(e, "TestDescription", output_type=str),
                                 global_result=_element_find(e, "GlobalResult", output_type=str),
                                 l_requirements=l_requirements,
-                                analysis_result=analysis_result,
-                                )
+                                analysis_result=analysis_result)
 
 
 @dataclass
 class TestResults:
+    """Dataclass containing information from a SheValidationTestResults data product, corresponding to the full product.
+    """
 
     # Metadata stored in the header
     product_id: str
@@ -208,12 +266,15 @@ class TestResults:
     l_test_results: List[SingleTestResult] = field(default_factory=list)
 
     @classmethod
+    @log_entry_exit(logger)
     def make_from_element(cls, e):
-        """Construct an instance of this class from a corresponding XML element.
+        """Construct an instance of this class from a corresponding XML element. In the case of this class,
+        it should be constructed from the root element of the ElementTree.
 
         Parameters
         ----------
         e : Element
+            The root element of the ElementTree of an opened SheValidationTestResults XML data product.
 
         Returns
         -------
@@ -237,19 +298,21 @@ class TestResults:
                            n_exp=_element_find(e, "Data.NumberExposures", output_type=int),
                            tile_id=_element_find(e, "Data.TileId", output_type=int),
                            source_pipeline=_element_find(e, "Data.SourcePipeline", output_type=str),
-                           l_test_results=l_test_results,
-                           )
+                           l_test_results=l_test_results)
 
 
+@log_entry_exit(logger)
 def _element_find(element, tag, find_all=False, output_type=None):
-    """Gets a sub-element from an XML ElementTree Element, searching recursively as necessary.
+    """Gets a sub-element or list thereof from an XML ElementTree Element, searching recursively as necessary,
+    optionally converting it into an object of the provided type.
 
     Parameters
     ----------
     element : Element
-        The element in an XML ElementTree from which to generate the output object
+        The element in an XML ElementTree from which to generate the output object.
     tag : str
-        The tag to search for, which may be a period (.) separated set of tags to work through recursively
+        The tag to search for, which may be a period (.) separated set of tags to work through recursively,
+        e.g. "tag.subtag".
     find_all : bool, default=False
         If False, will return the results of `element.find` in final step, which returns a single value. If True,
         will return the results of `element.findall` in the final step, which returns a list of all values.
@@ -278,7 +341,7 @@ def _element_find(element, tag, find_all=False, output_type=None):
                 output = _e_to_type(output, output_type)
             return output
 
-    # Otherwise, split on the first . and call this method recursively
+    # Otherwise, split on the first "." and call this method recursively
     head, tail = tag.split(".", maxsplit=1)
     return _element_find(element.find(head), tail, find_all=find_all, output_type=output_type)
 
@@ -298,6 +361,7 @@ def _e_to_type(e: Optional[Element], t: Type) -> Optional[str]:
     return t(e.text)
 
 
+@log_entry_exit(logger)
 def parse_xml_product(filename):
     """Parses a SheValidationTestResults XML product, returning a TestResults dataclass containing the information
     within it.

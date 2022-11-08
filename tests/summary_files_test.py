@@ -24,10 +24,10 @@ import os
 
 from testing.common import L_TEST_META
 from utility.constants import PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
-from utility.test_report_summary import build_test_report_summary
+from utility.summary_files import build_test_report_summary
 
-EX_TEST_STR_1 = "|[T1](T1.html)|-1|-1|\n"
-EX_TEST_STR_2 = "|[T2](T2a.html)|1|2|\n"
+EX_TEST_STR_1 = "| [T1](T1.html) | -1 | -1 |\n"
+EX_TEST_STR_2 = "| [T2](T2a.html) | 1 | 2 |\n"
 
 
 def test_build_summary(project_copy):
@@ -49,5 +49,5 @@ def test_build_summary(project_copy):
     # Check that the file contains the expected content
     with open(qualified_test_report_summary_filename, "r") as fi:
         l_lines = fi.readlines()
-        assert l_lines[-2] == EX_TEST_STR_1
-        assert l_lines[-1] == EX_TEST_STR_2
+        assert l_lines[-4] == EX_TEST_STR_1
+        assert l_lines[-3] == EX_TEST_STR_2

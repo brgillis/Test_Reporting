@@ -7,7 +7,13 @@
 :author: Bryan Gillis
 
 This python script is run to construct report pages for all validation tests. It reads in the file manifest, and then
-calls appropriate functions to construct pages for each test results xml file.
+calls appropriate functions to construct pages for each test results xml file. This script is called automatically as
+part of the continuous-integration pipeline to build report pages.
+
+It generally shouldn't be necessary to modify this file when adding new files to be reported on or new custom
+implementations of building report pages. The former can be done by editing the manifest file in the root directory
+of this project, and the latter by adding new modules for the new implementations and updating the
+`implementations.py` module (see instructions in that module).
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -24,23 +30,25 @@ calls appropriate functions to construct pages for each test results xml file.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import json
+import logging
 import os
 from argparse import ArgumentParser
 from logging import getLogger
 from typing import Dict, List, TYPE_CHECKING
 
-from utility.constants import CTI_GAL_KEY, MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
-from utility.test_report_summary import build_test_report_summary, update_summary
-from utility.test_writing import BUILD_FUNCTION_TYPE, TestMeta, TestSummaryWriter
+from implementations import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
+from utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
+from utility.misc import log_entry_exit
+from utility.summary_files import build_test_report_summary, update_summary
+from utility.test_writing import TestMeta
 
 if TYPE_CHECKING:
     import Namespace  # noqa F401
 
-D_BUILD_FUNCTIONS: Dict[str, BUILD_FUNCTION_TYPE] = {CTI_GAL_KEY: TestSummaryWriter()}
-
 logger = getLogger(__name__)
 
 
+@log_entry_exit(logger)
 def get_build_argument_parser():
     """Get an argument parser for this script.
 
@@ -51,56 +59,56 @@ def get_build_argument_parser():
     """
 
     parser = ArgumentParser()
+
     parser.add_argument("--manifest", type=str, default=MANIFEST_FILENAME,
                         help="The name of the .json-format file manifest, containing the validation test results "
-                             "tarballs to have results pages built.")
-    parser.add_argument("--rootdir", type=str, default=None,
-                        help="The root directory of this project, or a copied instance thereof. Will default to the "
-                             "current directory if not provided.")
+                             f"tarballs to have results pages built. Default: {MANIFEST_FILENAME}")
+    parser.add_argument("--rootdir", type=str, default=os.getcwd(),
+                        help="The root directory of this project, or a copied instance thereof. Default: (Current "
+                             "directory)")
+    parser.add_argument("--log-level", type=str, default="INFO",
+                        help="The desired level to log at. Allowed values are: 'DEBUG', 'INFO', 'WARNING', 'ERROR, "
+                             "'CRITICAL'. Default: 'INFO'")
+
     return parser
 
 
+@log_entry_exit(logger)
 def parse_args():
     """Parses arguments for this executable.
 
     Returns
     -------
     args : Namespace
-        The parsed arguments
+        The parsed arguments.
     """
 
     parser = get_build_argument_parser()
 
     args = parser.parse_args()
 
-    if args.rootdir is None:
-        args.rootdir = os.getcwd()
-
     return args
 
 
+@log_entry_exit(logger)
 def read_manifest(qualified_manifest_filename):
     """Read in the .json-format manifest file.
 
     Parameters
     ----------
     qualified_manifest_filename : str
-        The fully-qualified filename of the .json-format manifest file
+        The fully-qualified filename of the .json-format manifest file.
 
     Returns
     -------
     d_manifest : Dict[str, str or Dict[str, str or None] or None]
-        The file manifest, stored as a dict
+        The file manifest, stored as a dict.
     """
-
-    logger.debug("Entering `read_manifest`.")
 
     with open(qualified_manifest_filename, "r") as fi:
         d_manifest = json.load(fi)
 
     logger.info(f"Successfully read in file manifest: {d_manifest}")
-
-    logger.debug("Exiting `read_manifest`.")
 
     return d_manifest
 
@@ -109,22 +117,29 @@ def main():
     """Standard entry-point function for this script.
     """
 
-    logger.debug("Entering `main`.")
-
     args = parse_args()
+
+    logging.basicConfig(level=args.log_level)
+
+    logger.info("#")
+    logger.info(f"# Beginning execution of script `{__file__}`")
+    logger.info("#")
 
     run_build_from_args(args)
 
-    logger.debug("Exiting `main`.")
+    logger.info("#")
+    logger.info(f"# Finished execution of script `{__file__}`")
+    logger.info("#")
 
 
+@log_entry_exit(logger)
 def run_build_from_args(args):
     """Workhorse function to perform primary execution of this script, using the provided parsed arguments.
 
     Parameters
     ----------
     args : Namespace
-        The parsed arguments for this script
+        The parsed arguments for this script.
     """
 
     d_manifest = read_manifest(os.path.join(args.rootdir, args.manifest))
@@ -134,13 +149,18 @@ def run_build_from_args(args):
     # Call the build function for each file in the manifest
     for key, value in d_manifest.items():
 
-        build_function = D_BUILD_FUNCTIONS.get(key)
+        build_callable = D_BUILD_CALLABLES.get(key)
 
-        if not build_function:
-            logger.debug(f"No build function provided for key '{key}'")
-            continue
+        # Rather than using the default functionality of the dict's `get` method, we check explicitly, so we can log
+        # in that case
+        if not build_callable:
+            logger.info(f"No build callable provided for key '{key}'; using default implementation "
+                        f"{DEFAULT_BUILD_CALLABLE} to construct test report from data: {value}.")
+            build_callable = DEFAULT_BUILD_CALLABLE
+        else:
+            logger.info(f"Using build callable {build_callable} to construct test report from data: {value}.")
 
-        l_test_meta += build_function(value, args.rootdir)
+        l_test_meta += build_callable(value, args.rootdir)
 
     # Build the summary page for test reports
     build_test_report_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
@@ -154,4 +174,5 @@ def run_build_from_args(args):
 
 
 if __name__ == "__main__":
+
     main()

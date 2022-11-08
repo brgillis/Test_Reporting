@@ -6,7 +6,7 @@
 
 Utility code for unit tests in this project.
 """
-
+import logging
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
 # This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
@@ -36,6 +36,13 @@ L_FILES_MODIFIED = (os.path.join(PUBLIC_DIR, SUMMARY_FILENAME),
                     )
 
 S_EXCLUDE = {*L_FILES_MODIFIED, DATA_DIR, TEST_DATA_DIR}
+
+
+@pytest.fixture(autouse=True)
+def log_debug():
+    """Fixture to ensure all tests are run at the DEBUG logging level, to catch any bugs in debug log commands.
+    """
+    logging.basicConfig(level=logging.DEBUG)
 
 
 @pytest.fixture(scope="session")

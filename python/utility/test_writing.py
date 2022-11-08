@@ -7,6 +7,14 @@
 This python module provides functionality for writing the test summary markdown files. To allow customization for
 individual unit tests, a callable class, TestSummaryWriter, is used, with its call being a template method where
 sub-methods it calls can be overridden.
+
+The functionality provided here covers the most general case of reporting results from a SheValidationTestResults
+data product where no information is known about the test it's reporting on or the format of information contained
+within its SupplementaryInfo, TextFiles, or Figures. It displays all the SupplementaryInfo in one section and all
+the Figures in another (at present, nothing is done with TextFiles as no tests yet use them).
+
+For specific tests, the format of this data is likely to be known, and so this is set up to be customizable following
+the instructions below.
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -30,20 +38,18 @@ from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tuple, Union
 
 from utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.misc import extract_tarball, hash_any
+from utility.misc import extract_tarball, hash_any, log_entry_exit
 from utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
-    from utility.product_parsing import AnalysisResult, SingleTestResult, TestResults  # noqa F401
+    from utility.product_parsing import AnalysisResult, RequirementResults, SingleTestResult, TestResults  # noqa F401
     from typing import Sequence, TextIO  # noqa F401
-
-ERROR_LABEL = "**ERROR:** "
 
 TMPDIR_MAXLEN = 16
 
-DIRECTORY_EXT = ".txt"
-DIRECTORY_FIGURES_HEADER = "# Figures:"
-DIRECTORY_SEPARATOR = ": "
+DIRECTORY_FILE_EXT = ".txt"
+DIRECTORY_FILE_FIGURES_HEADER = "# Figures:"
+DIRECTORY_FILE_SEPARATOR = ": "
 
 logger = getLogger(__name__)
 
@@ -68,44 +74,94 @@ class TestMeta(NamedTuple):
     num_failed: int = -1
 
 
-VALUE_TYPE = Union[str, Dict[str, str]]
-BUILD_FUNCTION_TYPE = Optional[Callable[[VALUE_TYPE, str], List[TestMeta]]]
+# Define the expected type for callables used to build test reports, now that the output type from it is defined above
+BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]], str], List[TestMeta]]
 
 
-class MarkdownWriter:
-    """Class to help with writing more-complicated Markdown files which include a Table of Contents.
+class TocMarkdownWriter:
+    """Class to help with writing Markdown files which include a Table of Contents.
     """
 
-    def __init__(self, title: str):
-        self.title = title
+    @log_entry_exit(logger)
+    def __init__(self, title):
+        """Initializes this writer, setting the desired title of the page.
+
+        Parameters
+        ----------
+        title : str
+            The desired title for this page. This does not need to include any leading '#'s or surrounding whitespace.
+        """
+
+        # Strip any leading '#' and any enclosing whitespace from the title, so we can be sure it's properly formatted
+        while title.startswith('#'):
+            title = title[1:]
+        self.title = title.strip()
+
         self._l_lines: List[str] = []
         self._l_toc_lines: List[str] = []
 
-    def add_line(self, line: str):
-        """Add a standard line to be written as part of the body text of the file.
+    @log_entry_exit(logger)
+    def add_line(self, line):
+        """Add a standard line to be written as part of the body text of the file. Note that this class does not
+        automatically add linebreaks after lines, so the line added here must include any desired linebreaks. This
+        can be thought of as acting like the `write` method of a filehandle opened to write or append.
+
+        Parameters
+        ----------
+        line : str
+            The line to be written, including any desired linebreaks afterwards.
         """
         self._l_lines.append(line)
 
-    def add_heading(self, heading: str, depth: int = 0, label: Optional[str] = None):
-        """Add a heading line to be written, which should also be linked from the table-of contents.
+    @log_entry_exit(logger)
+    def add_heading(self, heading, depth):
+        """Add a heading line to be included at this point in the file, which will also be linked from the table-of
+        contents.
+
+        Parameters
+        ----------
+        heading : str
+            The heading to be added both to the Table of Contents and the section header in the body of the file.
+            This should not include any leading '#'s or surrounding whitespace.
+        depth : int
+            Integer >= 0 specifying the depth of the heading. Depth 0 corresponds to the highest allowed depth within
+            the body of the file (a heading starting with '## '), and each increase of depth by 1 corresponds to a
+            section which will have an extra '#' in its header, so e.g. depth 2 would start with '#### '.
         """
 
-        # Trim any ending newlines, and beginning #s and spaces
-        while heading.endswith("\n"):
-            heading = heading[:-1]
+        # Trim any beginning '#'s and spaces, as those will be added automatically at the proper depth
+        input_heading = heading
+        hash_counter = 0
         while heading.startswith("#"):
             heading = heading[1:]
+            hash_counter += 1
+
+        # If any '#'s were included, check that they're consistent with the specified depth, and raise an exception
+        # if not as it will be unclear what the user desired in this case.
+        if (hash_counter > 0) and (hash_counter != depth + 2):
+            raise ValueError(f"Heading '{input_heading}' has inconsistent number of '#'s with specified depth ("
+                             f"{depth}). Heading should be supplied without any leading '#'s, with depth used to "
+                             "control this.")
+
         heading = heading.strip()
 
-        if label is None:
-            label = heading.lower().replace(" ", "-")
+        # Make sure the label for this heading is unique by appending to it a counter of the number of headings
+        # already in the document
+        label = f"{heading.lower().replace(' ', '-')}-{len(self._l_toc_lines)}"
 
+        # Add a line for this heading both in the main list of lines (so it will be written at the proper location)
+        # and in the lines for the Table of Contents, both formatted properly and with the label linking them
         self._l_lines.append("#" * (depth + 2) + f" {heading} <a id=\"{label}\"></a>\n\n")
-
         self._l_toc_lines.append("  " * depth + f"1. [{heading}](#{label})\n")
 
+    @log_entry_exit(logger)
     def write(self, fo: TextIO):
-        """Writes out the TOC and all lines.
+        """Writes out the TOC and all lines added to this object.
+
+        Parameters
+        ----------
+        fo : TextIO
+            The text filehandle to write to.
         """
 
         fo.write(f"# {self.title}\n\n")
@@ -123,21 +179,200 @@ class MarkdownWriter:
 
 class TestSummaryWriter:
     """Class to handle writing a markdown file containing the summary of a test case. See the documentation of this
-    class's __call__ method for further details.
+    class's `__call__` method for further details of its functionality.
+
+    This can be overridden by child classes to specialize the writing when the format of a SheValidationTestResults
+    product is known by following the instructions below.
+
+    Instructions
+    ------------
+
+    This class uses a design pattern called the "Template Method". This is used for cases where the same series of
+    steps will be undertaken each time, but child classes may wish to handle the details of each step differently.
+    This is implemented by using a parent class (defined here), with methods to perform each step of the
+    process. Any of these methods can be overridden by child classes to alter the functionality, and so these
+    instructions cannot cover all possibilities. Instead, we will provide examples resembling likely use cases.
+
+    Be warned that documentation has a tendency to get out of sync with code, so use the code as the ultimate arbiter,
+    not this documentation.
+
+    For any of these cases, you will need to start by defining in a new module a child class of the TestSummaryWriter
+    class defined here, which overrides select methods, i.e.:
+
+    ```
+    class SpecificTestWriter(TestSummaryWriter):
+
+        test_name = "Specific-Test"
+
+        @staticmethod
+        @log_entry_exit(logger)
+        def _add_test_case_details(writer, test_case_results):
+            '''Specialized implementation of formatting SupplementaryInfo for this test.
+            '''
+            ...
+
+        ...
+    ```
+
+    **Use Case #1: Formatting SupplementaryInfo**
+
+    In the default implementation here, all SupplementaryInfo stored within a product will be printed as-is in a code
+    block with no modification. Let's say that for a specific test, you know that there will always be exactly one
+    SupplementaryInfo entry, and it will be formatted as:
+
+    ```
+    x = <value>
+    x_err = <value>
+    y = <value>
+    y_err = <value>
+    ```
+
+    (where each `<value>` is some number), and you wish it to be displayed outside of a code block as:
+
+    ```
+    #### Result Values
+
+    x = <value> +/- <value>
+
+    y = <value> +/- <value>
+    ```
+
+    To do this, you would find the method here which handles the writing of SupplementaryInfo:
+    `_add_test_case_supp_info`. See the documentation of this method for detailed information on it, but to summarize,
+    it takes as arguments a `writer`, which is an object used to write sections of the Markdown file with support for
+    section headings and auto-generating a Table of Contents, `req`, which is a `RequirementResults` object storing
+    the results for this test case (see the definition of that class for details), and `req_i`, which is the index of
+    this requirement (which is used to ensure unique labeling of sections for links from the Table of Contents). You
+    could then use these to write the child implementation as e.g.:
+
+    ```
+    @staticmethod
+    def _add_test_case_supp_info(writer, req):
+        '''Specialized implementation to write out the x and y values +/- their errors.
+
+        # Add a heading for this section. The depth here is 2 (2 layes deeper than depth 0, which corresponds to the
+        # highest level of heading within the body, which is labelled as "##". We don't need any "#" or linebreak at the
+        # end when adding the heading. We use the Requirement index in the label here to make sure it's unique.
+        writer.add_heading(f"Result Values", depth=2)
+
+        # Here we implement custom parsing of the SupplementaryInfo to get the values we want
+        supp_info_str = req.l_supp_info[0].strip()
+
+        l_supp_info_lines = supp_info.split('\n')
+        x = l_supp_info_lines[0].split(' = ')[1]
+        x_err = l_supp_info_lines[1].split(' = ')[1]
+        y = l_supp_info_lines[2].split(' = ')[1]
+        y_err = l_supp_info_lines[3].split(' = ')[1]
+
+        # Now we add lines to the writer. `writer.add_line` functions just like `fo.write` where `fo` is a filehandle
+        # opened to write or append text. Since we just added a heading, it will automatically have two line breaks
+        # after it, so we don't need to handle those ourselves. Remember that this is a MarkDown file, which requires
+        # double linebreaks if you wish for things to appear on separate lines.
+        writer.add_line(f'x = {x} +/- {x_err}'\n\n)
+        writer.add_line(f'y = {y} +/- {y_err}'\n\n)
+
+        # And that's all we need to do here. The writer will be called after everything in the file is added to it. It
+        # waits until that point, so it will have all the headings which it will link from the Table of Contents at the
+        # top and can write that first.
+    ```
+
+    **Use Case #2: Formatting SupplementaryInfo and Figures together**
+
+    One possibility is that multiple figures will be associated with the information contained in a single
+    SupplementaryInfo block, and you wish for each of the figures to be displayed alongside the corresponding pieces of
+    information. For instance, the SupplementaryInfo might look like:
+
+    ```
+    Bin 1:
+    slope = <value>
+    slope_err = <value>
+    intercept = <value>
+    intercept_err = <value>
+
+    Bin 2:
+    slope = <value>
+    slope_err = <value>
+    intercept = <value>
+    intercept_err = <value>
+    ```
+
+    (where each `<value>` is some number), and one figure is provided for each bin.
+
+    In this case, you'll need to override a method a bit higher up in the callstack:
+    `_add_test_case_details_and_figures_with_tmpdir`. This handles the writing of both the SupplementaryInfo and Figures
+    sections. In the default implementation, it does it sequentially in separate sections, but here you'll want it to be
+    done in a single section. The overridden implementation might look something like:
+
+    ```
+    def _add_test_case_details_and_figures_with_tmpdir(self,
+                                                       writer,
+                                                       test_case_results,
+                                                       rootdir,
+                                                       tmpdir,
+                                                       figures_tmpdir):
+        writer.add_heading("Results and Figures", depth=0)
+
+        # Dig out the data for each bin from the SupplementaryInfo
+        req = test_case_results.l_requirements[0]
+        supp_info_str = req.supp_info.info_value.strip()
+        bin_1_str, bin_2_str = supp_info_str.split('\n\n')
+
+        # Get the figure label and filename for each bin
+        l_figure_labels_and_filenames = self._prepare_figures(ana_result, rootdir, tmpdir, figures_tmpdir)
+
+        # The object `l_figure_labels_and_filenames` is a list of (label, filename) tuples. In general, there's no
+        # guarantee that the labels will be present (non-None) or unique. But in this example, we'll assume that we
+        # do have such a guarantee, and that the two labels will be "bin-1" and "bin-2". We can then better sort this
+        # into a dict:
+        d_figure_filenames = {figure_label: figure_filename for (figure_label, figure_filename) in
+                              l_figure_labels_and_filenames}
+
+        # Write info for each bin
+        for bin_i, bin_str in enumerate((bin_1_str, bin_2_str)):
+
+            filename = d_figure_filenames[f'bin-{bin_i+1}']
+
+            # Copy the figure to the appropriate directory and get the relative filename for it using the provided
+            # method
+            relative_figure_filename = self._move_figure_to_public(filename, rootdir, figures_tmpdir)
+
+            # Add a heading for this bin's subsection, at a depth 1 greater than that of this section
+            writer.add_heading(f'Bin {bin_i}', depth=1)
+
+            # Add a link to the figure
+            writer.add_line(f'![{label}]({relative_figure_filename})\n\n')
+
+            # Get the slope and intercept info out of the info string for this specific bin by properly parsing it
+            l_bin_info_lines = bin_str.split('\n')
+            slope = l_bin_info_lines[1].split(' = ')[1]
+            slope_err = l_bin_info_lines[2].split(' = ')[1]
+            intercept = l_bin_info_lines[3].split(' = ')[1]
+            intercept_err = l_bin_info_lines[4].split(' = ')[1]
+
+            # And finally, add lines for the slope and intercept info, still in the same section as the associated
+            # figure
+            writer.add_line(f'slope = {slope} +/- {slope_err}'\n\n)
+            writer.add_line(f'intercept = {intercept} +/- {intercept_err}'\n\n)
+    ```
     """
 
+    # Class attribute definitions - these can be overridden by child classes to specify the value without needing to
+    # use the `__init__`
     test_name: Optional[str] = None
 
+    @log_entry_exit(logger)
     def __init__(self, test_name: Optional[str] = None):
         """Initializer for TestSummaryWriter, which allows specifying the test name.
 
         Parameters
         ----------
         test_name : str or None
-            The name of the test, which will be used for titling its page in the output.
+            The name of the test, which will be used for titling its page in the output. If not provided, will be set
+            to the `test_name` class attribute.
         """
         self.test_name = test_name if test_name is not None else self.test_name
 
+    @log_entry_exit(logger)
     def __call__(self, value, rootdir):
         """Template method which implements basic writing the summary of output for the test as a whole. Portions of
         this method which call protected methods can be overridden by child classes for customization.
@@ -158,7 +393,6 @@ class TestSummaryWriter:
             A list of objects, each containing the test name and filename and a list of the same for associated
             tests. If the input `value` is a filename, this will be a single-element list. If the input `value` is
             instead a dict, this will have multiple elements, depending on the number of elements in the dict.
-
         """
 
         # Figure out how to interpret `value` by checking if it's a str or dict, and then iterate over call to
@@ -177,6 +411,7 @@ class TestSummaryWriter:
 
         return l_test_meta
 
+    @log_entry_exit(logger)
     def _summarize_results_tarball(self, results_tarball_filename, rootdir, tag=None):
         """Writes summary markdown files for the test results contained in a tarball of the test results product and
         associated data.
@@ -215,6 +450,7 @@ class TestSummaryWriter:
         return l_test_meta
 
     @staticmethod
+    @log_entry_exit(logger)
     def _make_tmpdir(hashable, rootdir):
         """We'll need a temporary directory to extract files into, so create one. Some unique hashable object must be
         provided, whose hash will be used to generate a presumably-unique directory name.
@@ -228,7 +464,6 @@ class TestSummaryWriter:
         -------
         qualified_tmpdir : str
             The fully-qualified path to a tmpdir created for use by this object
-
         """
 
         tmpdir = "tmp_" + hash_any(hashable, max_length=TMPDIR_MAXLEN)
@@ -240,6 +475,7 @@ class TestSummaryWriter:
 
         return qualified_tmpdir
 
+    @log_entry_exit(logger)
     def _summarize_results_tarball_with_tmpdir(self,
                                                qualified_results_tarball_filename,
                                                qualified_tmpdir,
@@ -269,7 +505,7 @@ class TestSummaryWriter:
                                          for product_filename in l_product_filenames]
 
         # Make sure the required subdir exists before we start writing anything
-        os.makedirs(os.path.join(rootdir, PUBLIC_DIR, TEST_REPORTS_SUBDIR))
+        os.makedirs(os.path.join(rootdir, PUBLIC_DIR, TEST_REPORTS_SUBDIR), exist_ok=True)
 
         l_test_meta: List[TestMeta] = []
 
@@ -290,6 +526,8 @@ class TestSummaryWriter:
                 test_name = f"TR-{test_results.product_id}{test_name_tail}"
             else:
                 test_name = f"{self.test_name}{test_name_tail}"
+
+            logger.info(f"Building report for test {test_name}.")
 
             # We write the pages for the test cases first, so we know about and can link to them from the test
             # summary page
@@ -316,6 +554,7 @@ class TestSummaryWriter:
         return l_test_meta
 
     @staticmethod
+    @log_entry_exit(logger)
     def _find_product_filenames(qualified_tmpdir):
         """Finds the filenames of all .xml products in the provided directory. If certain .xml files should be
         ignored for a given test, this method can be overridden to handle that.
@@ -336,6 +575,7 @@ class TestSummaryWriter:
 
         return l_product_filenames
 
+    @log_entry_exit(logger)
     def _write_all_test_case_results(self, test_results, test_name_tail, rootdir, tmpdir):
         """Writes out the results of all test cases to a .md-format file.
 
@@ -384,6 +624,7 @@ class TestSummaryWriter:
 
         return l_test_case_names_and_filenames
 
+    @log_entry_exit(logger)
     def _write_individual_test_case_results(self,
                                             test_case_results,
                                             test_case_name,
@@ -409,25 +650,28 @@ class TestSummaryWriter:
 
         qualified_test_case_filename = os.path.join(rootdir, PUBLIC_DIR, test_case_filename)
 
+        logger.info(f"Writing results for test case {test_case_name} ro {qualified_test_case_filename}.")
+
         # Ensure the folder for this exists
         os.makedirs(os.path.split(qualified_test_case_filename)[0], exist_ok=True)
 
-        writer = MarkdownWriter(test_case_name)
+        writer = TocMarkdownWriter(test_case_name)
 
         self._add_test_case_meta(writer, test_case_results)
 
-        self._add_test_case_info_and_figures(test_case_results, writer, rootdir, tmpdir)
+        self._add_test_case_details_and_figures(test_case_results, writer, rootdir, tmpdir)
 
         with open(qualified_test_case_filename, "w") as fo:
             writer.write(fo)
 
     @staticmethod
+    @log_entry_exit(logger)
     def _add_test_case_meta(writer, test_case_results):
         """Adds lines for the metadata associated with an individual test case to a MarkdownWriter.
 
         Parameters
         ----------
-        writer : MarkdownWriter
+        writer : TocMarkdownWriter
             The writer object set up to write a markdown report on a test case
         test_case_results : SingleTestResult
         """
@@ -439,13 +683,14 @@ class TestSummaryWriter:
         if test_case_results.analysis_result.ana_comment is not None:
             writer.add_line(f"**Comments:** {test_case_results.analysis_result.ana_comment}\n\n")
 
-    def _add_test_case_info_and_figures(self, test_case_results, writer, rootdir, tmpdir):
+    @log_entry_exit(logger)
+    def _add_test_case_details_and_figures(self, test_case_results, writer, rootdir, tmpdir):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
         prepares figures, and also adds lines for them.
 
         Parameters
         ----------
-        writer : MarkdownWriter
+        writer : TocMarkdownWriter
         test_case_results : SingleTestResult
         rootdir : str
         tmpdir : str
@@ -456,17 +701,18 @@ class TestSummaryWriter:
         figures_tmpdir = self._make_tmpdir(test_case_results, tmpdir)
 
         try:
-            self._add_test_case_supp_info_and_figures_with_tmpdir(writer, test_case_results, rootdir, tmpdir,
-                                                                  figures_tmpdir)
+            self._add_test_case_details_and_figures_with_tmpdir(writer, test_case_results, rootdir, tmpdir,
+                                                                figures_tmpdir)
         finally:
             shutil.rmtree(figures_tmpdir)
 
-    def _add_test_case_supp_info_and_figures_with_tmpdir(self,
-                                                         writer,
-                                                         test_case_results,
-                                                         rootdir,
-                                                         tmpdir,
-                                                         figures_tmpdir):
+    @log_entry_exit(logger)
+    def _add_test_case_details_and_figures_with_tmpdir(self,
+                                                       writer,
+                                                       test_case_results,
+                                                       rootdir,
+                                                       tmpdir,
+                                                       figures_tmpdir):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
         prepares figures, and also adds lines for them, after a temporary directory has been created to store figures
         data.
@@ -477,7 +723,7 @@ class TestSummaryWriter:
 
         Parameters
         ----------
-        writer : MarkdownWriter
+        writer : TocMarkdownWriter
         test_case_results : SingleTestResult
         rootdir : str
         tmpdir : str
@@ -485,48 +731,65 @@ class TestSummaryWriter:
         figures_tmpdir : str
             The fully-qualified path to the temporary directory set up to contain figures data for this test case.
         """
-        self._add_test_case_supp_info(writer, test_case_results)
+        self._add_test_case_details(writer, test_case_results)
         self._add_test_case_figures(writer=writer,
                                     ana_result=test_case_results.analysis_result,
                                     rootdir=rootdir,
                                     tmpdir=tmpdir,
                                     figures_tmpdir=figures_tmpdir)
 
-    @staticmethod
-    def _add_test_case_supp_info(writer, test_case_results):
-        """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter.
+    @log_entry_exit(logger)
+    def _add_test_case_details(self, writer, test_case_results):
+        """Adds a section for detailed results of an individual test case to a MarkdownWriter.
 
         Parameters
         ----------
-        writer : MarkdownWriter
+        writer : TocMarkdownWriter
         test_case_results : SingleTestResult
         """
 
         # We can't guarantee that supplementary info keys will be unique between different requirements,
         # so to ensure we have unique links for each, we keep a counter and add it to the name of each
-        supp_info_counter = 0
         writer.add_heading("Detailed Results", depth=0)
-        for req in test_case_results.l_requirements:
+        for req_i, req in enumerate(test_case_results.l_requirements):
             writer.add_heading("Requirement", depth=1)
             writer.add_line(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
             writer.add_line(f"**Measured Value**: {req.meas_value.value}\n\n")
             if req.req_comment is not None:
                 writer.add_line(f"**Comments**: {req.req_comment}\n\n")
-            for supp_info in req.l_supp_info:
-                writer.add_heading(f"{supp_info.info_key}", depth=2, label=f"si-{supp_info_counter}")
-                supp_info_counter += 1
-                writer.add_line(f"{supp_info.info_description}\n\n")
-                writer.add_line("```\n")
-                writer.add_line(supp_info.info_value)
-                writer.add_line("```\n\n")
+            self._add_test_case_supp_info(writer, req)
 
+    @staticmethod
+    def _add_test_case_supp_info(writer, req):
+        """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter.
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        req : RequirementResults
+            The object containing the results for a specific requirement.
+        """
+
+        for supp_info_i, supp_info in enumerate(req.l_supp_info):
+            writer.add_heading(f"{supp_info.info_key}", depth=2)
+            writer.add_line(f"{supp_info.info_description}\n\n")
+            writer.add_line("```\n")
+
+            # Trim excess line breaks from the supplementary info's beginning and end
+            supp_info_str = supp_info.info_value.strip()
+
+            writer.add_line(supp_info_str)
+
+            writer.add_line("\n```\n\n")
+
+    @log_entry_exit(logger)
     def _add_test_case_figures(self, writer, ana_result, rootdir, tmpdir, figures_tmpdir):
         """Prepares figures and adds lines for them to a MarkdownWriter, after a new temporary directory has been
         created to store extracted files in.
 
         Parameters
         ----------
-        writer : MarkdownWriter
+        writer : TocMarkdownWriter
         ana_result : AnalysisResult
             The AnalysisResult object containing the filenames of textfiles and figures tarballs for this test case.
         rootdir : str
@@ -538,24 +801,100 @@ class TestSummaryWriter:
 
         writer.add_heading("Figures", depth=0)
 
+        l_figure_labels_and_filenames = self._prepare_figures(ana_result, rootdir, tmpdir, figures_tmpdir)
+
+        # Check we prepared successfully; if not, return, so we don't hit any further errors
+        if not l_figure_labels_and_filenames:
+            writer.add_line("N/A\n\n")
+            return
+
+        # Add a subsection for each figure to the writer
+        for i, (label, filename) in enumerate(l_figure_labels_and_filenames):
+
+            # Make a label if we don't have one
+            if label is None:
+                label = f"Figure #{i}"
+
+            relative_figure_filename = self._move_figure_to_public(filename, rootdir, figures_tmpdir)
+
+            writer.add_heading(label, depth=1)
+            writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
+
+    @staticmethod
+    def _move_figure_to_public(filename, rootdir, figures_tmpdir):
+        """Move a figure to the appropriate directory and return the relative filename for it.
+
+        Parameters
+        ----------
+        filename : str
+            The filename of the figure relative to the `figures_tmpdir`
+        rootdir : str
+        figures_tmpdir : str
+            The fully-qualified path to the tmpdir created to store unpacked figures.
+
+        Returns
+        -------
+        relative_figure_filename : str or None
+            The path to the moved figure relative to where test reports are stored. In case of an error where the
+            file wasn't present, the error will be logged and None will be returned instead.
+        """
+
+        qualified_src_filename = os.path.join(figures_tmpdir, filename)
+        qualified_dest_filename = os.path.join(rootdir, PUBLIC_DIR, IMAGES_SUBDIR, filename)
+
+        # Check for file existence
+        if not os.path.isfile(qualified_src_filename):
+            # Source doesn't exist. If destination does, then there's no issue - assumedly it's already been moved
+            # for another page, and so we don't need to move it again. If destination doesn't exist, then we have an
+            # error.
+            if not os.path.isfile(qualified_dest_filename):
+                logger.error(f"Expected figure {filename} does not exist.")
+                return None
+        else:
+            shutil.move(qualified_src_filename, qualified_dest_filename)
+
+        # Return the path to the moved figure file, relative to where test reports will be stored
+        return f"../{IMAGES_SUBDIR}/{filename}"
+
+    def _prepare_figures(self, ana_result, rootdir, tmpdir, figures_tmpdir):
+        """Performs standard steps to prepare figures - unpacking them, reading the directory file, and setting up
+        expected output directory.
+
+        Parameters
+        ----------
+        ana_result : AnalysisResult
+            Object containing information about the textfiles and figures for a given test case.
+        rootdir : str
+        tmpdir : str
+            The tmpdir which was used to extract the full tarball of the product and associated data.
+        figures_tmpdir : str
+            The tmpdir to be used to extract the textfiles and figures in their respective tarballs.
+
+        Returns
+        -------
+        l_figure_labels_and_filenames : List[Tuple[str or None,str]] or None
+            A list of (label,filename) tuples which were read in from the directory file. If expected files are not
+            present, None will be returned instead.
+        """
+
         # Check if any figures are present
         if ana_result.figures_tarball is None or ana_result.textfiles_tarball is None:
-            writer.add_line("N/A\n\n")
+            # None present, but this might be expected, so just log at debug level
+            logger.debug("No figures associated with this test case.")
+            return None
 
         # Extract the textfiles and figures tarballs
         qualified_figures_tarball_filename = os.path.join(tmpdir, ana_result.figures_tarball)
-
         if not os.path.isfile(qualified_figures_tarball_filename):
-            writer.add_line(f"{ERROR_LABEL}Figures tarball {qualified_figures_tarball_filename} expected but not "
-                            f"present.\n\n")
-            return
+            logger.error(f"Figures tarball {qualified_figures_tarball_filename} expected but not "
+                         f"present.")
+            return None
 
         qualified_textfiles_tarball_filename = os.path.join(tmpdir, ana_result.textfiles_tarball)
-
         if not os.path.isfile(qualified_textfiles_tarball_filename):
-            writer.add_line(f"{ERROR_LABEL}Textfiles tarball {qualified_textfiles_tarball_filename} expected but not "
-                            f"present.\n\n")
-            return
+            logger.error(f"Textfiles tarball {qualified_textfiles_tarball_filename} expected but not "
+                         f"present.")
+            return None
 
         extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)
         extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)
@@ -568,22 +907,10 @@ class TestSummaryWriter:
         # Make sure a data subdir exists in the images dir
         os.makedirs(os.path.join(rootdir, PUBLIC_DIR, IMAGES_SUBDIR, DATA_DIR), exist_ok=True)
 
-        # Add a subsection for each figure to the writer
-        for i, (label, filename) in enumerate(l_figure_labels_and_filenames):
-
-            # Make a label if we don't have one
-            if label is None:
-                label = f"Figure #{i}"
-
-            # Copy the figure to the appropriate directory and get the relative filename for it
-            shutil.copy(os.path.join(figures_tmpdir, filename),
-                        os.path.join(rootdir, PUBLIC_DIR, IMAGES_SUBDIR, filename))
-            relative_figure_filename = f"../{IMAGES_SUBDIR}/{filename}"
-
-            writer.add_heading(label, depth=1)
-            writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
+        return l_figure_labels_and_filenames
 
     @staticmethod
+    @log_entry_exit(logger)
     def find_directory_filename(figures_tmpdir):
         """Searches through a directory to find a possible directory file (which contains labels and filenames of
         figures).
@@ -601,24 +928,25 @@ class TestSummaryWriter:
 
         l_possible_directory_filenames: List[str] = []
         for filename in l_filenames:
-            if filename.endswith(DIRECTORY_EXT):
+            if filename.endswith(DIRECTORY_FILE_EXT):
                 l_possible_directory_filenames.append(filename)
 
         # Check we have exactly one possibility, otherwise raise an exception
         if len(l_possible_directory_filenames) == 1:
-            return os.path.join(figures_tmpdir, l_possible_directory_filenames[0])
+            qualified_directory_filename = os.path.join(figures_tmpdir, l_possible_directory_filenames[0])
+            logger.info(f"Found directory file for this test case: {qualified_directory_filename}")
+            return qualified_directory_filename
         elif len(l_possible_directory_filenames) == 0:
             raise FileNotFoundError(f"No identifiable directory file found in directory {figures_tmpdir}.")
         else:
-            raise ValueError(
-                f"Multiple possible directory files found in directory {figures_tmpdir}: "
-                f"{l_possible_directory_filenames}")
+            raise ValueError(f"Multiple possible directory files found in directory {figures_tmpdir}: "
+                             f"{l_possible_directory_filenames}")
 
     @staticmethod
+    @log_entry_exit(logger)
     def read_figure_labels_and_filenames(qualified_directory_filename):
         """Reads a directory file, and returns a list of figure labels and filenames. Note that any figure label
-        might be
-        None if it's not supplied in the directory file.
+        might be None if it's not supplied in the directory file.
 
         Parameters
         ----------
@@ -642,15 +970,15 @@ class TestSummaryWriter:
             # If we haven't started the figures section, check for the header which starts it and then start reading
             # on the next iteration
             if not figures_section_started:
-                if directory_line == DIRECTORY_FIGURES_HEADER:
+                if directory_line == DIRECTORY_FILE_FIGURES_HEADER:
                     figures_section_started = True
                 continue
 
             # If we get here, we're in the figures section
             figure_label: Optional[str] = None
             figure_filename: str
-            if DIRECTORY_SEPARATOR in directory_line:
-                figure_label, figure_filename = directory_line.split(DIRECTORY_SEPARATOR)
+            if DIRECTORY_FILE_SEPARATOR in directory_line:
+                figure_label, figure_filename = directory_line.split(DIRECTORY_FILE_SEPARATOR)
             else:
                 figure_filename = directory_line
 
@@ -659,6 +987,7 @@ class TestSummaryWriter:
 
         return l_figure_labels_and_filenames
 
+    @log_entry_exit(logger)
     def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, rootdir):
         """Writes out the summary of the test to a .md-format file. If special formatting is desired for an
         individual test, this method or the methods it calls can be overridden by child classes.
@@ -677,12 +1006,13 @@ class TestSummaryWriter:
         test_filename : str
             The filename of the created .md file containing the summary of this test, relative to "public" directory
             within `rootdir`
-
         """
 
         test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
 
         qualified_test_filename = os.path.join(rootdir, PUBLIC_DIR, test_filename)
+
+        logger.info(f"Writing test results summary to {qualified_test_filename}.")
 
         # Ensure the folder for this exists
         os.makedirs(os.path.split(qualified_test_filename)[0], exist_ok=True)
@@ -703,6 +1033,7 @@ class TestSummaryWriter:
         return test_filename
 
     @staticmethod
+    @log_entry_exit(logger)
     def _write_product_metadata(test_results, fo):
         """Writes metadata related to the test's data product to an open filehandle
 
@@ -727,6 +1058,7 @@ class TestSummaryWriter:
         fo.write(f"**Creation Date and Time:** {t.day} {month_name}, {t.year} at {t.time()}\n\n")
 
     @staticmethod
+    @log_entry_exit(logger)
     def _write_test_metadata(test_results, fo):
         """Writes metadata related to the test itself to an open filehandle
 
@@ -752,6 +1084,7 @@ class TestSummaryWriter:
             fo.write(f"**Observation Mode:** {test_results.obs_mode}\n\n")
 
     @staticmethod
+    @log_entry_exit(logger)
     def _write_test_case_table(test_results, l_test_case_meta, fo):
         """Writes a table containing test case information and links to their pages to an open filehandle.
 

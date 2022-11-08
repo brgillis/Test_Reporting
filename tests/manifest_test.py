@@ -26,8 +26,8 @@ import os
 import pytest
 
 from build_all_report_pages import read_manifest
-from utility.constants import (CTI_GAL_KEY, EXP_KEY, MANIFEST_FILENAME, OBS_KEY, S_MANIFEST_PRIMARY_KEYS,
-                               S_MANIFEST_SECONDARY_KEYS, )
+from utility.constants import (MANIFEST_FILENAME, )
+from implementations import CTI_GAL_KEY, EXP_KEY, OBS_KEY
 
 MOCK_MANIFEST_FILENAME = "mock_manifest.json"
 MOCK_CTI_GAL_OBS_FILENAME = "she_obs_cti_gal.tar.gz"
@@ -115,18 +115,11 @@ def test_provided_manifest(rootdir):
 
     for key, value in d_manifest.items():
 
-        # Check that the primary keys are all recognized
-        assert key in S_MANIFEST_PRIMARY_KEYS, f"Unrecognized key in manifest: {key}. Allowed keys are: " \
-                                               f"{sorted(S_MANIFEST_PRIMARY_KEYS)}."
-
         # If the value is a dict, check that all keys are known secondary keys. Otherwise, check that the value is a str
         if isinstance(value, dict):
 
             # Check that the keys of the dict are all recognise, and the values are all strings
             for subkey, subvalue in value.items():
-
-                assert subkey in S_MANIFEST_SECONDARY_KEYS, f"Unrecognized subkey in manifest: {key}. Allowed " \
-                                                            f"subkeys are: {sorted(S_MANIFEST_PRIMARY_KEYS)}."
 
                 assert (isinstance(subvalue, str) or
                         subvalue is None), f"Invalid subvalue in manifest: {subvalue}, with type " \

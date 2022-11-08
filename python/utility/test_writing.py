@@ -215,11 +215,12 @@ class TestSummaryWriter:
 
         # Dig out the data for each bin from the SupplementaryInfo
         req = test_case_results.l_requirements[0]
-        supp_info_str = req.supp_info.info_value.strip()
-        bin_1_str, bin_2_str = supp_info_str.split('\n\n')
+        supp_info_str = req.l_supp_info[0].info_value.strip()
+        bin_1_str, bin_2_str = supp_info_str.split("\n\n")
 
         # Get the figure label and filename for each bin
-        l_figure_labels_and_filenames = self._prepare_figures(ana_result, rootdir, tmpdir, figures_tmpdir)
+        l_figure_labels_and_filenames = self._prepare_figures(test_case_results.analysis_result, rootdir, tmpdir,
+                                                              figures_tmpdir)
 
         # The object `l_figure_labels_and_filenames` is a list of (label, filename) tuples. In general, there's no
         # guarantee that the labels will be present (non-None) or unique. But in this example, we'll assume that we
@@ -231,29 +232,30 @@ class TestSummaryWriter:
         # Write info for each bin
         for bin_i, bin_str in enumerate((bin_1_str, bin_2_str)):
 
-            filename = d_figure_filenames[f'bin-{bin_i+1}']
+            filename = d_figure_filenames[f"bin-{bin_i + 1}"]
 
             # Copy the figure to the appropriate directory and get the relative filename for it using the provided
             # method
             relative_figure_filename = self._move_figure_to_public(filename, rootdir, figures_tmpdir)
 
             # Add a heading for this bin's subsection, at a depth 1 greater than that of this section
-            writer.add_heading(f'Bin {bin_i}', depth=1)
+            bin_label = f"Bin {bin_i}"
+            writer.add_heading(bin_label, depth=1)
 
             # Add a link to the figure
-            writer.add_line(f'![{label}]({relative_figure_filename})\n\n')
+            writer.add_line(f"![{bin_label}]({relative_figure_filename})\n\n")
 
             # Get the slope and intercept info out of the info string for this specific bin by properly parsing it
-            l_bin_info_lines = bin_str.split('\n')
-            slope = l_bin_info_lines[1].split(' = ')[1]
-            slope_err = l_bin_info_lines[2].split(' = ')[1]
-            intercept = l_bin_info_lines[3].split(' = ')[1]
-            intercept_err = l_bin_info_lines[4].split(' = ')[1]
+            l_bin_info_lines = bin_str.split("\n")
+            slope = l_bin_info_lines[1].split(" = ")[1]
+            slope_err = l_bin_info_lines[2].split(" = ")[1]
+            intercept = l_bin_info_lines[3].split(" = ")[1]
+            intercept_err = l_bin_info_lines[4].split(" = ")[1]
 
             # And finally, add lines for the slope and intercept info, still in the same section as the associated
             # figure
-            writer.add_line(f'slope = {slope} +/- {slope_err}'\n\n)
-            writer.add_line(f'intercept = {intercept} +/- {intercept_err}'\n\n)
+            writer.add_line(f"slope = {slope} +/- {slope_err}\n\n")
+            writer.add_line(f"intercept = {intercept} +/- {intercept_err}\n\n")
     ```
     """
 

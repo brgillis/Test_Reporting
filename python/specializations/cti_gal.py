@@ -155,4 +155,6 @@ class CtiGalTestSummaryWriter(TestSummaryWriter):
         -------
         fixed_bin_str : str
         """
-        return bin_str.replace(":slope", ":\nslope")
+        bin_str = bin_str.replace(":slope", ":\nslope")
+        bin_str = bin_str.replace(":intercept", ":\nintercept")
+        return bin_str

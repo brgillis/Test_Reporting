@@ -1,10 +1,10 @@
 """
-:file: common.py
+:file: testing/__init__.py
 
-:date: 10/18/2022
+:date: 11/08/2022
 :author: Bryan Gillis
 
-Common code for unit tests in this project.
+Standard package __init__.py file.
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -19,15 +19,3 @@ Common code for unit tests in this project.
 #
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-
-from utility.test_writing import TestCaseMeta, TestMeta
-
-TEST_TARBALL_FILENAME = "she_obs_cti_gal.tar.gz"
-TEST_XML_FILENAME = "she_observation_cti_gal_validation_test_results_product.xml"
-L_TEST_META = [TestMeta("T1", "T1.md", [TestCaseMeta("TC1-1", "TC1-1.md")]),
-               TestMeta(name="T2",
-                        filename="T2a.md",
-                        l_test_case_meta=[TestCaseMeta("TC2-1", "TC2-1.md"),
-                                          TestCaseMeta("TC2-2", "TC2-2.md")],
-                        num_passed=1,
-                        num_failed=2)]

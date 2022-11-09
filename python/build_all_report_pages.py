@@ -122,13 +122,13 @@ def main():
     logging.basicConfig(level=args.log_level)
 
     logger.info("#")
-    logger.info("# Beginning execution of script `%s`" % __file__)
+    logger.info("# Beginning execution of script `%s`", __file__)
     logger.info("#")
 
     run_build_from_args(args)
 
     logger.info("#")
-    logger.info("# Finished execution of script `%s`" % __file__)
+    logger.info("# Finished execution of script `%s`", __file__)
     logger.info("#")
 
 

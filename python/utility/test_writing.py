@@ -430,7 +430,7 @@ class TestSummaryWriter:
             else:
                 test_name = f"{self.test_name}{test_name_tail}"
 
-            logger.info("Building report for test %s." % test_name)
+            logger.info("Building report for test %s.", test_name)
 
             # We write the pages for the test cases first, so we know about and can link to them from the test
             # summary page
@@ -929,7 +929,7 @@ class TestSummaryWriter:
 
         qualified_test_filename = os.path.join(rootdir, PUBLIC_DIR, test_filename)
 
-        logger.info("Writing test results summary to %s" % qualified_test_filename)
+        logger.info("Writing test results summary to %s", qualified_test_filename)
 
         writer = TocMarkdownWriter(test_name)
 

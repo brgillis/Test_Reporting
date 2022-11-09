@@ -34,13 +34,13 @@ BIN_LABEL = "Bin %i"
 
 MSG_NO_FIGURE = "No figure for this bin.\n\n"
 
-MSG_SLOPE_VAL = "Slope = %f +/- %f\n\n"
-MSG_SLOPE_Z = "Z(Slope) = %f (Max allowed: %f)\n\n"
-MSG_SLOPE_RESULT = "Slope result: **%f**\n\n"
+MSG_SLOPE_VAL = "Slope = %s +/- %s\n\n"
+MSG_SLOPE_Z = "Z(Slope) = %s (Max allowed: %s)\n\n"
+MSG_SLOPE_RESULT = "Slope result: **%s**\n\n"
 
-MSG_INTERCEPT_VAL = "Intercept = %f +/- %f\n\n"
-MSG_INTERCEPT_Z = "Z(Intercept) = %f (Max allowed: %f)\n\n"
-MSG_INTERCEPT_RESULT = "Intercept result: **%f**\n\n"
+MSG_INTERCEPT_VAL = "Intercept = %s +/- %f\n\n"
+MSG_INTERCEPT_Z = "Z(Intercept) = %s (Max allowed: %s)\n\n"
+MSG_INTERCEPT_RESULT = "Intercept result: **%s**\n\n"
 
 SLOPE_INFO_KEY = "SLOPE_INFO"
 INTERCEPT_INFO_KEY = "INTERCEPT_INFO"

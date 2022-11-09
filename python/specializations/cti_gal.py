@@ -21,9 +21,33 @@ Module providing a specialized TestSummaryWriter for CTI-Gal test cases.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 from logging import getLogger
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
+from utility.misc import TocMarkdownWriter
+from utility.product_parsing import SingleTestResult
 from utility.test_writing import TestSummaryWriter
+
+GLOBAL_LABEL = "Global"
+BIN_LABEL = "Bin %i"
+
+MSG_NO_FIGURE = "No figure for this bin.\n\n"
+
+MSG_SLOPE_VAL = "Slope = %f +/- %f\n\n"
+MSG_SLOPE_Z = "Z(Slope) = %f (Max allowed: %f)\n\n"
+MSG_SLOPE_RESULT = "Slope result: **%f**\n\n"
+
+MSG_INTERCEPT_VAL = "Intercept = %f +/- %f\n\n"
+MSG_INTERCEPT_Z = "Z(Intercept) = %f (Max allowed: %f)\n\n"
+MSG_INTERCEPT_RESULT = "Intercept result: **%f**\n\n"
+
+SLOPE_INFO_KEY = "SLOPE_INFO"
+INTERCEPT_INFO_KEY = "INTERCEPT_INFO"
+
+VAL_SEPARATOR = " = "
+RESULT_SEPARATOR = ": "
+
+BIN_MIN_POSITION = 7
+BIN_MAX_POSITION = 9
 
 logger = getLogger(__name__)
 
@@ -40,17 +64,7 @@ class CtiGalTestSummaryWriter(TestSummaryWriter):
         writer.add_heading("Results and Figures", depth=0)
 
         # Dig out the data for each bin from the SupplementaryInfo
-        l_supp_info = test_case_results.l_requirements[0].l_supp_info
-
-        l_slope_bin_str: Optional[List[str]] = None
-        l_int_bin_str: Optional[List[str]] = None
-        for supp_info in l_supp_info:
-            if supp_info.info_key == "SLOPE_INFO":
-                slope_supp_info_str = supp_info.info_value.strip()
-                l_slope_bin_str = slope_supp_info_str.split("\n\n")
-            elif supp_info.info_key == "INTERCEPT_INFO":
-                int_supp_info_str = supp_info.info_value.strip()
-                l_int_bin_str = int_supp_info_str.split("\n\n")
+        l_slope_bin_str, l_int_bin_str = self._get_slope_intercept_info(test_case_results)
 
         # Check that data is formatted as expected. If not, fall back to parent implementation
         if (not l_slope_bin_str) or (not l_int_bin_str) or (len(l_slope_bin_str) != len(l_int_bin_str)):
@@ -82,9 +96,9 @@ class CtiGalTestSummaryWriter(TestSummaryWriter):
         for bin_i, (slope_str, int_str) in enumerate(zip(l_slope_bin_str, l_int_bin_str)):
 
             if is_global:
-                label = "Global Bin"
+                label = GLOBAL_LABEL
             else:
-                label = f"Bin {bin_i}"
+                label = BIN_LABEL % bin_i
             writer.add_heading(label, depth=1)
 
             filename = d_figure_filenames.get(bin_i)
@@ -94,7 +108,7 @@ class CtiGalTestSummaryWriter(TestSummaryWriter):
                 relative_figure_filename = self._move_figure_to_public(filename, rootdir, figures_tmpdir)
                 writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
             else:
-                writer.add_line("No figure for this bin.\n\n")
+                writer.add_line(MSG_NO_FIGURE)
 
             # Use a try block, and any exception here we'll fall back to simply dumping the SupplementaryInfo as-is
 
@@ -106,33 +120,34 @@ class CtiGalTestSummaryWriter(TestSummaryWriter):
                 l_slope_info_lines = slope_str.split("\n")
                 l_int_info_lines = int_str.split("\n")
 
-                # Check if this is global or binned based on the length of the lines list
-                bin_info_line: Optional[str] = None
+                # Check if this is global or binned based on the length of the lines list. If binned, output the bin
+                # limits and adjust `l_slope_info_lines` and `l_int_info_lines` to match the format it would be for
+                # the global case
                 if not is_global:
-                    bin_info_line = l_slope_info_lines[0]
+                    self._write_bin_info(writer, l_slope_info_lines[0])
                     l_slope_info_lines = l_slope_info_lines[1:]
                     l_int_info_lines = l_int_info_lines[1:]
 
                 # Get the slope and intercept info out of the info strings for this specific bin by properly parsing it
-                slope = l_slope_info_lines[0].split(" = ")[1]
-                slope_err = l_slope_info_lines[1].split(" = ")[1]
-                slope_z = l_slope_info_lines[2].split(" = ")[1]
-                max_slope_z = l_slope_info_lines[3].split(" = ")[1]
-                slope_result = l_slope_info_lines[4].split(": ")[1]
+                slope = l_slope_info_lines[0].split(VAL_SEPARATOR)[1]
+                slope_err = l_slope_info_lines[1].split(VAL_SEPARATOR)[1]
+                slope_z = l_slope_info_lines[2].split(VAL_SEPARATOR)[1]
+                max_slope_z = l_slope_info_lines[3].split(VAL_SEPARATOR)[1]
+                slope_result = l_slope_info_lines[4].split(RESULT_SEPARATOR)[1]
 
-                intercept = l_int_info_lines[0].split(" = ")[1]
-                intercept_err = l_int_info_lines[1].split(" = ")[1]
-                intercept_z = l_int_info_lines[2].split(" = ")[1]
-                max_intercept_z = l_int_info_lines[3].split(" = ")[1]
-                intercept_result = l_int_info_lines[4].split(": ")[1]
+                intercept = l_int_info_lines[0].split(VAL_SEPARATOR)[1]
+                intercept_err = l_int_info_lines[1].split(VAL_SEPARATOR)[1]
+                intercept_z = l_int_info_lines[2].split(VAL_SEPARATOR)[1]
+                max_intercept_z = l_int_info_lines[3].split(VAL_SEPARATOR)[1]
+                intercept_result = l_int_info_lines[4].split(RESULT_SEPARATOR)[1]
 
                 # Write out the slope and intercept info for this bin
-                writer.add_line(f"Slope = {slope} +/- {slope_err}\n\n")
-                writer.add_line(f"Z(Slope) = {slope_z} (Max allowed: {max_slope_z})\n\n")
-                writer.add_line(f"Slope result: **{slope_result}**\n\n")
-                writer.add_line(f"Intercept = {intercept} +/- {intercept_err}\n\n")
-                writer.add_line(f"Z(Intercept) = {intercept_z} (Max allowed: {max_intercept_z})\n\n")
-                writer.add_line(f"Intercept result: **{intercept_result}**\n\n")
+                writer.add_line(MSG_SLOPE_VAL % slope, slope_err)
+                writer.add_line(MSG_SLOPE_Z % slope_z, max_slope_z)
+                writer.add_line(MSG_SLOPE_RESULT % slope_result)
+                writer.add_line(MSG_INTERCEPT_VAL % intercept, intercept_err)
+                writer.add_line(MSG_INTERCEPT_Z % intercept_z, max_intercept_z)
+                writer.add_line(MSG_INTERCEPT_RESULT % intercept_result)
 
             except Exception as e:
                 logger.error("%s", e)
@@ -143,18 +158,44 @@ class CtiGalTestSummaryWriter(TestSummaryWriter):
                 writer.add_line("```\n")
 
     @staticmethod
-    def _fix_bin_str(bin_str):
+    def _get_slope_intercept_info(test_case_results: SingleTestResult) -> Tuple[Optional[List[str]],
+                                                                                Optional[List[str]]]:
+        """Gets lists of supplementary info strings for the slope and intercept from the test case results object.
+        """
+
+        l_supp_info = test_case_results.l_requirements[0].l_supp_info
+
+        l_slope_bin_str: Optional[List[str]] = None
+        l_int_bin_str: Optional[List[str]] = None
+
+        for supp_info in l_supp_info:
+            if supp_info.info_key == SLOPE_INFO_KEY:
+                slope_supp_info_str = supp_info.info_value.strip()
+                l_slope_bin_str = slope_supp_info_str.split("\n\n")
+            elif supp_info.info_key == INTERCEPT_INFO_KEY:
+                int_supp_info_str = supp_info.info_value.strip()
+                l_int_bin_str = int_supp_info_str.split("\n\n")
+
+        return l_slope_bin_str, l_int_bin_str
+
+    @staticmethod
+    def _fix_bin_str(bin_str: str) -> str:
         """Fixes a bin string for a bug that was present in old code (if found to be present here), where a linebreak
         was missing.
-
-        Parameters
-        ----------
-        bin_str : str
-
-        Returns
-        -------
-        fixed_bin_str : str
         """
         bin_str = bin_str.replace(":slope", ":\nslope")
         bin_str = bin_str.replace(":intercept", ":\nintercept")
         return bin_str
+
+    @staticmethod
+    def _write_bin_info(writer: TocMarkdownWriter, bin_info_str: str) -> None:
+        """Parses a bin info line to get the minimum and maximum limits of the bin and adds a line about it to the
+        writer.
+        """
+
+        split_bin_info_str = bin_info_str.split()
+
+        bin_min = split_bin_info_str[BIN_MIN_POSITION]
+        bin_max = split_bin_info_str[BIN_MAX_POSITION]
+
+        writer.add_line(f"Bin limits: {bin_min} to {bin_max}.\n\n")

@@ -76,15 +76,17 @@ class CtiGalTestSummaryWriter(TestSummaryWriter):
         if (not l_slope_bin_str) or (not l_int_bin_str) or (len(l_slope_bin_str) != len(l_int_bin_str)):
             logger.error(f"CTI-Gal SupplementaryInfo not formatted as expected: {l_slope_bin_str=}, "
                          f"{l_int_bin_str=}. Falling back to parent implementation.")
-            return super()._add_test_case_details_and_figures_with_tmpdir(writer,
-                                                                          test_case_results,
-                                                                          rootdir,
-                                                                          tmpdir,
-                                                                          figures_tmpdir)
+            return super()._add_test_case_details_and_figures_with_tmpdir(writer=writer,
+                                                                          test_case_results=test_case_results,
+                                                                          rootdir=rootdir,
+                                                                          tmpdir=tmpdir,
+                                                                          figures_tmpdir=figures_tmpdir)
 
         # Get the figure label and filename for each bin
-        l_figure_labels_and_filenames = self._prepare_figures(test_case_results.analysis_result, rootdir, tmpdir,
-                                                              figures_tmpdir)
+        l_figure_labels_and_filenames = self._prepare_figures(ana_result=test_case_results.analysis_result,
+                                                              rootdir=rootdir,
+                                                              tmpdir=tmpdir,
+                                                              figures_tmpdir=figures_tmpdir)
 
         # Make a dict of bin indices to filenames
         if l_figure_labels_and_filenames:
@@ -105,11 +107,11 @@ class CtiGalTestSummaryWriter(TestSummaryWriter):
                 label = GLOBAL_LABEL
             else:
                 label = BIN_LABEL % bin_i
+
             writer.add_heading(label, depth=1)
 
-            filename = d_figure_filenames.get(bin_i)
-
             # Check if there's a figure for this bin, and prepare and link to it if so
+            filename = d_figure_filenames.get(bin_i)
             if filename:
                 relative_figure_filename = self._move_figure_to_public(filename, rootdir, figures_tmpdir)
                 writer.add_line(f"![{label} Figure]({relative_figure_filename})\n\n")
@@ -118,9 +120,7 @@ class CtiGalTestSummaryWriter(TestSummaryWriter):
 
             # Use a try block, and any on exception here we'll fall back to simply dumping the SupplementaryInfo as-is
             try:
-
                 self._write_slope_intercept_info(writer, slope_str, intercept_str, is_global)
-
             except Exception as e:
                 logger.error("%s", e)
                 writer.add_line(f"```\n{slope_str}\n\n{intercept_str}\n\n```\n")

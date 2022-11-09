@@ -806,16 +806,12 @@ class TestSummaryWriter:
 
         # Extract the textfiles and figures tarballs
         qualified_figures_tarball_filename = os.path.join(tmpdir, ana_result.figures_tarball)
-        if not os.path.isfile(qualified_figures_tarball_filename):
-            logger.error(f"Figures tarball {qualified_figures_tarball_filename} expected but not "
-                         f"present.")
-            return None
-
         qualified_textfiles_tarball_filename = os.path.join(tmpdir, ana_result.textfiles_tarball)
-        if not os.path.isfile(qualified_textfiles_tarball_filename):
-            logger.error(f"Textfiles tarball {qualified_textfiles_tarball_filename} expected but not "
-                         f"present.")
-            return None
+
+        for qualified_tarball_filename in (qualified_figures_tarball_filename, qualified_textfiles_tarball_filename):
+            if not os.path.isfile(qualified_tarball_filename):
+                logger.error("Tarball %s expected but not present.", qualified_tarball_filename)
+                return None
 
         extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)
         extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)

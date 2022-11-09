@@ -430,7 +430,7 @@ class TestSummaryWriter:
             else:
                 test_name = f"{self.test_name}{test_name_tail}"
 
-            logger.info(f"Building report for test {test_name}.")
+            logger.info("Building report for test %s." % test_name)
 
             # We write the pages for the test cases first, so we know about and can link to them from the test
             # summary page
@@ -571,7 +571,7 @@ class TestSummaryWriter:
 
         qualified_test_case_filename = os.path.join(rootdir, PUBLIC_DIR, test_case_filename)
 
-        logger.info(f"Writing results for test case {test_case_name} ro {qualified_test_case_filename}.")
+        logger.info("Writing results for test case %s from %s.", test_case_name, qualified_test_case_filename)
 
         # Ensure the folder for this exists
         os.makedirs(os.path.split(qualified_test_case_filename)[0], exist_ok=True)
@@ -855,7 +855,7 @@ class TestSummaryWriter:
         # Check we have exactly one possibility, otherwise raise an exception
         if len(l_possible_directory_filenames) == 1:
             qualified_directory_filename = os.path.join(figures_tmpdir, l_possible_directory_filenames[0])
-            logger.info(f"Found directory file for this test case: {qualified_directory_filename}")
+            logger.info("Found directory file for this test case: %s", qualified_directory_filename)
             return qualified_directory_filename
         elif len(l_possible_directory_filenames) == 0:
             raise FileNotFoundError(f"No identifiable directory file found in directory {figures_tmpdir}.")
@@ -933,7 +933,7 @@ class TestSummaryWriter:
 
         qualified_test_filename = os.path.join(rootdir, PUBLIC_DIR, test_filename)
 
-        logger.info(f"Writing test results summary to {qualified_test_filename}.")
+        logger.info("Writing test results summary to %s" % qualified_test_filename)
 
         writer = TocMarkdownWriter(test_name)
 

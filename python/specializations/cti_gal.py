@@ -38,7 +38,7 @@ MSG_SLOPE_VAL = "Slope = %s +/- %s\n\n"
 MSG_SLOPE_Z = "Z(Slope) = %s (Max allowed: %s)\n\n"
 MSG_SLOPE_RESULT = "Slope result: **%s**\n\n"
 
-MSG_INTERCEPT_VAL = "Intercept = %s +/- %f\n\n"
+MSG_INTERCEPT_VAL = "Intercept = %s +/- %s\n\n"
 MSG_INTERCEPT_Z = "Z(Intercept) = %s (Max allowed: %s)\n\n"
 MSG_INTERCEPT_RESULT = "Intercept result: **%s**\n\n"
 
@@ -178,8 +178,8 @@ class CtiGalTestSummaryWriter(TestSummaryWriter):
         max_val_z = l_info_lines[3].split(VAL_SEPARATOR)[1]
         val_result = l_info_lines[4].split(RESULT_SEPARATOR)[1]
 
-        writer.add_line(msg_val % val, val_err)
-        writer.add_line(msg_z % val_z, max_val_z)
+        writer.add_line(msg_val % (val, val_err))
+        writer.add_line(msg_z % (val_z, max_val_z))
         writer.add_line(msg_result % val_result)
 
     @staticmethod

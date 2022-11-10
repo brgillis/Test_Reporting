@@ -10,6 +10,8 @@ Software Problem Reports. It also automatically generates human-readable reports
 ## Table of Contents
 
 * [Project Structure](#project-structure)
+* [Building Test Reports](#building-test-reports)
+  * [Manifest](#manifest)
 * [Publishing](#publishing)
 * [Continuous Integration](#continuous-integration)
   * [`pytest` Job](#pytest-job)
@@ -42,6 +44,52 @@ Software Problem Reports. It also automatically generates human-readable reports
 * `manifest.json` - JSON-format manifest file, listing filenames of tarballs in the `data` directory (relative to that
   directory) for which test reports are to be generated
 * `README.md` - This file
+
+## Building Test Reports
+
+As part of this project's [Continuous Integration](#continuous-integration) pipeline, it calls the
+`python/build_all_report_pages.py` script to automatically generate test reports from tarballs of test results products
+(and their associated data) in the `data/` directory of this project which are listed in the `manifest.json` file. This
+section will provide an overview of files can be added and updated, and how to provide specialized implementations of
+building test reports for tests where the default formatting is suboptimal.
+
+### Manifest
+
+The `manifest.json` file is a JSON-format file which lists the filenames of tarballs in the `data/` directory for which
+test reports are to be generated. The files are stored in an `object` (similar to a Python dictionary), with each key
+indicating the type of test, and, in the simplest case, the value being the tarball's filename relative to the `data/`
+directory. For example:
+
+```JSON
+{
+  "shear_bias": "shear_bias_test_results.tar.gz",
+  "cti_psf": "cti_psf_test_results.tar.gz"
+}
+```
+
+In this example, reports will be generated for two tests - `"shear_bias"` from the file
+`data/shear_bias_test_results.tar.gz` and `"cti_psf"` from the file `cti_psf_test_results.tar.gz`. The key for each
+of these tests will be used by the build script to determine if a [specialization](#specializations) is available to
+build the test report. If so, this will be used, and if not, the test report will be built with the default formatting.
+
+In the case that you wish for multiple test reports to be generated for the same test, instead of providing a filename
+directly, you can instead provide another object which uses as keys tags (which will be appended to the page names for the
+generated reports) and as values the filenames of the test results tarballs, e.g.:
+
+```JSON
+{
+  "cti_gal": {
+    "obs": "cti_gal_obs_test_results.tar.gz",
+    "exp-0": "cti_gal_exp_0_test_results.tar.gz",
+    "exp-1": "cti_gal_exp_1_test_results.tar.gz",
+    "exp-2": "cti_gal_exp_2_test_results.tar.gz",
+    "exp-3": "cti_gal_exp_3_test_results.tar.gz"
+  }
+}
+```
+
+In this example, a test report will be generated for each of the files listed, with the title of each using the provided
+tag, e.g. "CTI-Gal-obs" etc.
 
 ## Publishing
 

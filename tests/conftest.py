@@ -127,7 +127,7 @@ def symlink_contents(src_dir,
             os.symlink(qualified_src_filename, qualified_dest_filename)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def project_copy(rootdir, tmpdir_factory):
     """Pytest fixture which creates a copy of the project in a temporary directory for use with unit testing.
 

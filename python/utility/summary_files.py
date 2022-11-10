@@ -24,7 +24,7 @@ import logging
 import os
 from typing import TYPE_CHECKING
 
-from utility.constants import PUBLIC_DIR, SUMMARY_FILENAME
+from utility.constants import HEADING_TOC, PUBLIC_DIR, README_FILENAME, SUMMARY_FILENAME
 from utility.misc import log_entry_exit
 
 if TYPE_CHECKING:
@@ -45,9 +45,9 @@ def build_test_report_summary(test_report_summary_filename,
     ----------
     test_report_summary_filename : str
         The desired filename of the Markdown (.md) file to be created, containing the summary of the Test Reports
-        section
+        section.
     l_test_meta : Sequence[TestMeta]
-        A list of objects, each containing the test name and filename, and a list of test case names and filenames
+        A list of objects, each containing the test name and filename, and a list of test case names and filenames.
     rootdir: str
         The root directory of this project (or during unit testing, a copied instance of this project).
     """
@@ -89,14 +89,12 @@ def update_summary(test_report_summary_filename,
     Parameters
     ----------
     test_report_summary_filename : str
-        The filename of the Markdown (.md) file containing the summary of the Test Reports section
+        The filename of the Markdown (.md) file containing the summary of the Test Reports section.
     l_test_meta : Sequence[TestMeta]
-        A list of objects, each containing the test name and filename, and a list of test case names and filenames
     rootdir: str
-        The root directory of this project (or during unit testing, a copied instance of this project).
     """
 
-    logger.info("Updating GitBooks SUMMARY.md file: %s", test_report_summary_filename)
+    logger.info("Updating GitBooks SUMMARY.md file: %s", SUMMARY_FILENAME)
 
     qualified_summary_filename = os.path.join(rootdir, PUBLIC_DIR, SUMMARY_FILENAME)
 
@@ -117,6 +115,42 @@ def update_summary(test_report_summary_filename,
                 _check_md_filename(test_case_md_filename)
 
                 fo.write(f"    * [{test_case_name}]({test_case_md_filename})\n")
+
+
+@log_entry_exit(logger)
+def update_readme(rootdir):
+    """Updates the public README.md file of this project, so it contains a table of contents linking to all files.
+    Note that this should only be called after finishing updating the SUMMARY.md file, since it copies from that.
+
+    Parameters
+    ----------
+    rootdir: str
+    """
+
+    logger.info("Updating README.md file: %s", README_FILENAME)
+
+    qualified_summary_filename = os.path.join(rootdir, PUBLIC_DIR, SUMMARY_FILENAME)
+
+    # Read in lines from the summary file
+    with open(qualified_summary_filename) as fi:
+        l_summary_lines = fi.readlines()
+
+    # Open the readme file to append to it a table of contents with all lines from the summary file
+
+    qualified_readme_filename = os.path.join(rootdir, PUBLIC_DIR, README_FILENAME)
+
+    with open(qualified_readme_filename, 'a') as fo:
+
+        fo.write(f"\n{HEADING_TOC}\n\n")
+
+        for line in l_summary_lines:
+
+            # Skip the heading line and empty lines
+            if line.startswith("#") or line == "\n":
+                continue
+
+            # Copy all other lines
+            fo.write(line)
 
 
 def _check_md_filename(filename):

@@ -6,6 +6,7 @@
 
 This python module defines constants used throughout this project.
 """
+from __future__ import annotations
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -31,6 +32,7 @@ PYTHON_DIR = "python"
 
 PUBLIC_DIR = "public"
 IMAGES_SUBDIR = "images"
+README_FILENAME = "README.md"
 SUMMARY_FILENAME = "SUMMARY.md"
 
 TESTS_DIR = "tests"
@@ -39,3 +41,6 @@ TEST_DATA_DIR = "test_data"
 # Desired filenames and directories to use for created markdown files to report test results
 TEST_REPORT_SUMMARY_FILENAME = "Test_Reports.md"
 TEST_REPORTS_SUBDIR = "TR"
+
+# Other constants
+HEADING_TOC = "## Table of Contents"

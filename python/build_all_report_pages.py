@@ -39,7 +39,7 @@ from typing import Dict, List, TYPE_CHECKING
 from implementations import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
 from utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 from utility.misc import log_entry_exit
-from utility.summary_files import build_test_report_summary, update_summary
+from utility.summary_files import build_test_report_summary, update_readme, update_summary
 from utility.test_writing import TestMeta
 
 if TYPE_CHECKING:
@@ -171,6 +171,9 @@ def run_build_from_args(args):
     update_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
                    l_test_meta=l_test_meta,
                    rootdir=args.rootdir)
+
+    # Update the public README.md file, adding a Table of Contents to it
+    update_readme(rootdir=args.rootdir)
 
 
 if __name__ == "__main__":

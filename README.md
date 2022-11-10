@@ -16,8 +16,21 @@ Software Problem Reports. It also automatically generates human-readable reports
 
 * `data/` - Directory containing tarballs of validation tests results for which reports are to be automatically
   generated
-* `public/` - Directory containing prepared Mardown and other files to be published
+* `public/` - Directory containing prepared Markdown and other files to be published
+  * `public/images` - Directory containing images to be used in published files
+  * `public/SPR` - Directory containing prepared Software Problem Report Markdown files to be published
+  * `public/TD` - Directory containing prepared Testing Dataset Markdown files to be published
+  * `public/README.md` - Markdown file which will be compiled into the front page of the published site
+  * `public/SUMMARY.md` - Markdown file which will be compiled into the sidebar of the published site, linking to all
+    pages in it (Note that any `.md` files not listed here will not be compiled into `.html` files)
 * `python/` - Directory containing Python code used for the generation of test reports
+  * `python/specializations/` - Python package containing code for specialized implementations of building test reports
+  * `python/testing/` - Python package containing data and functionality used for unit testing
+  * `python/utility/` - Python package containing modules providing needed functionality for building test reports
+  * `python/build_all_report_pages.py` - Executable python script which is used as part of the Continuous Integration
+    pipeline to build reports on test results tarballs
+  * `python/implementations.py` - Python module which details which specialized implementations of building test reports
+    are to be used on which files in the `manifest.json` file
 * `test_data/` - Directory containing data used in unit tests of Python code
 * `tests/` - Directory containing unit tests of Python code
 * `.gitignore` - Standard .gitignore file to list files excluded from version control

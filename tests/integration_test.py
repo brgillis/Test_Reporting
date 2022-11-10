@@ -27,7 +27,7 @@ from utility.constants import PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
 
 
 def test_integration(project_copy, test_manifest):
-    """Tests a slimmed-down full execution of the build script.
+    """Tests a slimmed-down full execution of the build script, using the default implementation.
 
     Parameters
     ----------
@@ -53,7 +53,7 @@ def test_integration(project_copy, test_manifest):
 
 
 def test_cti_gal_integration(project_copy, cti_gal_manifest):
-    """Tests a slimmed-down full execution of the build script.
+    """Tests a slimmed-down full execution of the build script, using the CTI-Gal specialization.
 
     Parameters
     ----------

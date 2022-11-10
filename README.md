@@ -7,6 +7,19 @@ The published version of this project can be found at: http://bgilles.pages.eucl
 This project hosts supporting documentation for the Software Test Plan/Report, including Testing Dataset definitions and
 Software Problem Reports. It also automatically generates human-readable reports on validation test results.
 
+## Project Structure
+
+* `data/` - Directory containing tarballs of validation tests results for which reports are to be automatically
+  generated
+* `public/` - Directory containing prepared Mardown and other files to be published
+* `python/` - Directory containing Python code used for the generation of test reports
+* `test_data/` - Directory containing data used in unit tests of Python code
+* `tests/` - Directory containing unit tests of Python code
+* `.gitignore` - Standard .gitignore file to list files excluded from version control
+* `manifest.json` - JSON-format manifest file, listing filenames of tarballs in the `data` directory (relative to that
+  directory) for which test reports are to be generated
+* `README.md` - This file
+
 ## Publishing
 
 This project is published via GitBooks, using GitLab's continuous integration pipeline. See the

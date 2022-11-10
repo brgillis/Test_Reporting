@@ -7,6 +7,11 @@ The published version of this project can be found at: http://bgilles.pages.eucl
 This project hosts supporting documentation for the Software Test Plan/Report, including Testing Dataset definitions and
 Software Problem Reports. It also automatically generates human-readable reports on validation test results.
 
+## Table of Contents
+
+* [Project Structure](#Project-Structure)
+* [Publishing](#Publishing)
+
 ## Project Structure
 
 * `data/` - Directory containing tarballs of validation tests results for which reports are to be automatically

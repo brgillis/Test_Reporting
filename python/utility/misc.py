@@ -91,7 +91,7 @@ def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
                          f"contain only alphanumeric characters and [-_./+], and must end with .tar or .tar.gz.")
 
     # Ditto for the directory being used
-    tmpdir_regex_match = re.match(r"^[a-zA-Z0-9\-_./+]*?$", qualified_tmpdir)
+    tmpdir_regex_match = re.match(r"^[a-zA-Z0-9\-_./+]*$", qualified_tmpdir)
 
     if not tmpdir_regex_match:
         raise ValueError(f"Qualified tempdir {qualified_tmpdir} failed security check. It must"

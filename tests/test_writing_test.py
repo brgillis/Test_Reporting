@@ -28,11 +28,14 @@ import pytest
 
 from testing.common import TEST_TARBALL_FILENAME
 from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
+from utility.misc import TocMarkdownWriter
 from utility.test_writing import (DIRECTORY_FILE_EXT, DIRECTORY_FILE_FIGURES_HEADER, DIRECTORY_FILE_SEPARATOR,
-                                  TestSummaryWriter, )
+                                  HEADING_DETAILED_RESULTS, HEADING_GENERAL_INFO, HEADING_PRODUCT_METADATA,
+                                  HEADING_TEST_CASES, HEADING_TEST_METADATA, TestCaseMeta, TestSummaryWriter, )
 
 if TYPE_CHECKING:
     from py.path import local  # noqa F401
+    from utility.product_parsing import TestResults  # noqa F401
 
 EX_N_TEST_CASES = 24
 
@@ -48,9 +51,14 @@ L_MOCK_DIRECTORY_LABELS_AND_FILENAMES = [("foo", "foo.jpeg"),
                                          (None, "foobar.jpeg"),
                                          (None, "foobar.png")]
 
+TEST_TITLE = "Test Title"
+TEST_NAME = "Test Name"
+TEST_CASE_NAME = "Test Case Name"
+TEST_CASE_FILENAME = "mock_filename.md"
+
 
 def _touch_file(qualified_filename: str) -> None:
-    """Creates an empty file with the give fully-qualified filename.
+    """Creates an empty file with the given fully-qualified filename.
     """
     with open(qualified_filename, "w"):
         pass
@@ -66,9 +74,7 @@ def test_write_summary(project_copy):
     """
 
     writer = TestSummaryWriter()
-    l_test_meta = writer(TEST_TARBALL_FILENAME, project_copy)
-
-    test_meta = l_test_meta[0]
+    test_meta = writer(TEST_TARBALL_FILENAME, project_copy)[0]
 
     # Check that the test name is as expected and the filename is sensible and exists
     assert test_meta.name == "TR-21950be4-0f90-4d36-be01-2a9a507b36cc"
@@ -130,6 +136,46 @@ def test_write_summary(project_copy):
 
             test_case_path = os.path.split(qualified_test_case_filename)[0]
             assert os.path.isfile(os.path.join(test_case_path, figure_filename))
+
+
+def test_add_test_case_meta(cti_gal_test_results):
+    """ Unit test of the `TestSummaryWriter._add_test_case_meta` method.
+
+    Parameters
+    ----------
+    cti_gal_test_results : TestResults
+        Pytest fixture providing a mock `TestResults` object.
+    """
+
+    # Run the function with an empty writer
+    writer = TocMarkdownWriter(TEST_TITLE)
+    test_case_results = cti_gal_test_results.l_test_results[0]
+    TestSummaryWriter(TEST_NAME)._add_test_case_meta(writer, test_case_results)
+
+    # Check that a sample of the writer's lines are as expected
+    assert writer._l_toc_lines[0] == (f"1. [{HEADING_GENERAL_INFO}](#"
+                                      f"{HEADING_GENERAL_INFO.lower().replace(' ', '-')}-0)\n")
+    assert writer._l_lines[-1] == "**Result:** PASSED\n\n"
+
+
+def test_add_test_case_details(cti_gal_test_results):
+    """ Unit test of the `TestSummaryWriter._add_test_case_details` method.
+
+    Parameters
+    ----------
+    cti_gal_test_results : TestResults
+        Pytest fixture providing a mock `TestResults` object.
+    """
+
+    # Run the function with an empty writer
+    writer = TocMarkdownWriter(TEST_TITLE)
+    test_case_results = cti_gal_test_results.l_test_results[0]
+    TestSummaryWriter(TEST_NAME)._add_test_case_details(writer, test_case_results)
+
+    # Check that a sample of the writer's lines are as expected
+    assert writer._l_toc_lines[0] == (f"1. [{HEADING_DETAILED_RESULTS}](#"
+                                      f"{HEADING_DETAILED_RESULTS.lower().replace(' ', '-')}-0)\n")
+    assert writer._l_lines[-1] == "\n```\n\n"
 
 
 @pytest.fixture
@@ -219,3 +265,64 @@ def test_read_figure_labels_and_filenames(mock_directory_file):
     l_labels_and_filenames = TestSummaryWriter.read_figure_labels_and_filenames(mock_directory_file)
 
     assert l_labels_and_filenames == L_MOCK_DIRECTORY_LABELS_AND_FILENAMES
+
+
+def test_write_product_metadata(cti_gal_test_results):
+    """ Unit test of the `TestSummaryWriter._write_product_metadata` method.
+
+    Parameters
+    ----------
+    cti_gal_test_results : TestResults
+        Pytest fixture providing a mock `TestResults` object.
+    """
+
+    # Run the function with an empty writer
+    writer = TocMarkdownWriter(TEST_TITLE)
+    TestSummaryWriter(TEST_NAME)._add_product_metadata(writer, cti_gal_test_results)
+
+    # Check that a sample of the writer's lines are as expected
+    assert writer._l_toc_lines[0] == (f"1. [{HEADING_PRODUCT_METADATA}](#"
+                                      f"{HEADING_PRODUCT_METADATA.lower().replace(' ', '-')}-0)\n")
+    assert writer._l_lines[-1] == "**Creation Date and Time:** 3 Dec, 2021 at 11:24:43.408000\n\n"
+
+
+def test_write_test_metadata(cti_gal_test_results):
+    """ Unit test of the `TestSummaryWriter._write_test_metadata` method.
+
+    Parameters
+    ----------
+    cti_gal_test_results : TestResults
+        Pytest fixture providing a mock `TestResults` object.
+    """
+
+    # Run the function with an empty writer
+    writer = TocMarkdownWriter(TEST_TITLE)
+    TestSummaryWriter(TEST_NAME)._add_test_metadata(writer, cti_gal_test_results)
+
+    # Check that a sample of the writer's lines are as expected
+    assert writer._l_toc_lines[0] == (f"1. [{HEADING_TEST_METADATA}](#"
+                                      f"{HEADING_TEST_METADATA.lower().replace(' ', '-')}-0)\n")
+    assert writer._l_lines[-1] == "**Number of Exposures:** 4\n\n"
+
+
+def test_write_test_case_table(cti_gal_test_results):
+    """ Unit test of the `TestSummaryWriter._write_test_case_table` method.
+
+    Parameters
+    ----------
+    cti_gal_test_results : TestResults
+        Pytest fixture providing a mock `TestResults` object.
+    """
+
+    # Make a mock list of test case meta
+    l_test_case_meta = [
+        TestCaseMeta(name=TEST_CASE_NAME, filename=f"{TEST_REPORTS_SUBDIR}/{TEST_CASE_FILENAME}", passed=True)]
+
+    # Run the function with an empty writer
+    writer = TocMarkdownWriter(TEST_TITLE)
+    TestSummaryWriter(TEST_NAME)._add_test_case_table(writer, cti_gal_test_results, l_test_case_meta)
+
+    # Check that a sample of the writer's lines are as expected
+    assert writer._l_toc_lines[0] == (f"1. [{HEADING_TEST_CASES}](#"
+                                      f"{HEADING_TEST_CASES.lower().replace(' ', '-')}-0)\n")
+    assert writer._l_lines[-1] == f"| [{TEST_CASE_NAME}]({TEST_CASE_FILENAME.replace('.md', '.html')}) | PASSED |\n"

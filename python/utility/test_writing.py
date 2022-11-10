@@ -51,6 +51,12 @@ DIRECTORY_FILE_EXT = ".txt"
 DIRECTORY_FILE_FIGURES_HEADER = "# Figures:"
 DIRECTORY_FILE_SEPARATOR = ": "
 
+HEADING_PRODUCT_METADATA = "Product Metadata"
+HEADING_TEST_METADATA = "Test Metadata"
+HEADING_TEST_CASES = "Test Cases"
+HEADING_GENERAL_INFO = "General Information"
+HEADING_DETAILED_RESULTS = "Detailed Results"
+
 logger = getLogger(__name__)
 
 
@@ -215,11 +221,12 @@ class TestSummaryWriter:
 
         # Dig out the data for each bin from the SupplementaryInfo
         req = test_case_results.l_requirements[0]
-        supp_info_str = req.supp_info.info_value.strip()
-        bin_1_str, bin_2_str = supp_info_str.split('\n\n')
+        supp_info_str = req.l_supp_info[0].info_value.strip()
+        bin_1_str, bin_2_str = supp_info_str.split("\n\n")
 
         # Get the figure label and filename for each bin
-        l_figure_labels_and_filenames = self._prepare_figures(ana_result, rootdir, tmpdir, figures_tmpdir)
+        l_figure_labels_and_filenames = self._prepare_figures(test_case_results.analysis_result, rootdir, tmpdir,
+                                                              figures_tmpdir)
 
         # The object `l_figure_labels_and_filenames` is a list of (label, filename) tuples. In general, there's no
         # guarantee that the labels will be present (non-None) or unique. But in this example, we'll assume that we
@@ -231,29 +238,30 @@ class TestSummaryWriter:
         # Write info for each bin
         for bin_i, bin_str in enumerate((bin_1_str, bin_2_str)):
 
-            filename = d_figure_filenames[f'bin-{bin_i+1}']
+            filename = d_figure_filenames[f"bin-{bin_i + 1}"]
 
             # Copy the figure to the appropriate directory and get the relative filename for it using the provided
             # method
             relative_figure_filename = self._move_figure_to_public(filename, rootdir, figures_tmpdir)
 
             # Add a heading for this bin's subsection, at a depth 1 greater than that of this section
-            writer.add_heading(f'Bin {bin_i}', depth=1)
+            bin_label = f"Bin {bin_i}"
+            writer.add_heading(bin_label, depth=1)
 
             # Add a link to the figure
-            writer.add_line(f'![{label}]({relative_figure_filename})\n\n')
+            writer.add_line(f"![{bin_label}]({relative_figure_filename})\n\n")
 
             # Get the slope and intercept info out of the info string for this specific bin by properly parsing it
-            l_bin_info_lines = bin_str.split('\n')
-            slope = l_bin_info_lines[1].split(' = ')[1]
-            slope_err = l_bin_info_lines[2].split(' = ')[1]
-            intercept = l_bin_info_lines[3].split(' = ')[1]
-            intercept_err = l_bin_info_lines[4].split(' = ')[1]
+            l_bin_info_lines = bin_str.split("\n")
+            slope = l_bin_info_lines[1].split(" = ")[1]
+            slope_err = l_bin_info_lines[2].split(" = ")[1]
+            intercept = l_bin_info_lines[3].split(" = ")[1]
+            intercept_err = l_bin_info_lines[4].split(" = ")[1]
 
             # And finally, add lines for the slope and intercept info, still in the same section as the associated
             # figure
-            writer.add_line(f'slope = {slope} +/- {slope_err}'\n\n)
-            writer.add_line(f'intercept = {intercept} +/- {intercept_err}'\n\n)
+            writer.add_line(f"slope = {slope} +/- {slope_err}\n\n")
+            writer.add_line(f"intercept = {intercept} +/- {intercept_err}\n\n")
     ```
     """
 
@@ -428,7 +436,7 @@ class TestSummaryWriter:
             else:
                 test_name = f"{self.test_name}{test_name_tail}"
 
-            logger.info(f"Building report for test {test_name}.")
+            logger.info("Building report for test %s.", test_name)
 
             # We write the pages for the test cases first, so we know about and can link to them from the test
             # summary page
@@ -436,7 +444,6 @@ class TestSummaryWriter:
                                                                  test_name_tail=test_name_tail,
                                                                  rootdir=rootdir,
                                                                  tmpdir=qualified_tmpdir)
-
 
             test_filename = self._write_test_results_summary(test_results=test_results,
                                                              test_name=test_name,
@@ -569,7 +576,7 @@ class TestSummaryWriter:
 
         qualified_test_case_filename = os.path.join(rootdir, PUBLIC_DIR, test_case_filename)
 
-        logger.info(f"Writing results for test case {test_case_name} ro {qualified_test_case_filename}.")
+        logger.info("Writing results for test case %s from %s.", test_case_name, qualified_test_case_filename)
 
         # Ensure the folder for this exists
         os.makedirs(os.path.split(qualified_test_case_filename)[0], exist_ok=True)
@@ -595,7 +602,7 @@ class TestSummaryWriter:
         test_case_results : SingleTestResult
         """
 
-        writer.add_heading("General Information", depth=0)
+        writer.add_heading(HEADING_GENERAL_INFO, depth=0)
         writer.add_line(f"**Test Case ID:** {test_case_results.test_id}\n\n")
         writer.add_line(f"**Description:** {test_case_results.test_description}\n\n")
         writer.add_line(f"**Result:** {test_case_results.global_result}\n\n")
@@ -669,7 +676,7 @@ class TestSummaryWriter:
 
         # We can't guarantee that supplementary info keys will be unique between different requirements,
         # so to ensure we have unique links for each, we keep a counter and add it to the name of each
-        writer.add_heading("Detailed Results", depth=0)
+        writer.add_heading(HEADING_DETAILED_RESULTS, depth=0)
         for req_i, req in enumerate(test_case_results.l_requirements):
             writer.add_heading("Requirement", depth=1)
             writer.add_line(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
@@ -804,16 +811,12 @@ class TestSummaryWriter:
 
         # Extract the textfiles and figures tarballs
         qualified_figures_tarball_filename = os.path.join(tmpdir, ana_result.figures_tarball)
-        if not os.path.isfile(qualified_figures_tarball_filename):
-            logger.error(f"Figures tarball {qualified_figures_tarball_filename} expected but not "
-                         f"present.")
-            return None
-
         qualified_textfiles_tarball_filename = os.path.join(tmpdir, ana_result.textfiles_tarball)
-        if not os.path.isfile(qualified_textfiles_tarball_filename):
-            logger.error(f"Textfiles tarball {qualified_textfiles_tarball_filename} expected but not "
-                         f"present.")
-            return None
+
+        for qualified_tarball_filename in (qualified_figures_tarball_filename, qualified_textfiles_tarball_filename):
+            if not os.path.isfile(qualified_tarball_filename):
+                logger.error("Tarball %s expected but not present.", qualified_tarball_filename)
+                return None
 
         extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)
         extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)
@@ -853,7 +856,7 @@ class TestSummaryWriter:
         # Check we have exactly one possibility, otherwise raise an exception
         if len(l_possible_directory_filenames) == 1:
             qualified_directory_filename = os.path.join(figures_tmpdir, l_possible_directory_filenames[0])
-            logger.info(f"Found directory file for this test case: {qualified_directory_filename}")
+            logger.info("Found directory file for this test case: %s", qualified_directory_filename)
             return qualified_directory_filename
         elif len(l_possible_directory_filenames) == 0:
             raise FileNotFoundError(f"No identifiable directory file found in directory {figures_tmpdir}.")
@@ -931,13 +934,13 @@ class TestSummaryWriter:
 
         qualified_test_filename = os.path.join(rootdir, PUBLIC_DIR, test_filename)
 
-        logger.info(f"Writing test results summary to {qualified_test_filename}.")
+        logger.info("Writing test results summary to %s", qualified_test_filename)
 
         writer = TocMarkdownWriter(test_name)
 
-        self._write_product_metadata(test_results, writer)
-        self._write_test_metadata(test_results, writer)
-        self._write_test_case_table(test_results, l_test_case_meta, writer)
+        self._add_product_metadata(writer, test_results)
+        self._add_test_metadata(writer, test_results)
+        self._add_test_case_table(writer, test_results, l_test_case_meta)
 
         # Ensure the folder for this exists
         os.makedirs(os.path.split(qualified_test_filename)[0], exist_ok=True)
@@ -949,17 +952,17 @@ class TestSummaryWriter:
 
     @staticmethod
     @log_entry_exit(logger)
-    def _write_product_metadata(test_results, writer):
+    def _add_product_metadata(writer, test_results):
         """Writes metadata related to the test's data product to an open filehandle
 
         Parameters
         ----------
-        test_results : TestResults
         writer : TocMarkdownWriter
             A writer to handle storing heading and lines we wish to be written out to a file
+        test_results : TestResults
         """
 
-        writer.add_heading(f"Product Metadata", depth=0)
+        writer.add_heading(HEADING_PRODUCT_METADATA, depth=0)
 
         writer.add_line(f"**Product ID:** {test_results.product_id}\n\n")
         writer.add_line(f"**Dataset Release:** {test_results.dataset_release}\n\n")
@@ -974,16 +977,16 @@ class TestSummaryWriter:
 
     @staticmethod
     @log_entry_exit(logger)
-    def _write_test_metadata(test_results, writer):
+    def _add_test_metadata(writer, test_results):
         """Writes metadata related to the test itself to an open filehandle
 
         Parameters
         ----------
-        test_results : TestResults
         writer : TocMarkdownWriter
+        test_results : TestResults
         """
 
-        writer.add_heading(f"Test Metadata", depth=0)
+        writer.add_heading(HEADING_TEST_METADATA, depth=0)
 
         if test_results.exp_product_id is not None:
             writer.add_line(f"**Exposure Product ID:** {test_results.exp_product_id}\n\n")
@@ -999,17 +1002,17 @@ class TestSummaryWriter:
             writer.add_line(f"**Observation Mode:** {test_results.obs_mode}\n\n")
 
     @log_entry_exit(logger)
-    def _write_test_case_table(self, test_results, l_test_case_meta, writer):
+    def _add_test_case_table(self, writer, test_results, l_test_case_meta):
         """Writes a table containing test case information and links to their pages to an open filehandle.
 
         Parameters
         ----------
+        writer : TocMarkdownWriter
         test_results : TestResults
         l_test_case_meta : Sequence[TestCaseMeta]
-        writer : TocMarkdownWriter
         """
 
-        writer.add_heading("Test Cases", depth=0)
+        writer.add_heading(HEADING_TEST_CASES, depth=0)
 
         num_passed, num_failed = self._calc_num_passed_failed(l_test_case_meta)
 

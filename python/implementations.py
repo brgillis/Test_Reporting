@@ -45,6 +45,7 @@ To define a new implementation, the following is the recommended procedure:
 
 from typing import Dict, Optional
 
+from specializations.cti_gal import CtiGalTestSummaryWriter
 from utility.test_writing import BUILD_CALLABLE_TYPE, TestSummaryWriter
 
 # Primary keys
@@ -56,6 +57,6 @@ EXP_KEY = "exp"
 
 # The build functions assigned to each key. The function assigned to the `None` key will be used if a key is used
 # in the manifest which doesn't have a specific build function defined here
-D_BUILD_CALLABLES: Dict[Optional[str], BUILD_CALLABLE_TYPE] = {CTI_GAL_KEY: TestSummaryWriter(test_name="CTI-Gal"), }
+D_BUILD_CALLABLES: Dict[Optional[str], BUILD_CALLABLE_TYPE] = {CTI_GAL_KEY: CtiGalTestSummaryWriter(), }
 
 DEFAULT_BUILD_CALLABLE = TestSummaryWriter()

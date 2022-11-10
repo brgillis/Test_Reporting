@@ -108,7 +108,7 @@ def read_manifest(qualified_manifest_filename):
     with open(qualified_manifest_filename, "r") as fi:
         d_manifest = json.load(fi)
 
-    logger.info(f"Successfully read in file manifest: {d_manifest}")
+    logger.info("Successfully read in file manifest: %s", d_manifest)
 
     return d_manifest
 
@@ -122,13 +122,13 @@ def main():
     logging.basicConfig(level=args.log_level)
 
     logger.info("#")
-    logger.info(f"# Beginning execution of script `{__file__}`")
+    logger.info("# Beginning execution of script `%s`", __file__)
     logger.info("#")
 
     run_build_from_args(args)
 
     logger.info("#")
-    logger.info(f"# Finished execution of script `{__file__}`")
+    logger.info("# Finished execution of script `%s`", __file__)
     logger.info("#")
 
 
@@ -154,11 +154,11 @@ def run_build_from_args(args):
         # Rather than using the default functionality of the dict's `get` method, we check explicitly, so we can log
         # in that case
         if not build_callable:
-            logger.info(f"No build callable provided for key '{key}'; using default implementation "
-                        f"{DEFAULT_BUILD_CALLABLE} to construct test report from data: {value}.")
+            logger.info("No build callable provided for key '%s'; using default implementation "
+                        "%s to construct test report from data: %s.", key, DEFAULT_BUILD_CALLABLE, value)
             build_callable = DEFAULT_BUILD_CALLABLE
         else:
-            logger.info(f"Using build callable {build_callable} to construct test report from data: {value}.")
+            logger.info("Using build callable %s to construct test report from data: %s.", build_callable, value)
 
         l_test_meta += build_callable(value, args.rootdir)
 

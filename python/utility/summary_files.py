@@ -52,7 +52,7 @@ def build_test_report_summary(test_report_summary_filename,
         The root directory of this project (or during unit testing, a copied instance of this project).
     """
 
-    logger.info(f"Building test report summary file {test_report_summary_filename}.")
+    logger.info("Building test report summary file %s", test_report_summary_filename)
 
     qualified_test_report_summary_filename = os.path.join(rootdir, PUBLIC_DIR, test_report_summary_filename)
 
@@ -96,7 +96,7 @@ def update_summary(test_report_summary_filename,
         The root directory of this project (or during unit testing, a copied instance of this project).
     """
 
-    logger.info(f"Updating GitBooks SUMMARY.md file: {test_report_summary_filename}")
+    logger.info("Updating GitBooks SUMMARY.md file: %s", test_report_summary_filename)
 
     qualified_summary_filename = os.path.join(rootdir, PUBLIC_DIR, SUMMARY_FILENAME)
 

@@ -27,10 +27,15 @@ from typing import Set, TYPE_CHECKING
 import pytest
 
 from utility.constants import DATA_DIR, MANIFEST_FILENAME, PUBLIC_DIR, SUMMARY_FILENAME, TESTS_DIR, TEST_DATA_DIR
+from utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
     from _pytest.tmpdir import TempdirFactory  # noqa F401
     from collections.abc import Collection  # noqa F401
+    from utility.test_writing import TestResults
+
+CTI_GAL_MANIFEST_FILENAME = "cti_gal_manifest.json"
+CTI_GAL_RESULTS_PRODUCT = "she_observation_cti_gal_validation_test_results_product.xml"
 
 L_FILES_MODIFIED = (os.path.join(PUBLIC_DIR, SUMMARY_FILENAME),
                     )
@@ -161,10 +166,9 @@ def project_copy(rootdir, tmpdir_factory):
 
     return project_copy_rootdir
 
-
 @pytest.fixture
 def test_manifest(project_copy):
-    """Pytest fixture to get the filename of the manifest to use for testing purposes.
+    """Pytest fixture to get the filename of the manifest to use for testing the default builder.
 
     Returns
     -------
@@ -173,3 +177,27 @@ def test_manifest(project_copy):
 
     """
     return os.path.join(project_copy, DATA_DIR, MANIFEST_FILENAME)
+
+
+@pytest.fixture
+def cti_gal_manifest(project_copy):
+    """Pytest fixture to get the filename of a manifest to use for testing the CTI-Gal builder.
+
+    Returns
+    -------
+    cti_gal_manifest : str
+        The fully-qualified path to the CTI-Gal manifest
+
+    """
+    return os.path.join(project_copy, DATA_DIR, CTI_GAL_MANIFEST_FILENAME)
+
+
+@pytest.fixture
+def cti_gal_test_results(rootdir):
+    """Pytest fixture providing a mock TestResults object for a CTI-Gal test.
+
+    Returns
+    -------
+    cti_gal_test_results : TestResults
+    """
+    return parse_xml_product(os.path.join(rootdir, TEST_DATA_DIR, CTI_GAL_RESULTS_PRODUCT))

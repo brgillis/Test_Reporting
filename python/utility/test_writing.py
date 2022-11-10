@@ -938,9 +938,9 @@ class TestSummaryWriter:
 
         writer = TocMarkdownWriter(test_name)
 
-        self._write_product_metadata(test_results, writer)
-        self._write_test_metadata(test_results, writer)
-        self._write_test_case_table(test_results, l_test_case_meta, writer)
+        self._add_product_metadata(writer, test_results)
+        self._add_test_metadata(writer, test_results)
+        self._add_test_case_table(writer, test_results, l_test_case_meta)
 
         # Ensure the folder for this exists
         os.makedirs(os.path.split(qualified_test_filename)[0], exist_ok=True)
@@ -952,14 +952,14 @@ class TestSummaryWriter:
 
     @staticmethod
     @log_entry_exit(logger)
-    def _write_product_metadata(test_results, writer):
+    def _add_product_metadata(writer, test_results):
         """Writes metadata related to the test's data product to an open filehandle
 
         Parameters
         ----------
-        test_results : TestResults
         writer : TocMarkdownWriter
             A writer to handle storing heading and lines we wish to be written out to a file
+        test_results : TestResults
         """
 
         writer.add_heading(HEADING_PRODUCT_METADATA, depth=0)
@@ -977,13 +977,13 @@ class TestSummaryWriter:
 
     @staticmethod
     @log_entry_exit(logger)
-    def _write_test_metadata(test_results, writer):
+    def _add_test_metadata(writer, test_results):
         """Writes metadata related to the test itself to an open filehandle
 
         Parameters
         ----------
-        test_results : TestResults
         writer : TocMarkdownWriter
+        test_results : TestResults
         """
 
         writer.add_heading(HEADING_TEST_METADATA, depth=0)
@@ -1002,14 +1002,14 @@ class TestSummaryWriter:
             writer.add_line(f"**Observation Mode:** {test_results.obs_mode}\n\n")
 
     @log_entry_exit(logger)
-    def _write_test_case_table(self, test_results, l_test_case_meta, writer):
+    def _add_test_case_table(self, writer, test_results, l_test_case_meta):
         """Writes a table containing test case information and links to their pages to an open filehandle.
 
         Parameters
         ----------
+        writer : TocMarkdownWriter
         test_results : TestResults
         l_test_case_meta : Sequence[TestCaseMeta]
-        writer : TocMarkdownWriter
         """
 
         writer.add_heading(HEADING_TEST_CASES, depth=0)

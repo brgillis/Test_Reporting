@@ -278,7 +278,7 @@ def test_write_product_metadata(cti_gal_test_results):
 
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
-    TestSummaryWriter(TEST_NAME)._write_product_metadata(cti_gal_test_results, writer)
+    TestSummaryWriter(TEST_NAME)._add_product_metadata(writer, cti_gal_test_results)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_PRODUCT_METADATA}](#"
@@ -297,7 +297,7 @@ def test_write_test_metadata(cti_gal_test_results):
 
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
-    TestSummaryWriter(TEST_NAME)._write_test_metadata(cti_gal_test_results, writer)
+    TestSummaryWriter(TEST_NAME)._add_test_metadata(writer, cti_gal_test_results)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_TEST_METADATA}](#"
@@ -320,7 +320,7 @@ def test_write_test_case_table(cti_gal_test_results):
 
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
-    TestSummaryWriter(TEST_NAME)._write_test_case_table(cti_gal_test_results, l_test_case_meta, writer)
+    TestSummaryWriter(TEST_NAME)._add_test_case_table(writer, cti_gal_test_results, l_test_case_meta)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_TEST_CASES}](#"

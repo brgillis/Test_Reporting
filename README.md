@@ -9,6 +9,9 @@ Software Problem Reports. It also automatically generates human-readable reports
 
 ## Table of Contents
 
+* [Contributors](#contributors)
+  * [Active Contributors](#active-contributors)
+  * [Other Contributors](#other-contributors)
 * [Project Structure](#project-structure)
 * [Building Test Reports](#building-test-reports)
   * [Manifest](#manifest)
@@ -20,6 +23,14 @@ Software Problem Reports. It also automatically generates human-readable reports
   * [`build` Job](#build-job)
   * [`pages` Job](#pages-job)
   * [`pages-test` Job](#pages-test-job)
+
+## Contributors
+
+### Active Contributors
+
+* Bryan Gillis (b.gillis@roe.ac.uk)
+
+### Other Contributors
 
 ## Project Structure
 

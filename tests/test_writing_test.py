@@ -58,7 +58,7 @@ TEST_CASE_FILENAME = "mock_filename.md"
 
 
 def _touch_file(qualified_filename: str) -> None:
-    """Creates an empty file with the give fully-qualified filename.
+    """Creates an empty file with the given fully-qualified filename.
     """
     with open(qualified_filename, "w"):
         pass
@@ -74,9 +74,7 @@ def test_write_summary(project_copy):
     """
 
     writer = TestSummaryWriter()
-    l_test_meta = writer(TEST_TARBALL_FILENAME, project_copy)
-
-    test_meta = l_test_meta[0]
+    test_meta = writer(TEST_TARBALL_FILENAME, project_copy)[0]
 
     # Check that the test name is as expected and the filename is sensible and exists
     assert test_meta.name == "TR-21950be4-0f90-4d36-be01-2a9a507b36cc"

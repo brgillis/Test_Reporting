@@ -13,7 +13,7 @@ part of the continuous-integration pipeline to build report pages.
 It generally shouldn't be necessary to modify this file when adding new files to be reported on or new custom
 implementations of building report pages. The former can be done by editing the manifest file in the root directory
 of this project, and the latter by adding new modules for the new implementations and updating the
-`implementations.py` module (see instructions in that module).
+`specialization_keys.py` module (see instructions in that module).
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -36,7 +36,7 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import Dict, List, TYPE_CHECKING
 
-from implementations import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
+from specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
 from utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 from utility.misc import log_entry_exit
 from utility.summary_files import build_test_report_summary, update_readme, update_summary

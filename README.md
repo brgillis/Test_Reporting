@@ -12,6 +12,8 @@ Software Problem Reports. It also automatically generates human-readable reports
 * [Project Structure](#project-structure)
 * [Building Test Reports](#building-test-reports)
   * [Manifest](#manifest)
+  * [Build Script](#build-script)
+  * [Specialized Formatting](#specialized-formatting)
 * [Publishing](#publishing)
 * [Continuous Integration](#continuous-integration)
   * [`pytest` Job](#pytest-job)
@@ -36,7 +38,7 @@ Software Problem Reports. It also automatically generates human-readable reports
   * `python/utility/` - Python package containing modules providing needed functionality for building test reports
   * `python/build_all_report_pages.py` - Executable python script which is used as part of the Continuous Integration
     pipeline to build reports on test results tarballs
-  * `python/implementations.py` - Python module which details which specialized implementations of building test reports
+  * `python/specialization_keys.py` - Python module which details which specialized implementations of building test reports
     are to be used on which files in the `manifest.json` file
 * `test_data/` - Directory containing data used in unit tests of Python code
 * `tests/` - Directory containing unit tests of Python code
@@ -69,8 +71,9 @@ directory. For example:
 
 In this example, reports will be generated for two tests - `"shear_bias"` from the file
 `data/shear_bias_test_results.tar.gz` and `"cti_psf"` from the file `cti_psf_test_results.tar.gz`. The key for each
-of these tests will be used by the build script to determine if a [specialization](#specializations) is available to
-build the test report. If so, this will be used, and if not, the test report will be built with the default formatting.
+of these tests will be used by the build script to determine if a [specialization](#specialized-formatting) is available
+to build the test report. If so, this will be used, and if not, the test report will be built with the default
+formatting.
 
 In the case that you wish for multiple test reports to be generated for the same test, instead of providing a filename
 directly, you can instead provide another object which uses as keys tags (which will be appended to the page names for the
@@ -90,6 +93,36 @@ generated reports) and as values the filenames of the test results tarballs, e.g
 
 In this example, a test report will be generated for each of the files listed, with the title of each using the provided
 tag, e.g. "CTI-Gal-obs" etc.
+
+### Build Script
+
+The script `python/build_all_report_pages.py` is used to automatically generate test reports from the files listed in
+the `manifest.json` file and contained in the `data/` directory. It is not generally necessary to work with this script
+directly when adding/updating test results tarballs or implementing new specialized formattings.
+
+### Specialized Formatting
+
+The default formatting of test reports makes no assumption about the structure of the data contained within the test
+results data product. As such, when the structure is known, it may be possible to more cleanly format the generated test
+reports. For this purpose, this project allows extensions to its functionality to apply specialized formatting based on
+the key used for each test in the [`manifest.json` file](#manifest).
+
+To add a new specialization, two steps are necessary:
+
+1. Create a new module in the `specializations` package which provides a function or callable object which can be used
+   to generate a test report with the desired formatting. This is most easily done by making a child class of the
+   `TestSummaryWriter` class found in the `utility.test_writing` module and overriding methods as desired.
+2. In the module `specialization_keys.py`, import the function or class created, and add an entry to the dict
+   `D_BUILD_CALLABLES` associating the desired key for this test (e.g. "cti_gal") with the function or class instance,
+   e.g.:
+
+```python
+CTI_GAL_KEY = "cti_gal"
+D_BUILD_CALLABLES: Dict[Optional[str], BUILD_CALLABLE_TYPE] = {CTI_GAL_KEY: CtiGalTestSummaryWriter(), }
+```
+
+Further instructions can be found in the docstrings of the `TestSummaryWriter` class in the `utility.test_writing`
+module (for step 1) and the `specialization_keys` module.
 
 ## Publishing
 

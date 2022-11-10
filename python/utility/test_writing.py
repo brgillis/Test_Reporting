@@ -54,6 +54,8 @@ DIRECTORY_FILE_SEPARATOR = ": "
 HEADING_PRODUCT_METADATA = "Product Metadata"
 HEADING_TEST_METADATA = "Test Metadata"
 HEADING_TEST_CASES = "Test Cases"
+HEADING_GENERAL_INFO = "General Information"
+HEADING_DETAILED_RESULTS = "Detailed Results"
 
 logger = getLogger(__name__)
 
@@ -600,7 +602,7 @@ class TestSummaryWriter:
         test_case_results : SingleTestResult
         """
 
-        writer.add_heading("General Information", depth=0)
+        writer.add_heading(HEADING_GENERAL_INFO, depth=0)
         writer.add_line(f"**Test Case ID:** {test_case_results.test_id}\n\n")
         writer.add_line(f"**Description:** {test_case_results.test_description}\n\n")
         writer.add_line(f"**Result:** {test_case_results.global_result}\n\n")
@@ -674,7 +676,7 @@ class TestSummaryWriter:
 
         # We can't guarantee that supplementary info keys will be unique between different requirements,
         # so to ensure we have unique links for each, we keep a counter and add it to the name of each
-        writer.add_heading("Detailed Results", depth=0)
+        writer.add_heading(HEADING_DETAILED_RESULTS, depth=0)
         for req_i, req in enumerate(test_case_results.l_requirements):
             writer.add_heading("Requirement", depth=1)
             writer.add_line(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")

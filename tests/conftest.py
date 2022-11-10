@@ -26,7 +26,8 @@ from typing import Set, TYPE_CHECKING
 
 import pytest
 
-from utility.constants import DATA_DIR, MANIFEST_FILENAME, PUBLIC_DIR, SUMMARY_FILENAME, TESTS_DIR, TEST_DATA_DIR
+from utility.constants import (DATA_DIR, MANIFEST_FILENAME, PUBLIC_DIR, README_FILENAME, SUMMARY_FILENAME, TESTS_DIR,
+                               TEST_DATA_DIR, )
 from utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
@@ -38,7 +39,7 @@ CTI_GAL_MANIFEST_FILENAME = "cti_gal_manifest.json"
 CTI_GAL_RESULTS_PRODUCT = "she_observation_cti_gal_validation_test_results_product.xml"
 
 L_FILES_MODIFIED = (os.path.join(PUBLIC_DIR, SUMMARY_FILENAME),
-                    )
+                    os.path.join(PUBLIC_DIR, README_FILENAME),)
 
 S_EXCLUDE = {*L_FILES_MODIFIED, DATA_DIR, TEST_DATA_DIR}
 

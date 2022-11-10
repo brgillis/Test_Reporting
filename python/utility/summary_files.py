@@ -94,9 +94,9 @@ def update_summary(test_report_summary_filename,
     rootdir: str
     """
 
-    logger.info("Updating GitBooks SUMMARY.md file: %s", SUMMARY_FILENAME)
-
     qualified_summary_filename = os.path.join(rootdir, PUBLIC_DIR, SUMMARY_FILENAME)
+
+    logger.info("Updating GitBooks SUMMARY.md file: %s", qualified_summary_filename)
 
     # Open the summary file to append to it
     with open(qualified_summary_filename, 'a') as fo:
@@ -127,17 +127,16 @@ def update_readme(rootdir):
     rootdir: str
     """
 
-    logger.info("Updating README.md file: %s", README_FILENAME)
-
     qualified_summary_filename = os.path.join(rootdir, PUBLIC_DIR, SUMMARY_FILENAME)
+    qualified_readme_filename = os.path.join(rootdir, PUBLIC_DIR, README_FILENAME)
+
+    logger.info("Updating README.md file: %s", qualified_readme_filename)
 
     # Read in lines from the summary file
     with open(qualified_summary_filename) as fi:
         l_summary_lines = fi.readlines()
 
     # Open the readme file to append to it a table of contents with all lines from the summary file
-
-    qualified_readme_filename = os.path.join(rootdir, PUBLIC_DIR, README_FILENAME)
 
     with open(qualified_readme_filename, 'a') as fo:
 

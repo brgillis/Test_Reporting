@@ -117,8 +117,11 @@ To add a new specialization, two steps are necessary:
    e.g.:
 
 ```python
+from specializations.cti_gal import CtiGalTestSummaryWriter
+
 CTI_GAL_KEY = "cti_gal"
-D_BUILD_CALLABLES: Dict[Optional[str], BUILD_CALLABLE_TYPE] = {CTI_GAL_KEY: CtiGalTestSummaryWriter(), }
+
+D_BUILD_CALLABLES = {CTI_GAL_KEY: CtiGalTestSummaryWriter(), }
 ```
 
 Further instructions can be found in the docstrings of the `TestSummaryWriter` class in the `utility.test_writing`

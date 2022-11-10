@@ -9,8 +9,8 @@ Software Problem Reports. It also automatically generates human-readable reports
 
 ## Table of Contents
 
-* [Project Structure](#Project-Structure)
-* [Publishing](#Publishing)
+* [Project Structure](#project-structure)
+* [Publishing](#publishing)
 
 ## Project Structure
 
@@ -28,7 +28,7 @@ Software Problem Reports. It also automatically generates human-readable reports
 ## Publishing
 
 This project is published via GitBooks, using GitLab's continuous integration pipeline. See the
-[Continuous Integration](#Continuous-Integration) section of this document for more details on this pipeline.
+[Continuous Integration](#continuous-integration) section of this document for more details on this pipeline.
 
 GitBooks automatically compiles all Markdown (`*.md`) files in the `public` directory of this project into `.html` files
 for web-based viewing, and deploys the compiled `.html` files and all other (non-`.md`) files from the `public`

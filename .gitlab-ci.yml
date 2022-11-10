@@ -26,7 +26,7 @@ build:
       - public
     expire_in: 1 day
 
-test:
+pages-test:
   stage: test
   image: node:10
   before_script:

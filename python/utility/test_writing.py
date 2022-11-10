@@ -51,6 +51,10 @@ DIRECTORY_FILE_EXT = ".txt"
 DIRECTORY_FILE_FIGURES_HEADER = "# Figures:"
 DIRECTORY_FILE_SEPARATOR = ": "
 
+HEADING_PRODUCT_METADATA = "Product Metadata"
+HEADING_TEST_METADATA = "Test Metadata"
+HEADING_TEST_CASES = "Test Cases"
+
 logger = getLogger(__name__)
 
 
@@ -438,7 +442,6 @@ class TestSummaryWriter:
                                                                  test_name_tail=test_name_tail,
                                                                  rootdir=rootdir,
                                                                  tmpdir=qualified_tmpdir)
-
 
             test_filename = self._write_test_results_summary(test_results=test_results,
                                                              test_name=test_name,
@@ -957,7 +960,7 @@ class TestSummaryWriter:
             A writer to handle storing heading and lines we wish to be written out to a file
         """
 
-        writer.add_heading(f"Product Metadata", depth=0)
+        writer.add_heading(HEADING_PRODUCT_METADATA, depth=0)
 
         writer.add_line(f"**Product ID:** {test_results.product_id}\n\n")
         writer.add_line(f"**Dataset Release:** {test_results.dataset_release}\n\n")
@@ -981,7 +984,7 @@ class TestSummaryWriter:
         writer : TocMarkdownWriter
         """
 
-        writer.add_heading(f"Test Metadata", depth=0)
+        writer.add_heading(HEADING_TEST_METADATA, depth=0)
 
         if test_results.exp_product_id is not None:
             writer.add_line(f"**Exposure Product ID:** {test_results.exp_product_id}\n\n")
@@ -1007,7 +1010,7 @@ class TestSummaryWriter:
         writer : TocMarkdownWriter
         """
 
-        writer.add_heading("Test Cases", depth=0)
+        writer.add_heading(HEADING_TEST_CASES, depth=0)
 
         num_passed, num_failed = self._calc_num_passed_failed(l_test_case_meta)
 

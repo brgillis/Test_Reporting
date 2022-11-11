@@ -15,7 +15,7 @@ Software Problem Reports. It also automatically generates human-readable reports
   * [Other Contributors](#other-contributors)
 * [Installation](#installation)
 * [Executables](#executables)
-  * [`build_all_report_pages.py`](#build_all_report_pages.py)
+  * [`build_all_report_pages.py`](#build_all_report_pagespy)
     * [Purpose](#purpose)
     * [Input](#input)
     * [Output](#output)

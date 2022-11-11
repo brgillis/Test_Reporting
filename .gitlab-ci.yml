@@ -26,7 +26,7 @@ build:
   stage: build
   image: python:3.9
   script:
-    - ./python/Test_Reporting/build_all_report_pages.py > public/build.log 2> public/build.log
+    - ./python/Test_Reporting/build_all_report_pages.py 2>&1 | tee public/build.log
   artifacts:
     paths:
       - public

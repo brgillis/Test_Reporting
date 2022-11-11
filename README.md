@@ -97,14 +97,13 @@ All arguments to the script allow default arguments, which are reasonable if run
 directory on the included `manifest.json` file. Therefore, the script can be from this directory simply as:
 
 ```bash
-python public/build_all_report_pages.py 2> public/build.log
+python python/build_all_report_pages.py 2> public/build.log
 ```
 
 More generally, it can be run as:
 
 ```bash
-python public/build_all_report_pages.py --manifest /path/to/manifest.json --rootdir /path/to/rootdir \\
---logging-level LEVEL 
+python python/build_all_report_pages.py --manifest /path/to/manifest.json --rootdir /path/to/rootdir/ --logging-level LEVEL 
 ```
 
 with the proper paths to the desired manifest file and the project root directory and the desired logging level (e.g. 
@@ -113,7 +112,7 @@ DEBUG).
 The script's execution log is output via stderr, and can be redirected to a file via e.g.:
 
 ```bash
-python public/build_all_report_pages.py 2> /path/to/build.log
+python python/build_all_report_pages.py 2> /path/to/build.log
 ```
 
 When run as part of the [Continuous Integration](#continuous-integration) pipeline, this log is output to

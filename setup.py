@@ -3,7 +3,7 @@ from distutils.core import setup
 name = "Test_Reporting"
 
 setup(name=name,
-      version="1.0",
+      version="1.1",
       description="Project for publishing report pages related to validation tests.",
       url="https://gitlab.euclid-sgs.uk/bgilles/test_reporting",
       author="Bryan R. Gillis",

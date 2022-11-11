@@ -26,12 +26,14 @@ from typing import List, Set, TYPE_CHECKING
 
 import pytest
 
-from testing.common import TEST_TARBALL_FILENAME
-from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.misc import TocMarkdownWriter
-from utility.report_writing import (DIRECTORY_FILE_EXT, DIRECTORY_FILE_FIGURES_HEADER, DIRECTORY_FILE_SEPARATOR,
-                                    HEADING_DETAILED_RESULTS, HEADING_GENERAL_INFO, HEADING_PRODUCT_METADATA,
-                                    HEADING_TEST_CASES, HEADING_TEST_METADATA, ValTestCaseMeta, ReportSummaryWriter, )
+from Test_Reporting.testing.common import TEST_TARBALL_FILENAME
+from Test_Reporting.utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
+from Test_Reporting.utility.misc import TocMarkdownWriter
+from Test_Reporting.utility.report_writing import (DIRECTORY_FILE_EXT, DIRECTORY_FILE_FIGURES_HEADER,
+                                                   DIRECTORY_FILE_SEPARATOR, HEADING_DETAILED_RESULTS,
+                                                   HEADING_GENERAL_INFO, HEADING_PRODUCT_METADATA,
+                                                   HEADING_TEST_CASES, HEADING_TEST_METADATA, ValTestCaseMeta,
+                                                   ReportSummaryWriter, )
 
 if TYPE_CHECKING:
     from py.path import local  # noqa F401

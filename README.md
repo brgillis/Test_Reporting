@@ -65,7 +65,7 @@ python setup.py install --user
 
 ### `build_all_report_pages.py`
 
-**WARNING:** The script `python/build_all_report_pages.py` is intended for automatic execution as part of the
+**WARNING:** The script `build_all_report_pages.py` is intended for automatic execution as part of the
 [Continuous Integration](#continuous-integration) pipeline. However, it can be run manually if desired for testing
 purposes, though note that this will alter the contents of the project. This should only be done after committing any
 work so that the changes can easily be rolled back.
@@ -111,13 +111,13 @@ All arguments to the script allow default arguments, which are reasonable if run
 directory on the included `manifest.json` file. Therefore, the script can be from this directory simply as:
 
 ```bash
-./python/build_all_report_pages.py 2> public/build.log
+./python/Test_Reporting/build_all_report_pages.py 2> public/build.log
 ```
 
 More generally, it can be run as:
 
 ```bash
-./python/build_all_report_pages.py --manifest /path/to/manifest.json --rootdir /path/to/rootdir/ --logging-level LEVEL 
+./python/Test_Reporting/build_all_report_pages.py --manifest /path/to/manifest.json --rootdir /path/to/rootdir/ --logging-level LEVEL 
 ```
 
 with the proper paths to the desired manifest file and the project root directory and the desired logging level (e.g. 
@@ -126,7 +126,7 @@ DEBUG).
 The script's execution log is output via stderr, and can be redirected to a file via e.g.:
 
 ```bash
-./python/build_all_report_pages.py 2> /path/to/build.log
+./python/Test_Reporting/build_all_report_pages.py 2> /path/to/build.log
 ```
 
 When run as part of the [Continuous Integration](#continuous-integration) pipeline, this log is output to
@@ -158,14 +158,16 @@ PYTHONPATH=`pwd`/python pytest -v tests/
   * `public/README.md` - Markdown file which will be compiled into the front page of the published site
   * `public/SUMMARY.md` - Markdown file which will be compiled into the sidebar of the published site, linking to all
     pages in it (Note that any `.md` files not listed here will not be compiled into `.html` files)
-* `python/` - Directory containing Python code used for the generation of test reports
-  * `python/specializations/` - Python package containing code for specialized implementations of building test reports
-  * `python/testing/` - Python package containing data and functionality used for unit testing
-  * `python/utility/` - Python package containing modules providing needed functionality for building test reports
-  * `python/build_all_report_pages.py` - Executable python script which is used as part of the Continuous Integration
-    pipeline to build reports on test results tarballs
-  * `python/specialization_keys.py` - Python module which details which specialized implementations of building test reports
-    are to be used on which files in the `manifest.json` file
+* `python/Test_Reporting/` - Directory containing Python code used for the generation of test reports
+  * `python/Test_Reporting/specializations/` - Python package containing code for specialized implementations of
+    building test reports
+  * `python/Test_Reporting/testing/` - Python package containing data and functionality used for unit testing
+  * `python/Test_Reporting/utility/` - Python package containing modules providing needed functionality for building
+    test reports
+  * `python/Test_Reporting/build_all_report_pages.py` - Executable python script which is used as part of the Continuous
+    Integration pipeline to build reports on test results tarballs
+  * `python/Test_Reporting/specialization_keys.py` - Python module which details which specialized implementations of
+    building test reports are to be used on which files in the `manifest.json` file
 * `test_data/` - Directory containing data used in unit tests of Python code
 * `tests/` - Directory containing unit tests of Python code
 * `.gitignore` - Standard .gitignore file to list files excluded from version control
@@ -177,7 +179,7 @@ PYTHONPATH=`pwd`/python pytest -v tests/
 ## Building Test Reports
 
 As part of this project's [Continuous Integration](#continuous-integration) pipeline, it calls the
-`python/build_all_report_pages.py` script to automatically generate test reports from tarballs of test results products
+`python/Test_Reporting/build_all_report_pages.py` script to automatically generate test reports from tarballs of test results products
 (and their associated data) in the `data/` directory of this project which are listed in the `manifest.json` file. This
 section will provide an overview of files can be added and updated, and how to provide specialized implementations of
 building test reports for tests where the default formatting is suboptimal.
@@ -225,9 +227,9 @@ tag, e.g. "CTI-Gal-obs" etc.
 
 ### Build Script
 
-The script `python/build_all_report_pages.py` is used to automatically generate test reports from the files listed in
-the `manifest.json` file and contained in the `data/` directory. It is not generally necessary to work with this script
-directly when adding/updating test results tarballs or implementing new specialized formats.
+The script `python/Test_Reporting/build_all_report_pages.py` is used to automatically generate test reports from the
+files listed in the `manifest.json` file and contained in the `data/` directory. It is not generally necessary to work
+with this script directly when adding/updating test results tarballs or implementing new specialized formats.
 
 
 ### Specialized Formatting
@@ -247,7 +249,7 @@ To add a new specialization, two steps are necessary:
    e.g.:
 
 ```python
-from specializations.cti_gal import CtiGalReportSummaryWriter
+from Test_Reporting.specializations.cti_gal import CtiGalReportSummaryWriter
 
 CTI_GAL_KEY = "cti_gal"
 
@@ -300,7 +302,7 @@ This job tests that this project can be successfully installed via setuptools.
 
 ### `build` Job
 
-This job runs the `python/build_all_report_pages.py` script, which builds test reports for all tarballs in the `data/`
+This job runs the `build_all_report_pages.py` script, which builds test reports for all tarballs in the `data/`
 directory of this project which are listed in the `manifest.json` file. Syntax errors in the `manifest.json` file or
 significant errors in the contents of a provided tarball may cause this job to fail. The script is able to recover from
 some errors (such as figures referenced not being included in the tarball), however.
@@ -321,7 +323,7 @@ to compile the prepared and built files. This version, however, does not publish
 directories as artifacts:
 
 * `test_input/` - This directory contains the Markdown and other files used as input for GitBooks. This includes the
-  files created by the `python/build_all_report_pages.py` script
+  files created by the `build_all_report_pages.py` script
 * `test_output/` - This contains the files compiled by GitBooks, which would be published if this branch were merged
   into the `master` branch
 
@@ -396,8 +398,9 @@ case the solution will be to fix the data, or else revert the changes if it cann
 
 ### After adding a new specialized format, it isn't being used
 
-First, check that you've set up the format to be used for the desired test in the `python/specialization_keys.py` file,
-and that the key used there matches the key used in the manifest for the desired data.
+First, check that you've set up the format to be used for the desired test in the
+`python/Test_Reporting/specialization_keys.py` file, and that the key used there matches the key used in the manifest
+for the desired data.
 
 If this is all set up correctly, it's possible that the code hit some issue in applying the specialized format and
 gracefully fell back to the default format. This should be indicated in the log if this is the case, so check the log,

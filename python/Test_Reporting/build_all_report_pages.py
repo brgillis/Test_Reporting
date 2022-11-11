@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-:file: build_all_report_pages.py
+:file: Test_Reporting/build_all_report_pages.py
 
 :date: 10/11/2022
 :author: Bryan Gillis
@@ -36,11 +36,11 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import Dict, List, TYPE_CHECKING
 
-from specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
-from utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
-from utility.misc import log_entry_exit
-from utility.summary_files import build_test_report_summary, update_readme, update_summary
-from utility.report_writing import ValTestMeta
+from Test_Reporting.specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
+from Test_Reporting.utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
+from Test_Reporting.utility.misc import log_entry_exit
+from Test_Reporting.utility.summary_files import build_test_report_summary, update_readme, update_summary
+from Test_Reporting.utility.report_writing import ValTestMeta
 
 if TYPE_CHECKING:
     import Namespace  # noqa F401

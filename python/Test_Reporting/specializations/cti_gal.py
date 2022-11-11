@@ -1,5 +1,5 @@
 """
-:file: specializations/cti_gal.py
+:file: Test_Reporting/specializations/cti_gal.py
 
 :date: 11/08/2022
 :author: Bryan Gillis
@@ -23,9 +23,9 @@ Module providing a specialized ReportSummaryWriter for CTI-Gal test cases.
 from logging import getLogger
 from typing import List, Optional, Tuple
 
-from utility.misc import TocMarkdownWriter
-from utility.product_parsing import SingleTestResult
-from utility.report_writing import ReportSummaryWriter
+from Test_Reporting.utility.misc import TocMarkdownWriter
+from Test_Reporting.utility.product_parsing import SingleTestResult
+from Test_Reporting.utility.report_writing import ReportSummaryWriter
 
 RESULTS_FIGURES_HEADING = "Results and Figures"
 

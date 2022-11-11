@@ -1,5 +1,5 @@
 """
-:file: utility/report_writing.py
+:file: Test_Reporting/utility/report_writing.py
 
 :date: 10/17/2022
 :author: Bryan Gillis
@@ -37,13 +37,15 @@ import shutil
 from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tuple, Union
 
-from utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.misc import TocMarkdownWriter, extract_tarball, hash_any, log_entry_exit
-from utility.product_parsing import parse_xml_product
+from Test_Reporting.utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
+from Test_Reporting.utility.misc import TocMarkdownWriter, extract_tarball, hash_any, log_entry_exit
+from Test_Reporting.utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
-    from utility.product_parsing import AnalysisResult, RequirementResults, SingleTestResult, TestResults  # noqa F401
     from typing import Sequence, TextIO  # noqa F401
+    from Test_Reporting.utility.product_parsing import (AnalysisResult, RequirementResults, SingleTestResult,
+                                                        TestResults,  # noqa F401
+                                                        )
 
 TMPDIR_MAXLEN = 16
 

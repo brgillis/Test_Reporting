@@ -22,9 +22,10 @@ Unit tests of updating the SUMMARY.md file
 
 import os
 
-from testing.common import L_TEST_META
-from utility.constants import HEADING_TOC, PUBLIC_DIR, README_FILENAME, SUMMARY_FILENAME, TEST_REPORT_SUMMARY_FILENAME
-from utility.summary_files import build_test_report_summary, update_readme, update_summary
+from Test_Reporting.testing.common import L_TEST_META
+from Test_Reporting.utility.constants import (HEADING_TOC, PUBLIC_DIR, README_FILENAME, SUMMARY_FILENAME,
+                                              TEST_REPORT_SUMMARY_FILENAME, )
+from Test_Reporting.utility.summary_files import build_test_report_summary, update_readme, update_summary
 
 EX_TEST_SUMMARY_STR = f"* [Test Reports]({TEST_REPORT_SUMMARY_FILENAME})\n"
 EX_TEST_STR_1 = "  * [T1](T1.md)\n"

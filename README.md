@@ -29,6 +29,7 @@ Software Problem Reports. It also automatically generates human-readable reports
 * [Publishing](#publishing)
 * [Continuous Integration](#continuous-integration)
   * [`pytest` Job](#pytest-job)
+  * [`install-test` Job](#install-test-job)
   * [`build` Job](#build-job)
   * [`pages` Job](#pages-job)
   * [`pages-test` Job](#pages-test-job)
@@ -281,6 +282,7 @@ for this pipeline can be found in the `.gitlab-ci.yml` file in the root director
 The CI pipeline runs the following jobs in sequence, described in the sections below:
 
 * `pytest`
+* `install-test` (run in parallel with `pytest` job)
 * `build`
 * `pages` (only run on master branch) / `pages-test` (run on all other branches)
 
@@ -291,6 +293,10 @@ that the `master` branch can only be modified via Merge Request, and the pipelin
 
 This job uses `pytest` to run all unit tests contained in the `tests/` directory of this project. If any of these tests
 fail, the job fails.
+
+### `install-test` Job
+
+This job tests that this project can be successfully installed via setuptools.
 
 ### `build` Job
 

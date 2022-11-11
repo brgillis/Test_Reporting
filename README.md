@@ -32,6 +32,11 @@ Software Problem Reports. It also automatically generates human-readable reports
   * [`build` Job](#build-job)
   * [`pages` Job](#pages-job)
   * [`pages-test` Job](#pages-test-job)
+* [Troubleshooting](#troubleshooting)
+  * [A test failed when I ran `pytest`](#a-test-failed-when-i-ran-pytest)
+  * [An exception was raised, what do I do?](#an-exception-was-raised-what-do-i-do)
+  * [After updating or adding a results tarball, the `build` step fails](#after-updating-or-adding-a-results-tarball-the-build-step-fails)
+  * [After adding a new specialized format, it isn't being used](#after-adding-a-new-specialized-format-it-isnt-being-used)
 
 
 ## Contributors
@@ -314,3 +319,80 @@ directories as artifacts:
 These artifacts can be found linked from the page for this job on GitLab, to either be downloaded or browsed. Note that
 due to limitations of the browser, some links between published files may not work when browsed this way, even if they
 will work when properly published.
+
+
+## Troubleshooting
+
+This section contains tips for resolving anticipated problems. If any problem occurs which isn't covered here, and you
+cannot figure out the solution yourself, please contact the developers via raising an issue on this project's GitLab
+page.
+
+
+### A test failed when I ran `pytest`
+
+This project's [Continuous Integration](#continuous-integration) pipeline is set up to ensure that no changes which
+cause tests to fail will be merged to the `master` branch, so this issue will likely only occur due to changes in the
+branch you're working. If you've made the changes yourself, investigate the details of the test failure and determine if
+it indicates an issue with your code changes, or if the test needs to be updated to account for deliberately-changed
+functionality.
+
+If a test somehow does fail on the `master` branch, first check that you're running the latest version of it. Reset any
+local changes and re-pull the `master` branch, and try running tests again. If the test still fails, check if it fails
+in the CI pipeline run on GitLab. If it doesn't fail there, then likely indicates something on your system is the cause
+of the difference (perhaps your `PYTHONPATH` is causing a clash). If it also fails there, then please report this issue
+to the developers via a GitLab issue so that it can be fixed.
+
+
+### An exception was raised, what do I do?
+
+As with the previous section, we assume here that the CI pipeline will prevent this from occurring in the `master`
+branch, and so assume here that this has occurred in your local branch due to some changes you've made.
+
+_**Ensure you have the most up-to-date version of the project**_
+
+It's possible the issue you're hitting is a bug that's already been fixed. Try pulling the `master` branch of the
+project and merging it into your branch, and see if this fixes the issue.
+
+_**See if the exception, traceback, or log gives you any other clue to solve the problem**_
+
+There are many reasons something might go wrong, and many have been anticipated in the code with an exception to
+indicate this. The exception text might tell you explicitly what the problem is - for instance, maybe two options you
+set aren't compatible together. If it wasn't an anticipated problem, the exception text probably won't obviously
+indicate the source of the problem, but you might be able to intuit it from the traceback. Look through the traceback at
+least a few steps back to see if anything jumps out at you as a potential problem that you can fix. Also check the
+logging of the program for any errors or warnings, and consider if those might be related to your problem.
+
+_**Report the issue**_
+
+If all else fails, raise an issue with the developers on GitLab. Be sure to include the following information:
+
+1. Any details of input data you're using
+2. The command you called to trigger the code
+3. The full log of the execution, from the start of the program to the ultimate failure
+4. Any steps you've taken to try to resolve this problem on your own
+
+
+### After updating or adding a results tarball, the `build` step fails
+
+First, check the build log for any indication of what went wrong. This can be found saved as an artifact by the `build`
+step at `test_input/public/build.log`. This should give an indication of the cause of failure. You can also try running
+the build manually with logging set to the DEBUG level to see if this helps you figure out what's going on.
+
+In general, the most likely cause of this step failing is that the new results tarball contains data formatted in a way
+that the build script is not expecting. The log should hopefully indicate where this issue occurred. If this is indeed
+the case, the code will need to be updated to either handle this formatting or fail in a more graceful manner (logging
+an error and outputting as much as it safely can). It is also possible that the data is corrupt in some way, in which
+case the solution will be to fix the data, or else revert the changes if it cannot be fixed.
+
+
+### After adding a new specialized format, it isn't being used
+
+First, check that you've set up the format to be used for the desired test in the `python/specialization_keys.py` file,
+and that the key used there matches the key used in the manifest for the desired data.
+
+If this is all set up correctly, it's possible that the code hit some issue in applying the specialized format and
+gracefully fell back to the default format. This should be indicated in the log if this is the case, so check the log,
+which will be stored as an artifact at `test_output/public/build.log` for any warnings or errors which might indicate
+what went wrong.
+
+If all else fails, try running the script yourself with a debugger and stepping through the code to see what happens.

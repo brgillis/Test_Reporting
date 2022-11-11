@@ -70,11 +70,11 @@ pages.
 
 This script takes the following parameters as input:
 
-| **Argument** | **Description**                                                                                              | **Required?** | **Default**     |
-|--------------|--------------------------------------------------------------------------------------------------------------|---------------|-----------------|
-| `--manifest` | The manifest file (containing the filenames of tarballs in the `data/` directory to build reports on) to use | No            | `manifest.json` |
-| `--rootdir`  | The root directory of this project                                                                           | No            | Current dir     |
-| `--log-level`| The level at which to log output ("DEBUG", "INFO", "WARNING", "ERROR", or "CRITICAL")                        | No            | "DEBUG"         |
+| **Argument**  | **Description**                                                                                              | **Required?** | **Default**                         |
+|---------------|--------------------------------------------------------------------------------------------------------------|---------------|-------------------------------------|
+| `--manifest`  | The manifest file (containing the filenames of tarballs in the `data/` directory to build reports on) to use | No            | `manifest.json`                     |
+| `--rootdir`   | The root directory of this project                                                                           | No            | `os.path.cwd()` (Current directory) |
+| `--log-level` | The level at which to log output (DEBUG, INFO, WARNING, ERROR, or CRITICAL)                                  | No            | DEBUG                               |
 
 #### Output
 

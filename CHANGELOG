@@ -1,0 +1,63 @@
+Changelog for Test_Reporting
+
+Changes in v1.1
+===============
+
+API Changes
+-----------
+- Reorganized python code to all be in the "python/Test_reporting" directory, which is necessary for it to work after
+  installation
+
+Dependency Changes
+------------------
+
+Deprecated Features
+-------------------
+
+Bug Fixes
+---------
+- Names of some classes were confusing pytest. These have all been changed to avoid this confusion
+
+New Features
+------------
+- Added specialized formatting for CTI-Gal validation test results
+
+New config features
+-------------------
+
+Miscellaneous
+-------------
+- Filled out README.md with details of project functionality
+- Project can now be installed via Python's setuptools
+- Added this CHANGELOG
+
+
+Changes in v1.0
+===============
+
+API Changes
+-----------
+
+Dependency Changes
+------------------
+- Now requires numpy 1.20.3
+
+Deprecated Features
+-------------------
+
+Bug Fixes
+---------
+
+New Features
+------------
+- Now supports automatic generation of test reports (in MVP stage) from files listed in "manifest.json" and contained
+  in the "data/" directory
+
+New config features
+-------------------
+
+Miscellaneous
+-------------
+
+
+--Versions prior to 1.0 not tracked in changelog--

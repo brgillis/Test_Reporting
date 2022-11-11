@@ -52,8 +52,11 @@ Software Problem Reports. It also automatically generates human-readable reports
 
 ## Installation
 
-In the present implementation, this project contains no scripts intended for manual execution and does not need to be
-installed.
+This project can be installed easily via Python's setuptools, by running the following command in the root directory:
+
+```bash
+python setup.py install --user
+```
 
 
 ## Executables

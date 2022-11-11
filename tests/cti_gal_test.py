@@ -24,10 +24,10 @@ import os
 import re
 from typing import List, Set, TYPE_CHECKING
 
-from specializations.cti_gal import CtiGalTestSummaryWriter
+from specializations.cti_gal import CtiGalReportSummaryWriter
 from testing.common import TEST_TARBALL_FILENAME
 from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.test_writing import (DIRECTORY_FILE_EXT, TestSummaryWriter, )
+from utility.report_writing import (DIRECTORY_FILE_EXT, ReportSummaryWriter, )
 
 if TYPE_CHECKING:
     from py.path import local  # noqa F401
@@ -37,7 +37,7 @@ EX_N_TEST_CASES = 24
 
 
 def test_write_summary(project_copy):
-    """Unit test of the `TestSummaryWriter` class's `__call__` method.
+    """Unit test of the `ReportSummaryWriter` class's `__call__` method.
 
     Parameters
     ----------
@@ -45,11 +45,11 @@ def test_write_summary(project_copy):
         Fixture which provides the root directory of a copy of the project
     """
 
-    writer = CtiGalTestSummaryWriter()
+    writer = CtiGalReportSummaryWriter()
     test_meta = writer(TEST_TARBALL_FILENAME, project_copy)[0]
 
     # Check that the test name is as expected and the filename is sensible and exists
-    assert test_meta.name == CtiGalTestSummaryWriter.test_name
+    assert test_meta.name == CtiGalReportSummaryWriter.test_name
     filename = test_meta.filename
     assert filename.startswith(TEST_REPORTS_SUBDIR)
     assert filename.endswith(".md")

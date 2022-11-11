@@ -20,8 +20,9 @@ To define a new implementation, the following is the recommended procedure:
    similarly define them as constants in a new "Secondary keys" section.
 
 3. Define an implementation and import it to this file. This can most easily be an instance of the
-   `TestSummaryWriter` class or a child of it, but can also be any callable which share's the signature of its
-   `__call__` method if desired. If using the `TestSummaryWriter` class, see its documentation for instructions on how
+   `ReportSummaryWriter` class or a child of it, but can also be any callable which share's the signature of its
+   `__call__` method if desired. If using the `ReportSummaryWriter` class, see its documentation for instructions on
+   how
    do define a new implementation.
 
 4. In the definition of the `D_BUILD_CALLABLES` dict in this module, add an entry with the chosen primary key and
@@ -45,8 +46,8 @@ To define a new implementation, the following is the recommended procedure:
 
 from typing import Dict, Optional
 
-from specializations.cti_gal import CtiGalTestSummaryWriter
-from utility.test_writing import BUILD_CALLABLE_TYPE, TestSummaryWriter
+from specializations.cti_gal import CtiGalReportSummaryWriter
+from utility.report_writing import BUILD_CALLABLE_TYPE, ReportSummaryWriter
 
 # Primary keys
 CTI_GAL_KEY = "cti_gal"
@@ -57,6 +58,6 @@ EXP_KEY = "exp"
 
 # The build functions assigned to each key. The function assigned to the `None` key will be used if a key is used
 # in the manifest which doesn't have a specific build function defined here
-D_BUILD_CALLABLES: Dict[Optional[str], BUILD_CALLABLE_TYPE] = {CTI_GAL_KEY: CtiGalTestSummaryWriter(), }
+D_BUILD_CALLABLES: Dict[Optional[str], BUILD_CALLABLE_TYPE] = {CTI_GAL_KEY: CtiGalReportSummaryWriter(), }
 
-DEFAULT_BUILD_CALLABLE = TestSummaryWriter()
+DEFAULT_BUILD_CALLABLE = ReportSummaryWriter()

@@ -40,7 +40,7 @@ from specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
 from utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 from utility.misc import log_entry_exit
 from utility.summary_files import build_test_report_summary, update_readme, update_summary
-from utility.test_writing import TestMeta
+from utility.report_writing import ValTestMeta
 
 if TYPE_CHECKING:
     import Namespace  # noqa F401
@@ -144,7 +144,7 @@ def run_build_from_args(args):
 
     d_manifest = read_manifest(os.path.join(args.rootdir, args.manifest))
 
-    l_test_meta: List[TestMeta] = []
+    l_test_meta: List[ValTestMeta] = []
 
     # Call the build function for each file in the manifest
     for key, value in d_manifest.items():

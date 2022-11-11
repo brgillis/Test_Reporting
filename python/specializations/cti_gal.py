@@ -4,7 +4,7 @@
 :date: 11/08/2022
 :author: Bryan Gillis
 
-Module providing a specialized TestSummaryWriter for CTI-Gal test cases.
+Module providing a specialized ReportSummaryWriter for CTI-Gal test cases.
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -25,7 +25,7 @@ from typing import List, Optional, Tuple
 
 from utility.misc import TocMarkdownWriter
 from utility.product_parsing import SingleTestResult
-from utility.test_writing import TestSummaryWriter
+from utility.report_writing import ReportSummaryWriter
 
 RESULTS_FIGURES_HEADING = "Results and Figures"
 
@@ -54,7 +54,7 @@ BIN_MAX_POSITION = 9
 logger = getLogger(__name__)
 
 
-class CtiGalTestSummaryWriter(TestSummaryWriter):
+class CtiGalReportSummaryWriter(ReportSummaryWriter):
     test_name = "CTI-Gal"
 
     def _add_test_case_details_and_figures_with_tmpdir(self,

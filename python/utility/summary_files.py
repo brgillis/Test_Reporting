@@ -29,7 +29,7 @@ from utility.misc import log_entry_exit
 
 if TYPE_CHECKING:
     from typing import Sequence  # noqa F401
-    from utility.test_writing import TestMeta  # noqa F401
+    from utility.report_writing import ValTestMeta  # noqa F401
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +46,7 @@ def build_test_report_summary(test_report_summary_filename,
     test_report_summary_filename : str
         The desired filename of the Markdown (.md) file to be created, containing the summary of the Test Reports
         section.
-    l_test_meta : Sequence[TestMeta]
+    l_test_meta : Sequence[ValTestMeta]
         A list of objects, each containing the test name and filename, and a list of test case names and filenames.
     rootdir: str
         The root directory of this project (or during unit testing, a copied instance of this project).
@@ -90,7 +90,7 @@ def update_summary(test_report_summary_filename,
     ----------
     test_report_summary_filename : str
         The filename of the Markdown (.md) file containing the summary of the Test Reports section.
-    l_test_meta : Sequence[TestMeta]
+    l_test_meta : Sequence[ValTestMeta]
     rootdir: str
     """
 

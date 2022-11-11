@@ -20,6 +20,7 @@ Software Problem Reports. It also automatically generates human-readable reports
     * [Input](#input)
     * [Output](#output)
     * [Examples](#examples)
+* [Testing](#testing)
 * [Project Structure](#project-structure)
 * [Building Test Reports](#building-test-reports)
   * [Manifest](#manifest)
@@ -52,6 +53,7 @@ installed.
 
 ## Executables
 
+
 ### `build_all_report_pages.py`
 
 **WARNING:** The script `python/build_all_report_pages.py` is intended for automatic execution as part of the
@@ -59,12 +61,14 @@ installed.
 purposes, though note that this will alter the contents of the project. This should only be done after committing any
 work so that the changes can easily be rolled back.
 
+
 #### Purpose
 
 This script automatically generates reports on the validation test results contained in tarballs in the `data/`
 directory of this project and listed in its `manifest.json` file. These reports will be stored in the `public/`
 directory of this project and its subdirs, and some existing files in it will be updated to link to the newly-created
 pages.
+
 
 #### Input
 
@@ -90,6 +94,7 @@ And modifies the following existing files:
   the expected `.html` filenames after being built by GitBooks, not the pre-compilation `.md` filenames)
 
 This script also outputs a log of its execution via the standard Python logger, which outputs to stderr.
+
 
 #### Examples
 
@@ -117,6 +122,16 @@ The script's execution log is output via stderr, and can be redirected to a file
 
 When run as part of the [Continuous Integration](#continuous-integration) pipeline, this log is output to
 `public/build.log`.
+
+
+## Testing
+
+This projects unit tests, along with a test build via GitBooks, are automatically run as part of the [Continuous
+Integration](#continuous-integration) pipeline, and so this can be used to run tests and see the results after any
+commit, without needing any extra setup.
+
+Python unit tests can also be run manually if desired. 
+
 
 ## Project Structure
 
@@ -198,7 +213,7 @@ tag, e.g. "CTI-Gal-obs" etc.
 
 The script `python/build_all_report_pages.py` is used to automatically generate test reports from the files listed in
 the `manifest.json` file and contained in the `data/` directory. It is not generally necessary to work with this script
-directly when adding/updating test results tarballs or implementing new specialized formattings.
+directly when adding/updating test results tarballs or implementing new specialized formats.
 
 
 ### Specialized Formatting
@@ -212,20 +227,20 @@ To add a new specialization, two steps are necessary:
 
 1. Create a new module in the `specializations` package which provides a function or callable object which can be used
    to generate a test report with the desired formatting. This is most easily done by making a child class of the
-   `TestSummaryWriter` class found in the `utility.test_writing` module and overriding methods as desired.
+   `ReportSummaryWriter` class found in the `utility.test_writing` module and overriding methods as desired.
 2. In the module `specialization_keys.py`, import the function or class created, and add an entry to the dict
    `D_BUILD_CALLABLES` associating the desired key for this test (e.g. "cti_gal") with the function or class instance,
    e.g.:
 
 ```python
-from specializations.cti_gal import CtiGalTestSummaryWriter
+from specializations.cti_gal import CtiGalReportSummaryWriter
 
 CTI_GAL_KEY = "cti_gal"
 
-D_BUILD_CALLABLES = {CTI_GAL_KEY: CtiGalTestSummaryWriter(), }
+D_BUILD_CALLABLES = {CTI_GAL_KEY: CtiGalReportSummaryWriter(), }
 ```
 
-Further instructions can be found in the docstrings of the `TestSummaryWriter` class in the `utility.test_writing`
+Further instructions can be found in the docstrings of the `ReportSummaryWriter` class in the `utility.test_writing`
 module (for step 1) and the `specialization_keys` module.
 
 

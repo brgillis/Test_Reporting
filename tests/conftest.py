@@ -33,7 +33,7 @@ from utility.product_parsing import parse_xml_product
 if TYPE_CHECKING:
     from _pytest.tmpdir import TempdirFactory  # noqa F401
     from collections.abc import Collection  # noqa F401
-    from utility.test_writing import TestResults
+    from utility.report_writing import TestResults
 
 CTI_GAL_MANIFEST_FILENAME = "cti_gal_manifest.json"
 CTI_GAL_RESULTS_PRODUCT = "she_observation_cti_gal_validation_test_results_product.xml"

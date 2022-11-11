@@ -74,7 +74,7 @@ This script takes the following parameters as input:
 |---------------|--------------------------------------------------------------------------------------------------------------|---------------|-------------------------------------|
 | `--manifest`  | The manifest file (containing the filenames of tarballs in the `data/` directory to build reports on) to use | No            | `manifest.json`                     |
 | `--rootdir`   | The root directory of this project                                                                           | No            | `os.path.cwd()` (Current directory) |
-| `--log-level` | The level at which to log output (DEBUG, INFO, WARNING, ERROR, or CRITICAL)                                  | No            | DEBUG                               |
+| `--log-level` | The level at which to log output (`DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`)                        | No            | `DEBUG`                             |
 
 #### Output
 
@@ -97,13 +97,13 @@ All arguments to the script allow default arguments, which are reasonable if run
 directory on the included `manifest.json` file. Therefore, the script can be from this directory simply as:
 
 ```bash
-python python/build_all_report_pages.py 2> public/build.log
+./python/build_all_report_pages.py 2> public/build.log
 ```
 
 More generally, it can be run as:
 
 ```bash
-python python/build_all_report_pages.py --manifest /path/to/manifest.json --rootdir /path/to/rootdir/ --logging-level LEVEL 
+./python/build_all_report_pages.py --manifest /path/to/manifest.json --rootdir /path/to/rootdir/ --logging-level LEVEL 
 ```
 
 with the proper paths to the desired manifest file and the project root directory and the desired logging level (e.g. 
@@ -112,7 +112,7 @@ DEBUG).
 The script's execution log is output via stderr, and can be redirected to a file via e.g.:
 
 ```bash
-python python/build_all_report_pages.py 2> /path/to/build.log
+./python/build_all_report_pages.py 2> /path/to/build.log
 ```
 
 When run as part of the [Continuous Integration](#continuous-integration) pipeline, this log is output to

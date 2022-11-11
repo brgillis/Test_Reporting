@@ -1,5 +1,5 @@
 """
-:file: utility/misc.py
+:file: Test_Reporting/utility/misc.py
 
 :date: 10/18/2022
 :author: Bryan Gillis
@@ -29,7 +29,7 @@ import re
 import subprocess
 from typing import List, TYPE_CHECKING, TextIO
 
-from utility.constants import HEADING_TOC
+from Test_Reporting.utility.constants import HEADING_TOC
 
 if TYPE_CHECKING:
     from logging import Logger

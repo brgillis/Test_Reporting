@@ -26,14 +26,15 @@ from typing import Set, TYPE_CHECKING
 
 import pytest
 
-from utility.constants import (DATA_DIR, MANIFEST_FILENAME, PUBLIC_DIR, README_FILENAME, SUMMARY_FILENAME, TESTS_DIR,
-                               TEST_DATA_DIR, )
-from utility.product_parsing import parse_xml_product
+from Test_Reporting.utility.constants import (DATA_DIR, MANIFEST_FILENAME, PUBLIC_DIR, README_FILENAME,
+                                              SUMMARY_FILENAME, TESTS_DIR,
+                                              TEST_DATA_DIR, )
+from Test_Reporting.utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
     from _pytest.tmpdir import TempdirFactory  # noqa F401
     from collections.abc import Collection  # noqa F401
-    from utility.report_writing import TestResults
+    from Test_Reporting.utility.report_writing import TestResults
 
 CTI_GAL_MANIFEST_FILENAME = "cti_gal_manifest.json"
 CTI_GAL_RESULTS_PRODUCT = "she_observation_cti_gal_validation_test_results_product.xml"

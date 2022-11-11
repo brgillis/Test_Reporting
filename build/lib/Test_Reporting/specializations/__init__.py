@@ -1,12 +1,11 @@
 """
-:file: utility/constants.py
+:file: Test_Reporting/specializations/__init__.py
 
-:date: 10/12/2022
+:date: 11/08/2022
 :author: Bryan Gillis
 
-This python module defines constants used throughout this project.
+Standard package __init__.py file.
 """
-from __future__ import annotations
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -20,27 +19,3 @@ from __future__ import annotations
 #
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-
-# Filenames and directories. All are relative to the root of the project
-
-# Files and directories which already exist in the project
-MANIFEST_FILENAME = "manifest.json"
-
-DATA_DIR = "data"
-
-PYTHON_DIR = "python"
-
-PUBLIC_DIR = "public"
-IMAGES_SUBDIR = "images"
-README_FILENAME = "README.md"
-SUMMARY_FILENAME = "SUMMARY.md"
-
-TESTS_DIR = "tests"
-TEST_DATA_DIR = "test_data"
-
-# Desired filenames and directories to use for created markdown files to report test results
-TEST_REPORT_SUMMARY_FILENAME = "Test_Reports.md"
-TEST_REPORTS_SUBDIR = "TR"
-
-# Other constants
-HEADING_TOC = "## Table of Contents"

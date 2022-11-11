@@ -1,5 +1,5 @@
 """
-:file: utility/product_parsing.py
+:file: Test_Reporting/utility/product_parsing.py
 
 :date: 10/14/2022
 :author: Bryan Gillis
@@ -44,7 +44,7 @@ from typing import Any, List, Optional, Type
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 
-from utility.misc import log_entry_exit
+from Test_Reporting.utility.misc import log_entry_exit
 
 logger = getLogger(__name__)
 

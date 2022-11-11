@@ -1,5 +1,5 @@
 """
-:file: utility/summary_files.py
+:file: Test_Reporting/utility/summary_files.py
 
 :date: 10/13/2022
 :author: Bryan Gillis
@@ -24,12 +24,12 @@ import logging
 import os
 from typing import TYPE_CHECKING
 
-from utility.constants import HEADING_TOC, PUBLIC_DIR, README_FILENAME, SUMMARY_FILENAME
-from utility.misc import log_entry_exit
+from Test_Reporting.utility.constants import HEADING_TOC, PUBLIC_DIR, README_FILENAME, SUMMARY_FILENAME
+from Test_Reporting.utility.misc import log_entry_exit
 
 if TYPE_CHECKING:
     from typing import Sequence  # noqa F401
-    from utility.report_writing import ValTestMeta  # noqa F401
+    from Test_Reporting.utility.report_writing import ValTestMeta  # noqa F401
 
 logger = logging.getLogger(__name__)
 

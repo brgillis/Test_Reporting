@@ -247,7 +247,7 @@ To add a new specialization, two steps are necessary:
    e.g.:
 
 ```python
-from specializations.cti_gal import CtiGalReportSummaryWriter
+from Test_Reporting.specializations.cti_gal import CtiGalReportSummaryWriter
 
 CTI_GAL_KEY = "cti_gal"
 

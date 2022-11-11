@@ -1,5 +1,5 @@
 """
-:file: specialization_keys.py
+:file: Test_Reporting/specialization_keys.py
 
 :date: 11/04/2022
 :author: Bryan Gillis
@@ -46,8 +46,8 @@ To define a new implementation, the following is the recommended procedure:
 
 from typing import Dict, Optional
 
-from specializations.cti_gal import CtiGalReportSummaryWriter
-from utility.report_writing import BUILD_CALLABLE_TYPE, ReportSummaryWriter
+from Test_Reporting.specializations.cti_gal import CtiGalReportSummaryWriter
+from Test_Reporting.utility.report_writing import BUILD_CALLABLE_TYPE, ReportSummaryWriter
 
 # Primary keys
 CTI_GAL_KEY = "cti_gal"

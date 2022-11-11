@@ -25,9 +25,9 @@ import os
 
 import pytest
 
-from build_all_report_pages import read_manifest
-from utility.constants import (MANIFEST_FILENAME, )
-from specialization_keys import CTI_GAL_KEY, EXP_KEY, OBS_KEY
+from Test_Reporting.build_all_report_pages import read_manifest
+from Test_Reporting.utility.constants import MANIFEST_FILENAME
+from Test_Reporting.specialization_keys import CTI_GAL_KEY, EXP_KEY, OBS_KEY
 
 MOCK_MANIFEST_FILENAME = "mock_manifest.json"
 MOCK_CTI_GAL_OBS_FILENAME = "she_obs_cti_gal.tar.gz"

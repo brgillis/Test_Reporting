@@ -22,8 +22,8 @@ Unit tests of running the whole script in a minimal state.
 
 import os
 
-import build_all_report_pages
-from utility.constants import PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
+from Test_Reporting import build_all_report_pages
+from Test_Reporting.utility.constants import PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
 
 
 def test_integration(project_copy, test_manifest):

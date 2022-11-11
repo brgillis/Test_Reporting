@@ -24,10 +24,9 @@ import os
 import re
 from typing import List, Set, TYPE_CHECKING
 
-from specializations.cti_gal import CtiGalReportSummaryWriter
-from testing.common import TEST_TARBALL_FILENAME
-from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from utility.report_writing import (DIRECTORY_FILE_EXT, ReportSummaryWriter, )
+from Test_Reporting.specializations.cti_gal import CtiGalReportSummaryWriter
+from Test_Reporting.testing.common import TEST_TARBALL_FILENAME
+from Test_Reporting.utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
 
 if TYPE_CHECKING:
     from py.path import local  # noqa F401

@@ -130,7 +130,12 @@ This projects unit tests, along with a test build via GitBooks, are automaticall
 Integration](#continuous-integration) pipeline, and so this can be used to run tests and see the results after any
 commit, without needing any extra setup.
 
-Python unit tests can also be run manually if desired. 
+Python unit tests can also be run manually if desired. This can be done most easily by adding the project's `python/`
+directory to your `PYTHONPATH` and calling pytest on the `tests/` directory, i.e.:
+
+```bash
+PYTHONPATH=`pwd`/python pytest -v tests/
+```
 
 
 ## Project Structure

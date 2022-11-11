@@ -7,11 +7,19 @@ The published version of this project can be found at: http://bgilles.pages.eucl
 This project hosts supporting documentation for the Software Test Plan/Report, including Testing Dataset definitions and
 Software Problem Reports. It also automatically generates human-readable reports on validation test results.
 
+
 ## Table of Contents
 
 * [Contributors](#contributors)
   * [Active Contributors](#active-contributors)
   * [Other Contributors](#other-contributors)
+* [Installation](#installation)
+* [Executables](#executables)
+  * [`build_all_report_pages.py`](#build_all_report_pages.py)
+    * [Purpose](#purpose)
+    * [Input](#input)
+    * [Output](#output)
+    * [Examples](#examples)
 * [Project Structure](#project-structure)
 * [Building Test Reports](#building-test-reports)
   * [Manifest](#manifest)
@@ -24,13 +32,92 @@ Software Problem Reports. It also automatically generates human-readable reports
   * [`pages` Job](#pages-job)
   * [`pages-test` Job](#pages-test-job)
 
+
 ## Contributors
+
 
 ### Active Contributors
 
 * Bryan Gillis (b.gillis@roe.ac.uk)
 
+
 ### Other Contributors
+
+
+## Installation
+
+In the present implementation, this project contains no scripts intended for manual execution and does not need to be
+installed.
+
+
+## Executables
+
+### `build_all_report_pages.py`
+
+**WARNING:** The script `python/build_all_report_pages.py` is intended for automatic execution as part of the
+[Continuous Integration](#continuous-integration) pipeline. However, it can be run manually if desired for testing
+purposes, though note that this will alter the contents of the project. This should only be done after committing any
+work so that the changes can easily be rolled back.
+
+#### Purpose
+
+This script automatically generates reports on the validation test results contained in tarballs in the `data/`
+directory of this project and listed in its `manifest.json` file. These reports will be stored in the `public/`
+directory of this project and its subdirs, and some existing files in it will be updated to link to the newly-created
+pages.
+
+#### Input
+
+This script takes the following parameters as input:
+
+| **Argument** | **Description**                                                                                              | **Required?** | **Default**     |
+|--------------|--------------------------------------------------------------------------------------------------------------|---------------|-----------------|
+| `--manifest` | The manifest file (containing the filenames of tarballs in the `data/` directory to build reports on) to use | No            | `manifest.json` |
+| `--rootdir`  | The root directory of this project                                                                           | No            | Current dir     |
+| `--log-level`| The level at which to log output ("DEBUG", "INFO", "WARNING", "ERROR", or "CRITICAL")                        | No            | "DEBUG"         |
+
+#### Output
+
+This script creates the following output:
+
+* Directory `public/TR/`, containing the generated reports for each test
+* Markdown file `public/Test_Reports.md`, containing a table linking to all generated test reports
+
+And modifies the following existing files:
+
+* `public/SUMMARY.md` is appended with links to all created Markdown files
+* `public/README.md` is appended with a Table of Contents linking to all other pages in the project (this will link to
+  the expected `.html` filenames after being built by GitBooks, not the pre-compilation `.md` filenames)
+
+This script also outputs a log of its execution via the standard Python logger, which outputs to stderr.
+
+#### Examples
+
+All arguments to the script allow default arguments, which are reasonable if running it from the project's root
+directory on the included `manifest.json` file. Therefore, the script can be from this directory simply as:
+
+```bash
+python public/build_all_report_pages.py 2> public/build.log
+```
+
+More generally, it can be run as:
+
+```bash
+python public/build_all_report_pages.py --manifest /path/to/manifest.json --rootdir /path/to/rootdir \\
+--logging-level LEVEL 
+```
+
+with the proper paths to the desired manifest file and the project root directory and the desired logging level (e.g. 
+DEBUG).
+
+The script's execution log is output via stderr, and can be redirected to a file via e.g.:
+
+```bash
+python public/build_all_report_pages.py 2> /path/to/build.log
+```
+
+When run as part of the [Continuous Integration](#continuous-integration) pipeline, this log is output to
+`public/build.log`.
 
 ## Project Structure
 
@@ -58,6 +145,7 @@ Software Problem Reports. It also automatically generates human-readable reports
   directory) for which test reports are to be generated
 * `README.md` - This file
 
+
 ## Building Test Reports
 
 As part of this project's [Continuous Integration](#continuous-integration) pipeline, it calls the
@@ -65,6 +153,7 @@ As part of this project's [Continuous Integration](#continuous-integration) pipe
 (and their associated data) in the `data/` directory of this project which are listed in the `manifest.json` file. This
 section will provide an overview of files can be added and updated, and how to provide specialized implementations of
 building test reports for tests where the default formatting is suboptimal.
+
 
 ### Manifest
 
@@ -105,11 +194,13 @@ generated reports) and as values the filenames of the test results tarballs, e.g
 In this example, a test report will be generated for each of the files listed, with the title of each using the provided
 tag, e.g. "CTI-Gal-obs" etc.
 
+
 ### Build Script
 
 The script `python/build_all_report_pages.py` is used to automatically generate test reports from the files listed in
 the `manifest.json` file and contained in the `data/` directory. It is not generally necessary to work with this script
 directly when adding/updating test results tarballs or implementing new specialized formattings.
+
 
 ### Specialized Formatting
 
@@ -138,6 +229,7 @@ D_BUILD_CALLABLES = {CTI_GAL_KEY: CtiGalTestSummaryWriter(), }
 Further instructions can be found in the docstrings of the `TestSummaryWriter` class in the `utility.test_writing`
 module (for step 1) and the `specialization_keys` module.
 
+
 ## Publishing
 
 This project is published via GitBooks, using GitLab's continuous integration pipeline. See the
@@ -151,6 +243,7 @@ This project contains both a set of prepared `.md` files in its `public/` direct
 of the CI pipeline) which generates `.md` files to report on the results of validation tests. The set of test results to
 generate reports for can be updated by adding or replacing the results tarballs in the `data` directory of this project 
 and updating the `manifest.json` file.
+
 
 ## Continuous Integration
 

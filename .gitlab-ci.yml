@@ -16,6 +16,12 @@ pytest:
     - pip install pytest --quiet
     - PYTHONPATH=`pwd`/python pytest -v tests/
 
+install-test:
+  stage: pretest
+  image: python:3.9
+  script:
+    - python setup.py install --user
+
 build:
   stage: build
   image: python:3.9
@@ -26,7 +32,7 @@ build:
       - public
     expire_in: 1 day
 
-test:
+pages-test:
   stage: test
   image: node:10
   before_script:

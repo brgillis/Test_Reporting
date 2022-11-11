@@ -29,6 +29,8 @@ import re
 import subprocess
 from typing import List, TYPE_CHECKING, TextIO
 
+from utility.constants import HEADING_TOC
+
 if TYPE_CHECKING:
     from logging import Logger
     from typing import Callable  # noqa F401
@@ -230,7 +232,7 @@ class TocMarkdownWriter:
         # Only write a Table of Contents if there's more than one heading; otherwise it's not worth it
         if len(self._l_toc_lines) > 1:
 
-            fo.write(f"## Table of Contents\n\n")
+            fo.write(f"{HEADING_TOC}\n\n")
 
             for line in self._l_toc_lines:
                 fo.write(line)

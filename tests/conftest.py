@@ -26,19 +26,20 @@ from typing import Set, TYPE_CHECKING
 
 import pytest
 
-from utility.constants import DATA_DIR, MANIFEST_FILENAME, PUBLIC_DIR, SUMMARY_FILENAME, TESTS_DIR, TEST_DATA_DIR
+from utility.constants import (DATA_DIR, MANIFEST_FILENAME, PUBLIC_DIR, README_FILENAME, SUMMARY_FILENAME, TESTS_DIR,
+                               TEST_DATA_DIR, )
 from utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
     from _pytest.tmpdir import TempdirFactory  # noqa F401
     from collections.abc import Collection  # noqa F401
-    from utility.test_writing import TestResults
+    from utility.report_writing import TestResults
 
 CTI_GAL_MANIFEST_FILENAME = "cti_gal_manifest.json"
 CTI_GAL_RESULTS_PRODUCT = "she_observation_cti_gal_validation_test_results_product.xml"
 
 L_FILES_MODIFIED = (os.path.join(PUBLIC_DIR, SUMMARY_FILENAME),
-                    )
+                    os.path.join(PUBLIC_DIR, README_FILENAME),)
 
 S_EXCLUDE = {*L_FILES_MODIFIED, DATA_DIR, TEST_DATA_DIR}
 
@@ -127,7 +128,7 @@ def symlink_contents(src_dir,
             os.symlink(qualified_src_filename, qualified_dest_filename)
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def project_copy(rootdir, tmpdir_factory):
     """Pytest fixture which creates a copy of the project in a temporary directory for use with unit testing.
 

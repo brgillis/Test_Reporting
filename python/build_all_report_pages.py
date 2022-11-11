@@ -13,7 +13,7 @@ part of the continuous-integration pipeline to build report pages.
 It generally shouldn't be necessary to modify this file when adding new files to be reported on or new custom
 implementations of building report pages. The former can be done by editing the manifest file in the root directory
 of this project, and the latter by adding new modules for the new implementations and updating the
-`implementations.py` module (see instructions in that module).
+`specialization_keys.py` module (see instructions in that module).
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
@@ -36,11 +36,11 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import Dict, List, TYPE_CHECKING
 
-from implementations import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
+from specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
 from utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 from utility.misc import log_entry_exit
-from utility.summary_files import build_test_report_summary, update_summary
-from utility.test_writing import TestMeta
+from utility.summary_files import build_test_report_summary, update_readme, update_summary
+from utility.report_writing import ValTestMeta
 
 if TYPE_CHECKING:
     import Namespace  # noqa F401
@@ -144,7 +144,7 @@ def run_build_from_args(args):
 
     d_manifest = read_manifest(os.path.join(args.rootdir, args.manifest))
 
-    l_test_meta: List[TestMeta] = []
+    l_test_meta: List[ValTestMeta] = []
 
     # Call the build function for each file in the manifest
     for key, value in d_manifest.items():
@@ -171,6 +171,9 @@ def run_build_from_args(args):
     update_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,
                    l_test_meta=l_test_meta,
                    rootdir=args.rootdir)
+
+    # Update the public README.md file, adding a Table of Contents to it
+    update_readme(rootdir=args.rootdir)
 
 
 if __name__ == "__main__":

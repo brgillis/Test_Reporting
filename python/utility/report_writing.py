@@ -1,11 +1,11 @@
 """
-:file: utility/test_writing.py
+:file: utility/report_writing.py
 
 :date: 10/17/2022
 :author: Bryan Gillis
 
 This python module provides functionality for writing the test summary markdown files. To allow customization for
-individual unit tests, a callable class, TestSummaryWriter, is used, with its call being a template method where
+individual unit tests, a callable class, ReportSummaryWriter, is used, with its call being a template method where
 sub-methods it calls can be overridden.
 
 The functionality provided here covers the most general case of reporting results from a SheValidationTestResults
@@ -60,7 +60,7 @@ HEADING_DETAILED_RESULTS = "Detailed Results"
 logger = getLogger(__name__)
 
 
-class TestCaseMeta(NamedTuple):
+class ValTestCaseMeta(NamedTuple):
     """Named tuple to contain output of a name of a test/testcase and its associated filename, plus optionally
     whether or not it passed.
     """
@@ -69,22 +69,22 @@ class TestCaseMeta(NamedTuple):
     passed: Optional[bool] = None
 
 
-class TestMeta(NamedTuple):
-    """Named tuple to contain output of a test case's name and filename, and a list of the same for all associated
+class ValTestMeta(NamedTuple):
+    """Named tuple to contain output of a test's name and filename, and a list of the same for all associated
     test cases.
     """
     name: str
     filename: str
-    l_test_case_meta: Sequence[TestCaseMeta]
+    l_test_case_meta: Sequence[ValTestCaseMeta]
     num_passed: int = -1
     num_failed: int = -1
 
 
 # Define the expected type for callables used to build test reports, now that the output type from it is defined above
-BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]], str], List[TestMeta]]
+BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]], str], List[ValTestMeta]]
 
 
-class TestSummaryWriter:
+class ReportSummaryWriter:
     """Class to handle writing a markdown file containing the summary of a test case. See the documentation of this
     class's `__call__` method for further details of its functionality.
 
@@ -103,11 +103,11 @@ class TestSummaryWriter:
     Be warned that documentation has a tendency to get out of sync with code, so use the code as the ultimate arbiter,
     not this documentation.
 
-    For any of these cases, you will need to start by defining in a new module a child class of the TestSummaryWriter
+    For any of these cases, you will need to start by defining in a new module a child class of the ReportSummaryWriter
     class defined here, which overrides select methods, i.e.:
 
     ```
-    class SpecificTestWriter(TestSummaryWriter):
+    class SpecificTestWriter(ReportSummaryWriter):
 
         test_name = "Specific-Test"
 
@@ -271,7 +271,7 @@ class TestSummaryWriter:
 
     @log_entry_exit(logger)
     def __init__(self, test_name: Optional[str] = None):
-        """Initializer for TestSummaryWriter, which allows specifying the test name.
+        """Initializer for ReportSummaryWriter, which allows specifying the test name.
 
         Parameters
         ----------
@@ -298,7 +298,7 @@ class TestSummaryWriter:
 
         Returns
         -------
-        l_test_meta : List[TestMeta]
+        l_test_meta : List[ValTestMeta]
             A list of objects, each containing the test name and filename and a list of the same for associated
             tests. If the input `value` is a filename, this will be a single-element list. If the input `value` is
             instead a dict, this will have multiple elements, depending on the number of elements in the dict.
@@ -306,7 +306,7 @@ class TestSummaryWriter:
 
         # Figure out how to interpret `value` by checking if it's a str or dict, and then iterate over call to
         # process each individual tarball
-        l_test_meta: List[TestMeta]
+        l_test_meta: List[ValTestMeta]
         if isinstance(value, str):
             l_test_meta = self._summarize_results_tarball(value, rootdir, tag=None)
         elif isinstance(value, dict):
@@ -336,7 +336,7 @@ class TestSummaryWriter:
 
         Returns
         -------
-        l_test_meta : List[TestMeta]
+        l_test_meta : List[ValTestMeta]
             A list of objects containing the test name and filename and a list of the same for associated tests.
         """
 
@@ -404,7 +404,7 @@ class TestSummaryWriter:
 
         Returns
         -------
-        l_test_meta : List[TestMeta]
+        l_test_meta : List[ValTestMeta]
         """
 
         extract_tarball(qualified_results_tarball_filename, qualified_tmpdir)
@@ -416,7 +416,7 @@ class TestSummaryWriter:
         # Make sure the required subdir exists before we start writing anything
         os.makedirs(os.path.join(rootdir, PUBLIC_DIR, TEST_REPORTS_SUBDIR), exist_ok=True)
 
-        l_test_meta: List[TestMeta] = []
+        l_test_meta: List[ValTestMeta] = []
 
         for i, qualified_product_filename in enumerate(l_qualified_product_filenames):
 
@@ -451,22 +451,22 @@ class TestSummaryWriter:
                                                              rootdir=rootdir)
 
             num_passed, num_failed = self._calc_num_passed_failed(l_test_case_meta)
-            l_test_meta.append(TestMeta(name=test_name,
-                                        filename=test_filename,
-                                        l_test_case_meta=l_test_case_meta,
-                                        num_passed=num_passed,
-                                        num_failed=num_failed))
+            l_test_meta.append(ValTestMeta(name=test_name,
+                                           filename=test_filename,
+                                           l_test_case_meta=l_test_case_meta,
+                                           num_passed=num_passed,
+                                           num_failed=num_failed))
 
         return l_test_meta
 
     @staticmethod
     @log_entry_exit(logger)
     def _calc_num_passed_failed(l_test_case_meta):
-        """Calculates the number of test cases which have passed and failed from the provided list of TestCaseMeta.
+        """Calculates the number of test cases which have passed and failed from the provided list of ValTestCaseMeta.
 
         Parameters
         ----------
-        l_test_case_meta : Sequence[TestCaseMeta]
+        l_test_case_meta : Sequence[ValTestCaseMeta]
 
         Returns
         -------
@@ -517,13 +517,13 @@ class TestSummaryWriter:
 
         Returns
         -------
-        l_test_case_names_and_filenames : Sequence[TestCaseMeta]
+        l_test_case_names_and_filenames : Sequence[ValTestCaseMeta]
             The names and generated file names of each test case associated with this test.
         """
 
         # We handle naming the test cases in this method, so we can check for the presence of duplicates
         d_test_name_instances: Dict[str, int] = {}
-        l_test_case_names_and_filenames: List[TestCaseMeta] = []
+        l_test_case_names_and_filenames: List[ValTestCaseMeta] = []
         for test_case_results in test_results.l_test_results:
 
             test_case_id = test_case_results.test_id
@@ -536,10 +536,10 @@ class TestSummaryWriter:
 
             test_case_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_case_name}.md")
 
-            l_test_case_names_and_filenames.append(TestCaseMeta(name=test_case_name,
-                                                                filename=test_case_filename,
-                                                                passed=(test_case_results.global_result ==
-                                                                        "PASSED")))
+            l_test_case_names_and_filenames.append(ValTestCaseMeta(name=test_case_name,
+                                                                   filename=test_case_filename,
+                                                                   passed=(test_case_results.global_result ==
+                                                                           "PASSED")))
 
             # Now we defer to a sub-method to write the results, so the formatting in that bit can be easily overridden
             self._write_individual_test_case_results(test_case_results=test_case_results,
@@ -919,7 +919,7 @@ class TestSummaryWriter:
         test_results : TestResults
         test_name : str
             The name of this test.
-        l_test_case_meta : Sequence[TestCaseMeta]
+        l_test_case_meta : Sequence[ValTestCaseMeta]
             The names and file names of each test case associated with this test.
         rootdir : str
 
@@ -1009,7 +1009,7 @@ class TestSummaryWriter:
         ----------
         writer : TocMarkdownWriter
         test_results : TestResults
-        l_test_case_meta : Sequence[TestCaseMeta]
+        l_test_case_meta : Sequence[ValTestCaseMeta]
         """
 
         writer.add_heading(HEADING_TEST_CASES, depth=0)

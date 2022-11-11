@@ -29,9 +29,9 @@ import pytest
 from testing.common import TEST_TARBALL_FILENAME
 from utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
 from utility.misc import TocMarkdownWriter
-from utility.test_writing import (DIRECTORY_FILE_EXT, DIRECTORY_FILE_FIGURES_HEADER, DIRECTORY_FILE_SEPARATOR,
-                                  HEADING_DETAILED_RESULTS, HEADING_GENERAL_INFO, HEADING_PRODUCT_METADATA,
-                                  HEADING_TEST_CASES, HEADING_TEST_METADATA, TestCaseMeta, TestSummaryWriter, )
+from utility.report_writing import (DIRECTORY_FILE_EXT, DIRECTORY_FILE_FIGURES_HEADER, DIRECTORY_FILE_SEPARATOR,
+                                    HEADING_DETAILED_RESULTS, HEADING_GENERAL_INFO, HEADING_PRODUCT_METADATA,
+                                    HEADING_TEST_CASES, HEADING_TEST_METADATA, ValTestCaseMeta, ReportSummaryWriter, )
 
 if TYPE_CHECKING:
     from py.path import local  # noqa F401
@@ -65,7 +65,7 @@ def _touch_file(qualified_filename: str) -> None:
 
 
 def test_write_summary(project_copy):
-    """Unit test of the `TestSummaryWriter` class's __call__ method.
+    """Unit test of the `ReportSummaryWriter` class's __call__ method.
 
     Parameters
     ----------
@@ -73,7 +73,7 @@ def test_write_summary(project_copy):
         Fixture which provides the root directory of a copy of the project
     """
 
-    writer = TestSummaryWriter()
+    writer = ReportSummaryWriter()
     test_meta = writer(TEST_TARBALL_FILENAME, project_copy)[0]
 
     # Check that the test name is as expected and the filename is sensible and exists
@@ -139,7 +139,7 @@ def test_write_summary(project_copy):
 
 
 def test_add_test_case_meta(cti_gal_test_results):
-    """ Unit test of the `TestSummaryWriter._add_test_case_meta` method.
+    """ Unit test of the `ReportSummaryWriter._add_test_case_meta` method.
 
     Parameters
     ----------
@@ -150,7 +150,7 @@ def test_add_test_case_meta(cti_gal_test_results):
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
     test_case_results = cti_gal_test_results.l_test_results[0]
-    TestSummaryWriter(TEST_NAME)._add_test_case_meta(writer, test_case_results)
+    ReportSummaryWriter(TEST_NAME)._add_test_case_meta(writer, test_case_results)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_GENERAL_INFO}](#"
@@ -159,7 +159,7 @@ def test_add_test_case_meta(cti_gal_test_results):
 
 
 def test_add_test_case_details(cti_gal_test_results):
-    """ Unit test of the `TestSummaryWriter._add_test_case_details` method.
+    """ Unit test of the `ReportSummaryWriter._add_test_case_details` method.
 
     Parameters
     ----------
@@ -170,7 +170,7 @@ def test_add_test_case_details(cti_gal_test_results):
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
     test_case_results = cti_gal_test_results.l_test_results[0]
-    TestSummaryWriter(TEST_NAME)._add_test_case_details(writer, test_case_results)
+    ReportSummaryWriter(TEST_NAME)._add_test_case_details(writer, test_case_results)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_DETAILED_RESULTS}](#"
@@ -201,7 +201,7 @@ def mock_unpacked_dir(tmpdir):
 
 
 def test_find_directory_filename(mock_unpacked_dir):
-    """Unit test of the `TestSummaryWriter.find_directory_filename` method.
+    """Unit test of the `ReportSummaryWriter.find_directory_filename` method.
 
     Parameters
     ----------
@@ -212,18 +212,18 @@ def test_find_directory_filename(mock_unpacked_dir):
 
     # As initially set up, there shouldn't be a directory, so check we get the expected exception
     with pytest.raises(FileNotFoundError):
-        TestSummaryWriter.find_directory_filename(mock_unpacked_dir)
+        ReportSummaryWriter.find_directory_filename(mock_unpacked_dir)
 
     # Add a file with an appropriate filename and check that we find it
     qualified_directory_filename = os.path.join(mock_unpacked_dir, EX_DIRECTORY_FILENAME)
     _touch_file(qualified_directory_filename)
-    assert TestSummaryWriter.find_directory_filename(mock_unpacked_dir) == qualified_directory_filename
+    assert ReportSummaryWriter.find_directory_filename(mock_unpacked_dir) == qualified_directory_filename
 
     # Add an extra file with an appropriate filename and check that we get the expected exception from having too
     # many candidate files
     _touch_file(os.path.join(mock_unpacked_dir, EX_EXTRA_DIRECTORY_FILENAME))
     with pytest.raises(ValueError):
-        TestSummaryWriter.find_directory_filename(mock_unpacked_dir)
+        ReportSummaryWriter.find_directory_filename(mock_unpacked_dir)
 
 
 @pytest.fixture
@@ -254,7 +254,7 @@ def mock_directory_file(tmpdir):
 
 
 def test_read_figure_labels_and_filenames(mock_directory_file):
-    """Unit test of the `TestSummaryWriter.read_figure_labels_and_filenames` method.
+    """Unit test of the `ReportSummaryWriter.read_figure_labels_and_filenames` method.
 
     Parameters
     ----------
@@ -262,13 +262,13 @@ def test_read_figure_labels_and_filenames(mock_directory_file):
         Pytest fixture providing the filename of a mock directory file set up for this test.
     """
 
-    l_labels_and_filenames = TestSummaryWriter.read_figure_labels_and_filenames(mock_directory_file)
+    l_labels_and_filenames = ReportSummaryWriter.read_figure_labels_and_filenames(mock_directory_file)
 
     assert l_labels_and_filenames == L_MOCK_DIRECTORY_LABELS_AND_FILENAMES
 
 
 def test_write_product_metadata(cti_gal_test_results):
-    """ Unit test of the `TestSummaryWriter._write_product_metadata` method.
+    """ Unit test of the `ReportSummaryWriter._write_product_metadata` method.
 
     Parameters
     ----------
@@ -278,7 +278,7 @@ def test_write_product_metadata(cti_gal_test_results):
 
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
-    TestSummaryWriter(TEST_NAME)._add_product_metadata(writer, cti_gal_test_results)
+    ReportSummaryWriter(TEST_NAME)._add_product_metadata(writer, cti_gal_test_results)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_PRODUCT_METADATA}](#"
@@ -287,7 +287,7 @@ def test_write_product_metadata(cti_gal_test_results):
 
 
 def test_write_test_metadata(cti_gal_test_results):
-    """ Unit test of the `TestSummaryWriter._write_test_metadata` method.
+    """ Unit test of the `ReportSummaryWriter._write_test_metadata` method.
 
     Parameters
     ----------
@@ -297,7 +297,7 @@ def test_write_test_metadata(cti_gal_test_results):
 
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
-    TestSummaryWriter(TEST_NAME)._add_test_metadata(writer, cti_gal_test_results)
+    ReportSummaryWriter(TEST_NAME)._add_test_metadata(writer, cti_gal_test_results)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_TEST_METADATA}](#"
@@ -306,7 +306,7 @@ def test_write_test_metadata(cti_gal_test_results):
 
 
 def test_write_test_case_table(cti_gal_test_results):
-    """ Unit test of the `TestSummaryWriter._write_test_case_table` method.
+    """ Unit test of the `ReportSummaryWriter._write_test_case_table` method.
 
     Parameters
     ----------
@@ -316,11 +316,11 @@ def test_write_test_case_table(cti_gal_test_results):
 
     # Make a mock list of test case meta
     l_test_case_meta = [
-        TestCaseMeta(name=TEST_CASE_NAME, filename=f"{TEST_REPORTS_SUBDIR}/{TEST_CASE_FILENAME}", passed=True)]
+        ValTestCaseMeta(name=TEST_CASE_NAME, filename=f"{TEST_REPORTS_SUBDIR}/{TEST_CASE_FILENAME}", passed=True)]
 
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
-    TestSummaryWriter(TEST_NAME)._add_test_case_table(writer, cti_gal_test_results, l_test_case_meta)
+    ReportSummaryWriter(TEST_NAME)._add_test_case_table(writer, cti_gal_test_results, l_test_case_meta)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_TEST_CASES}](#"

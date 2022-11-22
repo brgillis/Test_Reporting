@@ -44,7 +44,7 @@ def test_integration(project_copy, test_manifest):
     args.manifest = test_manifest
 
     # Call the main workhorse function
-    build_all_report_pages.run_build_from_args(args)
+    build_all_report_pages.run_build_all_from_args(args)
 
     # Check that output looks as expected
 
@@ -70,7 +70,7 @@ def test_cti_gal_integration(project_copy, cti_gal_manifest):
     args.manifest = cti_gal_manifest
 
     # Call the main workhorse function
-    build_all_report_pages.run_build_from_args(args)
+    build_all_report_pages.run_build_all_from_args(args)
 
     # Check that output looks as expected
 

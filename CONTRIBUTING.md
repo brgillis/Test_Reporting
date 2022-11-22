@@ -11,6 +11,7 @@
   * [Documentation](#documentation)
   * [Naming](#naming)
   * [IDE Support](#ide-support)
+  * [Logging](#logging)
 
 ## Before Contributing
 
@@ -158,3 +159,21 @@ ignore unused imports is applied only to these imports and not any other imports
 F401` flag is used to indicate to format-checker to ignore this line if they believe these imports are unused.
 
 Take care to maintain this block if the imports are no longer needed, as this will not be caught by autoformatters.
+
+### Logging
+
+To aid in diagnosing issues, non-trivial functions within this project use the `log_entry_exit` decorator, which 
+logs (at debug level by default) when the function is entered and exited, and with what arguments. This should be used 
+as e.g.:
+
+```python
+from logging import getLogger
+
+from Test_Reporting.utility.misc import log_entry_exit
+
+logger = getLogger(__name__)
+
+@log_entry_exit(logger)
+def my_function():
+    ...
+```

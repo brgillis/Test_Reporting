@@ -169,6 +169,7 @@ def project_copy(rootdir, tmpdir_factory):
 
     return project_copy_rootdir
 
+
 @pytest.fixture
 def test_manifest(project_copy):
     """Pytest fixture to get the filename of the manifest to use for testing the default builder.

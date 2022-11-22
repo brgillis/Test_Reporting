@@ -152,7 +152,7 @@ class TocMarkdownWriter:
         Parameters
         ----------
         title : str
-            The desired title for this page. This does not need to include any leading '#'s or surrounding whitespace.
+            The desired title for this page. This does not need to include any leading "#"s or surrounding whitespace.
         """
 
         # Strip any leading '#' and any enclosing whitespace from the title, so we can be sure it's properly formatted
@@ -185,25 +185,25 @@ class TocMarkdownWriter:
         ----------
         heading : str
             The heading to be added both to the Table of Contents and the section header in the body of the file.
-            This should not include any leading '#'s or surrounding whitespace.
+            This should not include any leading "#"s or surrounding whitespace.
         depth : int
             Integer >= 0 specifying the depth of the heading. Depth 0 corresponds to the highest allowed depth within
             the body of the file (a heading starting with '## '), and each increase of depth by 1 corresponds to a
             section which will have an extra '#' in its header, so e.g. depth 2 would start with '#### '.
         """
 
-        # Trim any beginning '#'s and spaces, as those will be added automatically at the proper depth
+        # Trim any beginning "#"s and spaces, as those will be added automatically at the proper depth
         input_heading = heading
         hash_counter = 0
         while heading.startswith("#"):
             heading = heading[1:]
             hash_counter += 1
 
-        # If any '#'s were included, check that they're consistent with the specified depth, and raise an exception
+        # If any "#"s were included, check that they're consistent with the specified depth, and raise an exception
         # if not as it will be unclear what the user desired in this case.
         if (hash_counter > 0) and (hash_counter != depth + 2):
-            raise ValueError(f"Heading '{input_heading}' has inconsistent number of '#'s with specified depth ("
-                             f"{depth}). Heading should be supplied without any leading '#'s, with depth used to "
+            raise ValueError(f"Heading '{input_heading}' has inconsistent number of \"#\"s with specified depth ("
+                             f"{depth}). Heading should be supplied without any leading \"#\"s, with depth used to "
                              "control this.")
 
         heading = heading.strip()

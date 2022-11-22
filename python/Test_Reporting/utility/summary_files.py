@@ -153,7 +153,7 @@ def update_readme(rootdir):
 
 
 def _check_md_filename(filename):
-    """Private method to check that a filename ends with `.md' and raise an exception if not.
+    """Private method to check that a filename ends with ".md" and raise an exception if not.
     """
     if not filename.endswith('.md'):
         raise ValueError(f"Filename '{filename}' must end with '.md'.")

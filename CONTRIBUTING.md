@@ -1,5 +1,17 @@
 # Contribution Guidelines
 
+## Table of Contents
+
+* [Before Contributing](#before-contributing)
+  * [Check if it's been proposed before](#check-if-its-been-proposed-before)
+  * [Prepare your editor](#prepare-your-editor)
+* [While Contributing](#while-contributing)
+* [Submitting Contributions](#submitting-contributions)
+* [Coding Style](#coding-style)
+  * [Documentation](#documentation)
+  * [Naming](#naming)
+  * [IDE Support](#ide-support)
+
 ## Before Contributing
 
 ### Check if it's been proposed before

@@ -6,7 +6,7 @@
 
 Utility code for unit tests in this project.
 """
-import logging
+
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
 # This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
@@ -23,6 +23,7 @@ import logging
 import os
 import shutil
 from typing import Set, TYPE_CHECKING
+import logging
 
 import pytest
 
@@ -34,7 +35,7 @@ from Test_Reporting.utility.product_parsing import parse_xml_product
 if TYPE_CHECKING:
     from _pytest.tmpdir import TempdirFactory  # noqa F401
     from collections.abc import Collection  # noqa F401
-    from Test_Reporting.utility.report_writing import TestResults
+    from Test_Reporting.utility.report_writing import TestResults  # noqa F401
 
 CTI_GAL_MANIFEST_FILENAME = "cti_gal_manifest.json"
 CTI_GAL_RESULTS_PRODUCT = "she_observation_cti_gal_validation_test_results_product.xml"
@@ -167,6 +168,7 @@ def project_copy(rootdir, tmpdir_factory):
     symlink_contents(test_data_dir, project_copy_datadir)
 
     return project_copy_rootdir
+
 
 @pytest.fixture
 def test_manifest(project_copy):

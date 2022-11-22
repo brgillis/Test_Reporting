@@ -38,6 +38,7 @@ Software Problem Reports. It also automatically generates human-readable reports
   * [An exception was raised, what do I do?](#an-exception-was-raised-what-do-i-do)
   * [After updating or adding a results tarball, the `build` step fails](#after-updating-or-adding-a-results-tarball-the-build-step-fails)
   * [After adding a new specialized format, it isn't being used](#after-adding-a-new-specialized-format-it-isnt-being-used)
+  * [The pipeline failed on master even though it succeeded on the feature branch](#the-pipeline-failed-on-master-even-though-it-succeeded-on-the-feature-branch)
 
 
 ## Contributors
@@ -408,3 +409,9 @@ which will be stored as an artifact at `test_output/public/build.log` for any wa
 what went wrong.
 
 If all else fails, try running the script yourself with a debugger and stepping through the code to see what happens.
+
+
+### The pipeline failed on master even though it succeeded on the feature branch
+
+Since the pipeline requires downloading the GitBooks package to install it, things can go wrong every once in a while.
+Most likely this issue will resolve itself if you try re-running the pipeline.

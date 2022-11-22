@@ -77,7 +77,8 @@ def build_test_report_summary(test_report_summary_filename,
                      f"| {test_meta.num_passed} "
                      f"| {test_meta.num_failed} |\n")
 
-        fo.write("\nThe log file for building these test reports can be found [here](build.log).")
+        fo.write("\nThe log file for building these test reports can be found [here (open this link in a new tab)]"
+                 "(build.log) .")
 
 
 @log_entry_exit(logger)

@@ -159,9 +159,9 @@ class ReportSummaryWriter:
     def _add_test_case_supp_info(writer, req):
         '''Specialized implementation to write out the x and y values +/- their errors.
 
-        # Add a heading for this section. The depth here is 2 (2 layes deeper than depth 0, which corresponds to the
-        # highest level of heading within the body, which is labelled as "##". We don't need any "#" or linebreak at the
-        # end when adding the heading. We use the Requirement index in the label here to make sure it's unique.
+        # Add a heading for this section. The depth here is 2 (2 layers deeper than depth 0, which corresponds to the
+        # highest level of heading within the body, which is labelled as "##"). We don't need any "#" or linebreak at
+        # the end when adding the heading. We use the Requirement index in the label here to make sure it's unique.
         writer.add_heading(f"Result Values", depth=2)
 
         # Here we implement custom parsing of the SupplementaryInfo to get the values we want
@@ -772,7 +772,7 @@ class ReportSummaryWriter:
 
         # Check for file existence
         if not os.path.isfile(qualified_src_filename):
-            # Source doesn't exist. If destination does, then there's no issue - assumedly it's already been moved
+            # Source doesn't exist. If destination does, then there's no issue - presumably it's already been moved
             # for another page, and so we don't need to move it again. If destination doesn't exist, then we have an
             # error.
             if not os.path.isfile(qualified_dest_filename):

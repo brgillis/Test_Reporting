@@ -202,8 +202,8 @@ class TocMarkdownWriter:
         # If any "#"s were included, check that they're consistent with the specified depth, and raise an exception
         # if not as it will be unclear what the user desired in this case.
         if (hash_counter > 0) and (hash_counter != depth + 2):
-            raise ValueError(f"Heading '{input_heading}' has inconsistent number of "#"s with specified depth ("
-                             f"{depth}). Heading should be supplied without any leading "#"s, with depth used to "
+            raise ValueError(f"Heading '{input_heading}' has inconsistent number of \"#\"s with specified depth ("
+                             f"{depth}). Heading should be supplied without any leading \"#\"s, with depth used to "
                              "control this.")
 
         heading = heading.strip()

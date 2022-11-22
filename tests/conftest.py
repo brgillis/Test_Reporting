@@ -6,7 +6,7 @@
 
 Utility code for unit tests in this project.
 """
-import logging
+
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
 # This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
@@ -23,6 +23,7 @@ import logging
 import os
 import shutil
 from typing import Set, TYPE_CHECKING
+import logging
 
 import pytest
 

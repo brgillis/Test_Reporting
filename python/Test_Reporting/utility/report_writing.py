@@ -83,7 +83,7 @@ class ValTestMeta(NamedTuple):
 
 
 # Define the expected type for callables used to build test reports, now that the output type from it is defined above
-BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]], str], List[ValTestMeta]]
+BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]], str, str], List[ValTestMeta]]
 
 
 class ReportSummaryWriter:
@@ -298,7 +298,7 @@ class ReportSummaryWriter:
             The root directory of this project. All filenames provided should be relative to the "data" directory
             within `rootdir`.
         reportdir : str or None
-            The directory to build reports in. Default: rootdir
+            The directory to build reports in. Default: `rootdir`/public
 
         Returns
         -------
@@ -309,7 +309,7 @@ class ReportSummaryWriter:
         """
 
         if reportdir is None:
-            reportdir = rootdir
+            reportdir = os.path.join(rootdir, PUBLIC_DIR)
 
         # Figure out how to interpret `value` by checking if it's a str or dict, and then iterate over call to
         # process each individual tarball
@@ -426,7 +426,7 @@ class ReportSummaryWriter:
                                          for product_filename in l_product_filenames]
 
         # Make sure the required subdir exists before we start writing anything
-        os.makedirs(os.path.join(reportdir, PUBLIC_DIR, TEST_REPORTS_SUBDIR), exist_ok=True)
+        os.makedirs(os.path.join(reportdir, TEST_REPORTS_SUBDIR), exist_ok=True)
 
         l_test_meta: List[ValTestMeta] = []
 
@@ -586,7 +586,7 @@ class ReportSummaryWriter:
         tmpdir : str
         """
 
-        qualified_test_case_filename = os.path.join(reportdir, PUBLIC_DIR, test_case_filename)
+        qualified_test_case_filename = os.path.join(reportdir, test_case_filename)
 
         logger.info("Writing results for test case %s from %s.", test_case_name, qualified_test_case_filename)
 
@@ -778,7 +778,7 @@ class ReportSummaryWriter:
         """
 
         qualified_src_filename = os.path.join(figures_tmpdir, filename)
-        qualified_dest_filename = os.path.join(reportdir, PUBLIC_DIR, IMAGES_SUBDIR, filename)
+        qualified_dest_filename = os.path.join(reportdir, IMAGES_SUBDIR, filename)
 
         # Check for file existence
         if not os.path.isfile(qualified_src_filename):
@@ -839,7 +839,7 @@ class ReportSummaryWriter:
         l_figure_labels_and_filenames = self.read_figure_labels_and_filenames(qualified_directory_filename)
 
         # Make sure a data subdir exists in the images dir
-        os.makedirs(os.path.join(reportdir, PUBLIC_DIR, IMAGES_SUBDIR, DATA_DIR), exist_ok=True)
+        os.makedirs(os.path.join(reportdir, IMAGES_SUBDIR, DATA_DIR), exist_ok=True)
 
         return l_figure_labels_and_filenames
 
@@ -944,7 +944,7 @@ class ReportSummaryWriter:
 
         test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
 
-        qualified_test_filename = os.path.join(reportdir, PUBLIC_DIR, test_filename)
+        qualified_test_filename = os.path.join(reportdir, test_filename)
 
         logger.info("Writing test results summary to %s", qualified_test_filename)
 

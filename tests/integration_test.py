@@ -105,6 +105,6 @@ def test_standalone_integration(project_copy, tmpdir_factory):
 
     # Check that output looks as expected
 
-    qualified_test_report_summary_filename = os.path.join(args.reportdir, PUBLIC_DIR, TEST_REPORTS_SUBDIR,
+    qualified_test_report_summary_filename = os.path.join(args.reportdir, TEST_REPORTS_SUBDIR,
                                                           f"{CtiGalReportSummaryWriter.test_name}.md")
     assert os.path.isfile(qualified_test_report_summary_filename)

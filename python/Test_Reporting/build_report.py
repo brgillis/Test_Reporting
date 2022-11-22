@@ -129,7 +129,7 @@ def run_build_from_args(args):
     else:
         logger.info("Using build callable %s to construct test report from data: %s.", build_callable, args.target)
 
-    build_callable(args.target, args.reportdir)
+    build_callable(args.target, os.path.split(args.target)[0], args.reportdir)
 
 
 if __name__ == "__main__":

@@ -79,13 +79,13 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
             return super()._add_test_case_details_and_figures_with_tmpdir(writer=writer,
                                                                           test_case_results=test_case_results,
                                                                           reportdir=reportdir,
-                                                                          tmpdir=tmpdir,
+                                                                          datadir=tmpdir,
                                                                           figures_tmpdir=figures_tmpdir)
 
         # Get the figure label and filename for each bin
         l_figure_labels_and_filenames = self._prepare_figures(ana_result=test_case_results.analysis_result,
                                                               reportdir=reportdir,
-                                                              tmpdir=tmpdir,
+                                                              datadir=tmpdir,
                                                               figures_tmpdir=figures_tmpdir)
 
         # Make a dict of bin indices to filenames

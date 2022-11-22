@@ -86,9 +86,7 @@ def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
     qualified_tmpdir = str(qualified_tmpdir)
 
     # Check the filename contains only expected characters. If it doesn't, this could open a security hole
-    filename_regex_match = re.match(r"^[a-zA-Z0-9\-_./+]*\.tar(\.gz)?$", qualified_results_tarball_filename)
-
-    if not filename_regex_match:
+    if not is_valid_tarball_filename(qualified_results_tarball_filename):
         raise ValueError(f"Qualified filename {qualified_results_tarball_filename} failed security check. It must"
                          f"contain only alphanumeric characters and [-_./+], and must end with .tar or .tar.gz.")
 
@@ -107,6 +105,18 @@ def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
             raise FileNotFoundError(tar_results.stderr)
         raise ValueError(f"Un-tarring of {qualified_results_tarball_filename} failed. stderr from tar "
                          f"process was: {tar_results.stderr}")
+
+
+def is_valid_tarball_filename(tarball_filename: str) -> bool:
+    """Checks that a filename is valid and safe for a tarball."""
+    filename_regex_match = re.match(r"^[a-zA-Z0-9\-_./+]*\.tar(\.gz)?$", tarball_filename)
+    return bool(filename_regex_match)
+
+
+def is_valid_xml_filename(xml_filename: str) -> bool:
+    """Checks that a filename is valid for an XML file."""
+    filename_regex_match = re.match(r"^.*\.xml?$", xml_filename)
+    return bool(filename_regex_match)
 
 
 @log_entry_exit(logger)

@@ -97,7 +97,7 @@ def test_standalone_integration(project_copy, tmpdir_factory):
     parser = build_report.get_build_argument_parser()
     args = parser.parse_args([os.path.join(project_copy, DATA_DIR, TEST_TARBALL_FILENAME)])
     args.datadir = project_copy
-    args.reportdir = str(tmpdir_factory.mktemp("project_copy"))
+    args.reportdir = str(tmpdir_factory.mktemp("reportdir"))
     args.key = CTI_GAL_KEY
 
     # Call the main workhorse function

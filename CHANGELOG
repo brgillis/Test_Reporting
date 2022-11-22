@@ -32,6 +32,7 @@ Miscellaneous
 - Project can now be installed via Python's setuptools
 - Added this CHANGELOG
 - Added CONTRIBUTING.md
+- Added requirements.txt
 
 
 Changes in v1.0

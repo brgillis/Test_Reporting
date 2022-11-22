@@ -22,12 +22,14 @@ Unit tests of running the whole script in a minimal state.
 
 import os
 
+from Test_Reporting.specializations.cti_gal import CtiGalReportSummaryWriter
+
 from Test_Reporting.testing.common import TEST_TARBALL_FILENAME
 
 from Test_Reporting.specialization_keys import CTI_GAL_KEY
 
 from Test_Reporting import build_all_report_pages, build_report
-from Test_Reporting.utility.constants import DATA_DIR, PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME
+from Test_Reporting.utility.constants import DATA_DIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR, TEST_REPORT_SUMMARY_FILENAME
 
 
 def test_build_all_integration(project_copy, test_manifest):
@@ -93,8 +95,7 @@ def test_standalone_integration(project_copy, tmpdir_factory):
 
     # Set up the mock arguments
     parser = build_report.get_build_argument_parser()
-    args = parser.parse_args([])
-    args.target = os.path.join(project_copy, DATA_DIR, TEST_TARBALL_FILENAME)
+    args = parser.parse_args([os.path.join(project_copy, DATA_DIR, TEST_TARBALL_FILENAME)])
     args.datadir = project_copy
     args.reportdir = str(tmpdir_factory.mktemp("project_copy"))
     args.key = CTI_GAL_KEY
@@ -104,5 +105,6 @@ def test_standalone_integration(project_copy, tmpdir_factory):
 
     # Check that output looks as expected
 
-    qualified_test_report_summary_filename = os.path.join(project_copy, PUBLIC_DIR, TEST_REPORT_SUMMARY_FILENAME)
+    qualified_test_report_summary_filename = os.path.join(args.reportdir, PUBLIC_DIR, TEST_REPORTS_SUBDIR,
+                                                          f"{CtiGalReportSummaryWriter.test_name}.md")
     assert os.path.isfile(qualified_test_report_summary_filename)

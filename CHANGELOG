@@ -21,6 +21,7 @@ Bug Fixes
 New Features
 ------------
 - Added specialized formatting for CTI-Gal validation test results
+- Added standalone script to build an individual report, "build_report.py"
 
 New config features
 -------------------
@@ -30,6 +31,7 @@ Miscellaneous
 - Filled out README.md with details of project functionality
 - Project can now be installed via Python's setuptools
 - Added this CHANGELOG
+- Added CONTRIBUTING.md
 
 
 Changes in v1.0

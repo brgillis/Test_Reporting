@@ -39,9 +39,8 @@ from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tu
 
 from Test_Reporting.utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
 from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, hash_any, is_valid_tarball_filename,
-                                         is_valid_xml_filename, log_entry_exit, )
+                                         is_valid_xml_filename, log_entry_exit, get_data_filename, )
 from Test_Reporting.utility.product_parsing import parse_xml_product
-from build.lib.Test_Reporting.utility.misc import get_data_filename
 
 if TYPE_CHECKING:
     from typing import Sequence, TextIO  # noqa F401
@@ -860,7 +859,7 @@ class ReportSummaryWriter:
         qualified_figures_tarball_filename = get_data_filename(ana_result.figures_tarball, datadir)
 
         # Return None if either expected tarball doesn't exist
-        if not (qualified_textfiles_tarball_filename and qualified_figures_tarball_filename):
+        if qualified_textfiles_tarball_filename is None or qualified_figures_tarball_filename is None:
             return None
 
         extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)

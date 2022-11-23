@@ -322,10 +322,15 @@ def get_data_filename(filename, datadir):
     qualified_filename = os.path.join(datadir, filename)
 
     # Check if datadir might have been supplied with an extra "data/" at the end, and silently fix if so
-    if not os.path.isfile(qualified_filename) and datadir.endswith(DATA_SUBDIR):
-        test_qualified_filename = os.path.join(os.path.split(datadir)[0], filename)
-        if os.path.isfile(test_qualified_filename):
-            qualified_filename = test_qualified_filename
+    if not os.path.isfile(qualified_filename):
+        if datadir.endswith(DATA_SUBDIR):
+            test_qualified_filename = os.path.join(os.path.split(datadir)[0], filename)
+            if os.path.isfile(test_qualified_filename):
+                qualified_filename = test_qualified_filename
+            else:
+                logger.error("File %s expected but not present. Also checked for %s, which is also not present",
+                             qualified_filename, test_qualified_filename)
+                return None
         else:
             logger.error("File %s expected but not present.", qualified_filename)
             return None

@@ -65,12 +65,14 @@ This project can be installed easily via Python's setuptools, by running the fol
 python setup.py install --user
 ```
 
-This installs the project into the user's `$HOME/.local/lib/python3.9/site-packages` directory. For the executable 
-scripts in this project to be run, this directory must be added to the user's `PATH` environment variable, e.g. by
-modifying their `.bashrc` file to add the line:
+This installs the project into the user's `$HOME/.local/lib/python3.9/site-packages` directory, which must be added 
+to the user's `PYTHONPATH` environment variable, and the executable scripts will be installed to their `$HOME/.
+local/bin` directory, which must be added to the user's `PATH` environment variable. This can be done by e.g. adding 
+this to their `.bash_profile` file:
 
 ```bash
-export PATH=$PATH:$HOME/.local/lib/python3.9/site-packages
+export PYTHONPATH=PYTHONPATH:$HOME/.local/lib/python3.9/site-packages
+export PATH=$PATH:$HOME/.local/bin
 ```
 
 ## Executables

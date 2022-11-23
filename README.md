@@ -230,6 +230,8 @@ PYTHONPATH=`pwd`/python pytest -v tests/
     test reports
   * `python/Test_Reporting/build_all_report_pages.py` - Executable python script which is used as part of the Continuous
     Integration pipeline to build reports on test results tarballs
+  * `python/Test_Reporting/build_report.py` - Executable python script which can be used to generate a report for a 
+    test results product, without needing to add it to this project. 
   * `python/Test_Reporting/specialization_keys.py` - Python module which details which specialized implementations of
     building test reports are to be used on which files in the `manifest.json` file
 * `test_data/` - Directory containing data used in unit tests of Python code

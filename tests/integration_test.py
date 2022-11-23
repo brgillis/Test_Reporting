@@ -21,6 +21,7 @@ Unit tests of running the whole script in a minimal state.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import os
+import shutil
 
 from Test_Reporting.specializations.cti_gal import CtiGalReportSummaryWriter
 
@@ -119,10 +120,15 @@ def test_standalone_integration_with_product(project_copy, tmpdir_factory):
         Pytest fixture providing a factory to create temporary directories for testing.
     """
 
+    mock_datadir = os.path.join(project_copy, "mock_datadir/data")
+
+    # We'll move the data to a separate directory to test that it can still be found
+    shutil.move(os.path.join(project_copy, DATA_DIR, "data/"), mock_datadir)
+
     # Set up the mock arguments
     parser = build_report.get_build_argument_parser()
     args = parser.parse_args([os.path.join(project_copy, DATA_DIR, TEST_XML_FILENAME)])
-    args.datadir = os.path.join(project_copy, DATA_DIR)
+    args.datadir = mock_datadir
     args.reportdir = str(tmpdir_factory.mktemp("reportdir"))
     args.key = CTI_GAL_KEY
 

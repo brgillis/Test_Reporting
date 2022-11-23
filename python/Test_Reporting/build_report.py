@@ -117,7 +117,7 @@ def run_build_from_args(args):
     args : Namespace
         The parsed arguments for this script.
     """
-    
+
     # Make sure all arguments give absolute paths
     args.target = get_qualified_path(args.target)
     if args.datadir is not None:
@@ -135,7 +135,7 @@ def run_build_from_args(args):
     else:
         logger.info("Using build callable %s to construct test report from data: %s.", build_callable, args.target)
 
-    build_callable(args.target, os.path.split(args.target)[0], args.reportdir)
+    build_callable(args.target, os.path.split(args.target)[0], args.reportdir, args.datadir)
 
 
 if __name__ == "__main__":

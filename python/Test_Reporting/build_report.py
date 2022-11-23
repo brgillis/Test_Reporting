@@ -31,7 +31,7 @@ from logging import getLogger
 from typing import TYPE_CHECKING
 
 from Test_Reporting.specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
-from Test_Reporting.utility.misc import log_entry_exit
+from Test_Reporting.utility.misc import get_qualified_path, log_entry_exit
 
 if TYPE_CHECKING:
     import Namespace  # noqa F401
@@ -117,6 +117,12 @@ def run_build_from_args(args):
     args : Namespace
         The parsed arguments for this script.
     """
+    
+    # Make sure all arguments give absolute paths
+    args.target = get_qualified_path(args.target)
+    if args.datadir is not None:
+        args.datadir = get_qualified_path(args.datadir)
+    args.reportdir = get_qualified_path(args.reportdir)
 
     build_callable = D_BUILD_CALLABLES.get(args.key)
 

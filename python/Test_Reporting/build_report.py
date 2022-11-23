@@ -53,7 +53,7 @@ def get_build_argument_parser():
 
     parser.add_argument("target", type=str,
                         help="The filename of either a tarball (\"*.tar\" or \"*.tar.gz\") of test results or a "
-                             "results data product (\"*.xml\"), for which reports should be build. If the latter is "
+                             "results data product (\"*.xml\"), for which reports should be built. If the latter is "
                              "provided, data files it points to will be assumed to be in the 'data' directory "
                              "relative to it unless otherwise specified with the \"--datadir\" argument.")
     parser.add_argument("--key", type=str, default=None,

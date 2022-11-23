@@ -41,6 +41,7 @@ from Test_Reporting.utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR
 from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, hash_any, is_valid_tarball_filename,
                                          is_valid_xml_filename, log_entry_exit, )
 from Test_Reporting.utility.product_parsing import parse_xml_product
+from build.lib.Test_Reporting.utility.misc import get_data_filename
 
 if TYPE_CHECKING:
     from typing import Sequence, TextIO  # noqa F401
@@ -855,13 +856,12 @@ class ReportSummaryWriter:
             return None
 
         # Extract the textfiles and figures tarballs
-        qualified_figures_tarball_filename = os.path.join(datadir, ana_result.figures_tarball)
-        qualified_textfiles_tarball_filename = os.path.join(datadir, ana_result.textfiles_tarball)
+        qualified_textfiles_tarball_filename = get_data_filename(ana_result.textfiles_tarball, datadir)
+        qualified_figures_tarball_filename = get_data_filename(ana_result.figures_tarball, datadir)
 
-        for qualified_tarball_filename in (qualified_figures_tarball_filename, qualified_textfiles_tarball_filename):
-            if not os.path.isfile(qualified_tarball_filename):
-                logger.error("Tarball %s expected but not present.", qualified_tarball_filename)
-                return None
+        # Return None if either expected tarball doesn't exist
+        if not (qualified_textfiles_tarball_filename and qualified_figures_tarball_filename):
+            return None
 
         extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)
         extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)

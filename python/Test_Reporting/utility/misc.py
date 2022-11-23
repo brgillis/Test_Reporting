@@ -30,7 +30,7 @@ import re
 import subprocess
 from typing import List, TYPE_CHECKING, TextIO
 
-from Test_Reporting.utility.constants import HEADING_TOC
+from Test_Reporting.utility.constants import DATA_SUBDIR, HEADING_TOC
 
 if TYPE_CHECKING:
     from logging import Logger
@@ -300,3 +300,34 @@ class TocMarkdownWriter:
 
         for line in self._l_lines:
             fo.write(line)
+
+
+def get_data_filename(filename, datadir):
+    """Get the filename of a datafile referenced by a data product, checking for if the data path might include an
+    extra "data/" at the end.
+
+    Parameters
+    ----------
+    filename : str
+        The filename of the datafile as specified in the data product
+    datadir : str
+        The path to the data directory
+
+    Returns
+    -------
+    qualified_filename : str or None
+        The fully-qualified path to the filename if the file is found, None if it isn't found.
+    """
+
+    qualified_filename = os.path.join(datadir, filename)
+
+    # Check if datadir might have been supplied with an extra "data/" at the end, and silently fix if so
+    if not os.path.isfile(qualified_filename) and datadir.endswith(DATA_SUBDIR):
+        test_qualified_filename = os.path.join(os.path.split(datadir)[0], filename)
+        if os.path.isfile(filename):
+            qualified_filename = test_qualified_filename
+        else:
+            logger.error("File %s expected but not present.", qualified_filename)
+            return None
+
+    return qualified_filename

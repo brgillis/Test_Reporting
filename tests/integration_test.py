@@ -120,7 +120,7 @@ def test_standalone_integration_with_product(project_copy, tmpdir_factory):
         Pytest fixture providing a factory to create temporary directories for testing.
     """
 
-    mock_datadir = os.path.join(project_copy, "mock_datadir/data")
+    mock_datadir = os.path.join(project_copy, "mock_datadir")
 
     # We'll move the data to a separate directory to test that it can still be found
     shutil.move(os.path.join(project_copy, DATA_DIR, "data/"), mock_datadir)

@@ -43,5 +43,8 @@ TEST_DATA_DIR = "test_data"
 TEST_REPORT_SUMMARY_FILENAME = "Test_Reports.md"
 TEST_REPORTS_SUBDIR = "TR"
 
-# Other constants
+# Heading for a Table of Contents
 HEADING_TOC = "## Table of Contents"
+
+# The subdir in which data associated with XML data products is stored
+DATA_SUBDIR = "data"

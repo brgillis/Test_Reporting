@@ -25,11 +25,12 @@ from __future__ import annotations
 import codecs
 import hashlib
 import logging
+import os
 import re
 import subprocess
 from typing import List, TYPE_CHECKING, TextIO
 
-from Test_Reporting.utility.constants import HEADING_TOC
+from Test_Reporting.utility.constants import DATA_SUBDIR, HEADING_TOC
 
 if TYPE_CHECKING:
     from logging import Logger
@@ -69,6 +70,52 @@ def log_entry_exit(my_logger, level=logging.DEBUG):
 
 
 @log_entry_exit(logger)
+def get_qualified_path(path, base=None):
+    """Takes a path (to a filename or directory) and makes it fully qualified. This can be used for instance on user
+    input which may be either absolute or relative, to convert the relative case to absolute.
+
+    Parameters
+    ----------
+    path : str
+        The path to make fully-qualified.
+    base : str or None
+        If the path isn't fully-qualified, this will be the base path added in front of it. Default: (Current
+        directory at time this function is called)
+
+    Returns
+    -------
+    qualified_path : str
+        The fully-qualified path.
+    """
+
+    # Silently coerce `path` to a string
+    path = str(path)
+
+    cwd = os.getcwd()
+    parent_dir = os.path.split(cwd)[0]
+
+    # Check if it starts relative to the current directory - we need to replace this in case the current directory is
+    # later changed
+    if path.startswith("../"):
+        path = os.path.join(parent_dir, path[3:])
+    elif path.startswith(".."):
+        path = os.path.join(parent_dir, path[2:])
+    elif path.startswith("./"):
+        path = os.path.join(cwd, path[2:])
+    elif path.startswith("."):
+        path = os.path.join(cwd, path[1:])
+
+    # Check if it's already absolute, and return if so
+    if path.startswith("/") or path.startswith("~"):
+        return path
+
+    if base is None:
+        base = cwd
+
+    return os.path.join(base, path)
+
+
+@log_entry_exit(logger)
 def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
     """Extracts a tarball into the provided directory, performing security checks on the provided filename to ensure
     it doesn't contain any characters which are potentially unsafe in a `tar` command.
@@ -86,9 +133,7 @@ def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
     qualified_tmpdir = str(qualified_tmpdir)
 
     # Check the filename contains only expected characters. If it doesn't, this could open a security hole
-    filename_regex_match = re.match(r"^[a-zA-Z0-9\-_./+]*\.tar(\.gz)?$", qualified_results_tarball_filename)
-
-    if not filename_regex_match:
+    if not is_valid_tarball_filename(qualified_results_tarball_filename):
         raise ValueError(f"Qualified filename {qualified_results_tarball_filename} failed security check. It must"
                          f"contain only alphanumeric characters and [-_./+], and must end with .tar or .tar.gz.")
 
@@ -107,6 +152,20 @@ def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
             raise FileNotFoundError(tar_results.stderr)
         raise ValueError(f"Un-tarring of {qualified_results_tarball_filename} failed. stderr from tar "
                          f"process was: {tar_results.stderr}")
+
+
+@log_entry_exit(logger)
+def is_valid_tarball_filename(tarball_filename: str) -> bool:
+    """Checks that a filename is valid and safe for a tarball."""
+    filename_regex_match = re.match(r"^[a-zA-Z0-9\-_./+]*\.tar(\.gz)?$", tarball_filename)
+    return bool(filename_regex_match)
+
+
+@log_entry_exit(logger)
+def is_valid_xml_filename(xml_filename: str) -> bool:
+    """Checks that a filename is valid for an XML file."""
+    filename_regex_match = re.match(r"^.*\.xml?$", xml_filename)
+    return bool(filename_regex_match)
 
 
 @log_entry_exit(logger)
@@ -241,3 +300,39 @@ class TocMarkdownWriter:
 
         for line in self._l_lines:
             fo.write(line)
+
+
+def get_data_filename(filename, datadir):
+    """Get the filename of a datafile referenced by a data product, checking for if the data path might include an
+    extra "data/" at the end.
+
+    Parameters
+    ----------
+    filename : str
+        The filename of the datafile as specified in the data product
+    datadir : str
+        The path to the data directory
+
+    Returns
+    -------
+    qualified_filename : str or None
+        The fully-qualified path to the filename if the file is found, None if it isn't found.
+    """
+
+    qualified_filename = os.path.join(datadir, filename)
+
+    # Check if datadir might have been supplied with an extra "data/" at the end, and silently fix if so
+    if not os.path.isfile(qualified_filename):
+        if datadir.endswith(DATA_SUBDIR):
+            test_qualified_filename = os.path.join(os.path.split(datadir)[0], filename)
+            if os.path.isfile(test_qualified_filename):
+                qualified_filename = test_qualified_filename
+            else:
+                logger.error("File %s expected but not present. Also checked for %s, which is also not present",
+                             qualified_filename, test_qualified_filename)
+                return None
+        else:
+            logger.error("File %s expected but not present.", qualified_filename)
+            return None
+
+    return qualified_filename

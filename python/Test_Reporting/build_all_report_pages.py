@@ -125,7 +125,7 @@ def main():
     logger.info("# Beginning execution of script `%s`", __file__)
     logger.info("#")
 
-    run_build_from_args(args)
+    run_build_all_from_args(args)
 
     logger.info("#")
     logger.info("# Finished execution of script `%s`", __file__)
@@ -133,7 +133,7 @@ def main():
 
 
 @log_entry_exit(logger)
-def run_build_from_args(args):
+def run_build_all_from_args(args):
     """Workhorse function to perform primary execution of this script, using the provided parsed arguments.
 
     Parameters

@@ -60,8 +60,8 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
     def _add_test_case_details_and_figures_with_tmpdir(self,
                                                        writer: TocMarkdownWriter,
                                                        test_case_results: SingleTestResult,
-                                                       rootdir: str,
-                                                       tmpdir: str,
+                                                       reportdir: str,
+                                                       datadir: str,
                                                        figures_tmpdir: str) -> None:
         """Overload of parent method, to implement specialized writing for the CTI-Gal test case which parses
         slope/intercept info from the SupplementaryInfo and places figures alongside associated data for each bin.
@@ -78,14 +78,14 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
                          f"{l_int_bin_str=}. Falling back to parent implementation.")
             return super()._add_test_case_details_and_figures_with_tmpdir(writer=writer,
                                                                           test_case_results=test_case_results,
-                                                                          rootdir=rootdir,
-                                                                          tmpdir=tmpdir,
+                                                                          reportdir=reportdir,
+                                                                          datadir=datadir,
                                                                           figures_tmpdir=figures_tmpdir)
 
         # Get the figure label and filename for each bin
         l_figure_labels_and_filenames = self._prepare_figures(ana_result=test_case_results.analysis_result,
-                                                              rootdir=rootdir,
-                                                              tmpdir=tmpdir,
+                                                              reportdir=reportdir,
+                                                              datadir=datadir,
                                                               figures_tmpdir=figures_tmpdir)
 
         # Make a dict of bin indices to filenames
@@ -113,7 +113,7 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
             # Check if there's a figure for this bin, and prepare and link to it if so
             filename = d_figure_filenames.get(bin_i)
             if filename:
-                relative_figure_filename = self._move_figure_to_public(filename, rootdir, figures_tmpdir)
+                relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
                 writer.add_line(f"![{label} Figure]({relative_figure_filename})\n\n")
             else:
                 writer.add_line(MSG_NO_FIGURE)

@@ -26,9 +26,39 @@ import pytest
 
 from Test_Reporting.testing.common import TEST_TARBALL_FILENAME, TEST_XML_FILENAME
 from Test_Reporting.utility.constants import TEST_DATA_DIR
-from Test_Reporting.utility.misc import extract_tarball, hash_any
+from Test_Reporting.utility.misc import extract_tarball, get_qualified_path, hash_any
 
 TEST_MAX_LEN = 16
+
+
+def test_get_qualified_path():
+    """Unit test of the `get_qualified_path` method.
+    """
+
+    cwd = os.getcwd()
+    parent_dir = os.path.split(cwd)[0]
+
+    # Add trailing slashes to `cwd` and `parent_dir` to match how we expect to get results
+    if not cwd.endswith("/"):
+        cwd = f"{cwd}/"
+    if not parent_dir.endswith("/"):
+        parent_dir = f"{parent_dir}/"
+
+    test_base = "/test/base"
+    test_relative_path = "relpath/to/file.txt"
+    test_absolute_path = "/path/to/file"
+
+    assert get_qualified_path(test_absolute_path) == test_absolute_path
+
+    assert get_qualified_path(test_relative_path) == os.path.join(cwd, test_relative_path)
+
+    assert get_qualified_path(f"./{test_relative_path}") == os.path.join(cwd, test_relative_path)
+    assert get_qualified_path(f"../{test_relative_path}") == os.path.join(parent_dir, test_relative_path)
+
+    assert get_qualified_path(".") == cwd
+    assert get_qualified_path("..") == parent_dir
+
+    assert get_qualified_path(test_relative_path, base=test_base) == os.path.join(test_base, test_relative_path)
 
 
 def test_extract_tarball(rootdir, tmpdir):

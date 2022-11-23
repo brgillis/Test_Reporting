@@ -20,6 +20,11 @@ Software Problem Reports. It also automatically generates human-readable reports
     * [Input](#input)
     * [Output](#output)
     * [Examples](#examples)
+  * [`build_report.py`](#build_reportpy)
+    * [Purpose](#purpose-1)
+    * [Input](#input-1)
+    * [Output](#output-1)
+    * [Examples](#examples-1)
 * [Testing](#testing)
 * [Project Structure](#project-structure)
 * [Building Test Reports](#building-test-reports)
@@ -60,6 +65,15 @@ This project can be installed easily via Python's setuptools, by running the fol
 python setup.py install --user
 ```
 
+This installs the project into the user's `$HOME/.local/lib/python3.9/site-packages` directory, which must be added 
+to the user's `PYTHONPATH` environment variable, and the executable scripts will be installed to their `$HOME/.
+local/bin` directory, which must be added to the user's `PATH` environment variable. This can be done by e.g. adding 
+this to their `.bash_profile` file:
+
+```bash
+export PYTHONPATH=PYTHONPATH:$HOME/.local/lib/python3.9/site-packages
+export PATH=$PATH:$HOME/.local/bin
+```
 
 ## Executables
 
@@ -94,14 +108,15 @@ This script takes the following parameters as input:
 
 This script creates the following output:
 
-* Directory `public/TR/`, containing the generated reports for each test
-* Markdown file `public/Test_Reports.md`, containing a table linking to all generated test reports
+* Directory `<rootdir>/public/TR/`, containing the generated reports for each test
+* Directory `<rootdir>/images/`, containing images referenced by the report
+* Markdown file `<rootdir>/public/Test_Reports.md`, containing a table linking to all generated test reports
 
 And modifies the following existing files:
 
-* `public/SUMMARY.md` is appended with links to all created Markdown files
-* `public/README.md` is appended with a Table of Contents linking to all other pages in the project (this will link to
-  the expected `.html` filenames after being built by GitBooks, not the pre-compilation `.md` filenames)
+* `<rootdir>/public/SUMMARY.md` is appended with links to all created Markdown files
+* `<rootdir>/public/README.md` is appended with a Table of Contents linking to all other pages in the project (this will
+  link to the expected `.html` filenames after being built by GitBooks, not the pre-compilation `.md` filenames)
 
 This script also outputs a log of its execution via the standard Python logger, which outputs to stderr.
 
@@ -112,13 +127,13 @@ All arguments to the script allow default arguments, which are reasonable if run
 directory on the included `manifest.json` file. Therefore, the script can be from this directory simply as:
 
 ```bash
-./python/Test_Reporting/build_all_report_pages.py 2> public/build.log
+build_all_report_pages.py
 ```
 
 More generally, it can be run as:
 
 ```bash
-./python/Test_Reporting/build_all_report_pages.py --manifest /path/to/manifest.json --rootdir /path/to/rootdir/ --logging-level LEVEL 
+build_all_report_pages.py [--manifest <manifest>] [--rootdir <rootdir>] [--logging-level <level>] 
 ```
 
 with the proper paths to the desired manifest file and the project root directory and the desired logging level (e.g. 
@@ -127,7 +142,64 @@ DEBUG).
 The script's execution log is output via stderr, and can be redirected to a file via e.g.:
 
 ```bash
-./python/Test_Reporting/build_all_report_pages.py 2> /path/to/build.log
+build_all_report_pages.py 2> /path/to/build.log
+```
+
+When run as part of the [Continuous Integration](#continuous-integration) pipeline, this log is output to
+`public/build.log`.
+
+
+### `build_report.py`
+
+
+#### Purpose
+
+This script generates a report on the provided validation test results product or tarball. The generated report will be
+in the format of multiple Markdown (`.md`) files, one for the test itself and one for each test case, and may also 
+include references to images.
+
+
+#### Input
+
+This script takes the following parameters as input:
+
+| **Argument**  | **Description**                                                                                                                                                                                                                                                                                                            | **Required?** | **Default**                         |
+|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|-------------------------------------|
+| `--target`    | The filename of either a tarball ("*.tar" or "*.tar.gz") of test results or a results data product ("*.xml"), for which reports should be built. If the latter is provided, data files it points to will be assumed to be in the "data" directory relative to it unless otherwise specified with the "--datadir" argument. | Yes           | N/A                                 |
+| `--key`       | The key corresponding to the type of the results product, which can be used to invoke a specialized builder for it. The allowed values for this can be found in the module `python/specialization_keys.py`.                                                                                                                | No            | `None` (use the default builder)    |
+| `--datadir`   | If the target is a results data product, this can be used to specify the directory that all data files it points to are relative to (this would be the "workdir" of the program which generated it).                                                                                                                       | No            | (Directory containing `target`)     |
+| `--reportdir` | The directory in which to build the report pages.                                                                                                                                                                                                                                                                          | No            | `os.path.cwd()` (Current directory) |
+| `--log-level` | The level at which to log output (`DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`)                                                                                                                                                                                                                                      | No            | `DEBUG`                             |
+
+#### Output
+
+This script creates the following output:
+
+* Directory `<reportdir>/TR/`, containing the generated report for the test and its test cases
+* Directory `<reportdir>/images/`, containing images referenced by the report
+
+This script also outputs a log of its execution via the standard Python logger, which outputs to stderr.
+
+
+#### Examples
+
+Only the `target` argument needs to be supplied to this script; others all allow default arguments. So this can be run
+most simply by e.g.
+
+```bash
+build_report.py test_data/she_obs_cti_gal.tar.gz
+```
+
+More generally, it can be run as:
+
+```bash
+build_report.py <target> [--key <key>] [--datadir <datadir>] [--reportdir <reportdir>] [--logging-level <level>]
+```
+
+The script's execution log is output via stderr, and can be redirected to a file via e.g.:
+
+```bash
+build_report.py 2> /path/to/build.log
 ```
 
 When run as part of the [Continuous Integration](#continuous-integration) pipeline, this log is output to
@@ -167,6 +239,8 @@ PYTHONPATH=`pwd`/python pytest -v tests/
     test reports
   * `python/Test_Reporting/build_all_report_pages.py` - Executable python script which is used as part of the Continuous
     Integration pipeline to build reports on test results tarballs
+  * `python/Test_Reporting/build_report.py` - Executable python script which can be used to generate a report for a 
+    test results product, without needing to add it to this project. 
   * `python/Test_Reporting/specialization_keys.py` - Python module which details which specialized implementations of
     building test reports are to be used on which files in the `manifest.json` file
 * `test_data/` - Directory containing data used in unit tests of Python code

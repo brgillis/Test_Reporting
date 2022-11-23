@@ -36,13 +36,28 @@ def test_get_qualified_path():
     """
 
     cwd = os.getcwd()
+    parent_dir = os.path.split(cwd)[0]
+
+    # Add trailing slashes to `cwd` and `parent_dir` to match how we expect to get results
+    if not cwd.endswith("/"):
+        cwd = f"{cwd}/"
+    if not parent_dir.endswith("/"):
+        parent_dir = f"{parent_dir}/"
 
     test_base = "/test/base"
     test_relative_path = "relpath/to/file.txt"
     test_absolute_path = "/path/to/file"
 
     assert get_qualified_path(test_absolute_path) == test_absolute_path
+
     assert get_qualified_path(test_relative_path) == os.path.join(cwd, test_relative_path)
+
+    assert get_qualified_path(f"./{test_relative_path}") == os.path.join(cwd, test_relative_path)
+    assert get_qualified_path(f"../{test_relative_path}") == os.path.join(parent_dir, test_relative_path)
+
+    assert get_qualified_path(".") == cwd
+    assert get_qualified_path("..") == parent_dir
+
     assert get_qualified_path(test_relative_path, base=test_base) == os.path.join(test_base, test_relative_path)
 
 

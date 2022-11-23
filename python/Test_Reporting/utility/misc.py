@@ -25,6 +25,7 @@ from __future__ import annotations
 import codecs
 import hashlib
 import logging
+import os
 import re
 import subprocess
 from typing import List, TYPE_CHECKING, TextIO
@@ -69,6 +70,38 @@ def log_entry_exit(my_logger, level=logging.DEBUG):
 
 
 @log_entry_exit(logger)
+def get_qualified_path(path, base=None):
+    """Takes a path (to a filename or directory) and makes it fully qualified. This can be used for instance on user
+    input which may be either absolute or relative, to convert the relative case to absolute.
+
+    Parameters
+    ----------
+    path : str
+        The path to make fully-qualified.
+    base : str or None
+        If the path isn't fully-qualified, this will be the base path added in front of it. Default: (Current
+        directory at time this function is called)
+
+    Returns
+    -------
+    qualified_path : str
+        The fully-qualified path.
+    """
+
+    # Silently coerce `path` to a string
+    path = str(path)
+
+    # Check if it's already absolute, and return if so
+    if path.startswith("/"):
+        return path
+
+    if base is None:
+        base = os.getcwd()
+
+    return os.path.join(base, path)
+
+
+@log_entry_exit(logger)
 def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
     """Extracts a tarball into the provided directory, performing security checks on the provided filename to ensure
     it doesn't contain any characters which are potentially unsafe in a `tar` command.
@@ -107,12 +140,14 @@ def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
                          f"process was: {tar_results.stderr}")
 
 
+@log_entry_exit(logger)
 def is_valid_tarball_filename(tarball_filename: str) -> bool:
     """Checks that a filename is valid and safe for a tarball."""
     filename_regex_match = re.match(r"^[a-zA-Z0-9\-_./+]*\.tar(\.gz)?$", tarball_filename)
     return bool(filename_regex_match)
 
 
+@log_entry_exit(logger)
 def is_valid_xml_filename(xml_filename: str) -> bool:
     """Checks that a filename is valid for an XML file."""
     filename_regex_match = re.match(r"^.*\.xml?$", xml_filename)

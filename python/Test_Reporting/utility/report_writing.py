@@ -44,9 +44,8 @@ from Test_Reporting.utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
     from typing import Sequence, TextIO  # noqa F401
-    from Test_Reporting.utility.product_parsing import (AnalysisResult, RequirementResults, SingleTestResult,
-                                                        TestResults,  # noqa F401
-                                                        )
+    from Test_Reporting.utility.product_parsing import (AnalysisResult, RequirementResults,  # noqa F401
+                                                        SingleTestResult, TestResults, )  # noqa F401
 
 TMPDIR_MAXLEN = 16
 

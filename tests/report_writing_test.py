@@ -44,7 +44,7 @@ EX_N_TEST_CASES = 24
 L_COMMON_MOCK_UNPACKED_FILENAMES = ["foo.bar",
                                     "foo2.bar"
                                     "foobar.foobar",
-                                    f"foo{DIRECTORY_FILE_EXT}.gz"
+                                    f"foo{DIRECTORY_FILE_EXT}.gz",
                                     "foo.xml",
                                     "foo2.xml",
                                     "dir/subfoo.xml",
@@ -234,6 +234,31 @@ def test_find_directory_filename(mock_unpacked_dir):
     _touch_file(os.path.join(mock_unpacked_dir, EX_EXTRA_DIRECTORY_FILENAME))
     with pytest.raises(ValueError):
         ReportSummaryWriter.find_directory_filename(mock_unpacked_dir)
+
+
+def test_find_product_filenames(mock_unpacked_dir):
+    """Unit test of the `ReportSummaryWriter._find_product_filenames` method.
+
+    Parameters
+    ----------
+    mock_unpacked_dir : str
+        Pytest fixture providing the fully-qualified filename of a directory prepared with some mock files. This is
+        set up to have multiple possible product files, some being in subdirs.
+    """
+
+    l_product_filenames = ReportSummaryWriter(TEST_NAME)._find_product_filenames(mock_unpacked_dir)
+
+    assert "foo.xml" in l_product_filenames
+    assert "foo2.xml" in l_product_filenames
+    assert "dir/subfoo.xml" in l_product_filenames
+    assert "dir/dir/subfoo.xml" in l_product_filenames
+    assert len(l_product_filenames) == 4
+
+    # Check we get an expected exception with an empty dir
+    qualified_empty_dir = os.path.join(mock_unpacked_dir, "empty_dir")
+    os.makedirs(qualified_empty_dir, exist_ok=True)
+    with pytest.raises(ValueError):
+        ReportSummaryWriter(TEST_NAME)._find_product_filenames(qualified_empty_dir)
 
 
 @pytest.fixture

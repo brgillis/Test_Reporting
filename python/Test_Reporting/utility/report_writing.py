@@ -555,7 +555,8 @@ class ReportSummaryWriter:
         l_product_filenames = [fn for fn in os.listdir(qualified_dir) if
                                os.path.isfile(os.path.join(qualified_dir, fn)) and self._is_valid_product_filename(fn)]
 
-        l_subdirs = [subdir for subdir in os.listdir(qualified_dir) if os.path.isdir(subdir)]
+        l_subdirs = [subdir for subdir in os.listdir(qualified_dir) if
+                     os.path.isdir(os.path.join(qualified_dir, subdir))]
 
         # Search recursively in each subdir
         for subdir in l_subdirs:

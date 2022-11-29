@@ -526,9 +526,8 @@ class ReportSummaryWriter:
 
         return num_passed, num_failed
 
-    @staticmethod
     @log_entry_exit(logger)
-    def _find_product_filenames(qualified_tmpdir):
+    def _find_product_filenames(self, qualified_tmpdir):
         """Finds the filenames of all .xml products in the provided directory. If certain .xml files should be
         ignored for a given test, this method can be overridden to handle that.
 
@@ -541,12 +540,48 @@ class ReportSummaryWriter:
         l_product_filenames : List[str]
         """
 
-        l_product_filenames = [fn for fn in os.listdir(qualified_tmpdir) if fn.endswith(".xml")]
+        l_product_filenames = self._recursive_find_product_filenames(qualified_tmpdir)
 
         if len(l_product_filenames) == 0:
             raise ValueError("No .xml data products found in tarball.")
 
         return l_product_filenames
+
+    @log_entry_exit(logger)
+    def _recursive_find_product_filenames(self, qualified_dir: str) -> List[str]:
+        """Recursive implementation of core loop in finding product filenames, to search within all subdirs.
+        """
+
+        l_product_filenames = [fn for fn in os.listdir(qualified_dir) if
+                               os.path.isfile(os.path.join(qualified_dir, fn)) and self._is_valid_product_filename(fn)]
+
+        l_subdirs = [subdir for subdir in os.listdir(qualified_dir) if
+                     os.path.isdir(os.path.join(qualified_dir, subdir))]
+
+        # Search recursively in each subdir
+        for subdir in l_subdirs:
+            qualified_subdir = os.path.join(qualified_dir, subdir)
+            l_product_filenames += [os.path.join(subdir, fn) for fn in
+                                    self._recursive_find_product_filenames(qualified_subdir)]
+
+        return l_product_filenames
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _is_valid_product_filename(filename):
+        """Method to check if a filename is valid for a data product. By default, this just checks if it ends with
+        ".xml", but this can be overridden for more detailed checks.
+
+        Parameters
+        ----------
+        filename : str
+            The filename to check for validity.
+
+        Returns
+        -------
+        bool
+        """
+        return filename.endswith(".xml")
 
     @log_entry_exit(logger)
     def _write_all_test_case_results(self, test_results, test_name_tail, reportdir, datadir):

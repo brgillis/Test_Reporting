@@ -1,5 +1,5 @@
 """
-:file: test_writing_test.py
+:file: cti_gal_test.py
 
 :date: 10/17/2022
 :author: Bryan Gillis

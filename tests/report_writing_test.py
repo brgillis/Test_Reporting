@@ -44,7 +44,11 @@ EX_N_TEST_CASES = 24
 L_COMMON_MOCK_UNPACKED_FILENAMES = ["foo.bar",
                                     "foo2.bar"
                                     "foobar.foobar",
-                                    f"foo{DIRECTORY_FILE_EXT}.gz"]
+                                    f"foo{DIRECTORY_FILE_EXT}.gz"
+                                    "foo.xml",
+                                    "foo2.xml",
+                                    "dir/subfoo.xml",
+                                    "dir/dir/subfoo.xml"]
 EX_DIRECTORY_FILENAME = f"foo{DIRECTORY_FILE_EXT}"
 EX_EXTRA_DIRECTORY_FILENAME = f"foo2{DIRECTORY_FILE_EXT}"
 
@@ -62,6 +66,10 @@ TEST_CASE_FILENAME = "mock_filename.md"
 def _touch_file(qualified_filename: str) -> None:
     """Creates an empty file with the given fully-qualified filename.
     """
+
+    # Make sure the directory containing this file exists
+    os.makedirs(os.path.split(qualified_filename)[0], exist_ok=True)
+
     with open(qualified_filename, "w"):
         pass
 

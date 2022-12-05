@@ -25,6 +25,11 @@ Software Problem Reports. It also automatically generates human-readable reports
     * [Input](#input-1)
     * [Output](#output-1)
     * [Examples](#examples-1)
+  * [`pack_results_tarball.py`](#pack_results_tarballpy)
+    * [Purpose](#purpose-2)
+    * [Input](#input-2)
+    * [Output](#output-2)
+    * [Examples](#examples-2)
 * [Testing](#testing)
 * [Project Structure](#project-structure)
 * [Building Test Reports](#building-test-reports)
@@ -187,7 +192,7 @@ Only the `target` argument needs to be supplied to this script; others all allow
 most simply by e.g.
 
 ```bash
-build_report.py test_data/she_obs_cti_gal.tar.gz
+build_report.py /path/to/this/project/test_data/she_obs_cti_gal.tar.gz
 ```
 
 More generally, it can be run as:
@@ -199,11 +204,57 @@ build_report.py <target> [--key <key>] [--datadir <datadir>] [--reportdir <repor
 The script's execution log is output via stderr, and can be redirected to a file via e.g.:
 
 ```bash
-build_report.py 2> /path/to/build.log
+build_report.py 2> ... /path/to/build.log
 ```
 
-When run as part of the [Continuous Integration](#continuous-integration) pipeline, this log is output to
-`public/build.log`.
+
+### `pack_results_tarball.py`
+
+
+#### Purpose
+
+This script packs one or more validation test results products, and all datafiles pointed to, into a tarball, to help
+expedite the process of collecting new results and publishing them with this project.
+
+
+#### Input
+
+This script takes the following parameters as input:
+
+| **Argument**  | **Description**                                                                                                                                                                                                                     | **Required?** | **Default**                                              |
+|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|----------------------------------------------------------|
+| `--target`    | The filename of either a `.xml` validation test results data product or a `.json` listfile of multiple such products. All products pointed to this way, plus all datafiles they point to, will be packed into a `.tar.gz` tarball." | Yes           | N/A                                                      |
+| `--workdir`   | The directory which all provided filenames (including those referenced within listfiles and data products) are relative to.                                                                                                         | No            | (Directory containing `target`)                          |
+| `--output`    | The desired filename of the tarball to be created.                                                                                                                                                                                  | No            | (Will use `target` with extension replaced by ".tar.gz") |
+| `--log-level` | The level at which to log output (`DEBUG`, `INFO`, `WARNING`, `ERROR`, or `CRITICAL`)                                                                                                                                               | No            | `DEBUG`                                                  |
+
+#### Output
+
+This script creates a single tarball as output. If the command-line argument `--output` is provided, this will be 
+used as the name of this output file. Otherwise, it will be named based off of `target`, with the extension replaced 
+by ".tar.gz"
+
+
+#### Examples
+
+Only the `target` argument needs to be supplied to this script; others all allow default arguments. So this can be run
+most simply by e.g.
+
+```bash
+pack_results_tarball.py /path/to/this/project/test_data/she_observation_cti_gal_validation_test_results_product.xml
+```
+
+More generally, it can be run as:
+
+```bash
+pack_results_tarball.py <target> [--workdir <workdir>] [--output <output>] [--logging-level <level>]
+```
+
+The script's execution log is output via stderr, and can be redirected to a file via e.g.:
+
+```bash
+pack_results_tarball.py ... 2> /path/to/build.log
+```
 
 
 ## Testing
@@ -241,6 +292,9 @@ PYTHONPATH=`pwd`/python pytest -v tests/
     Integration pipeline to build reports on test results tarballs
   * `python/Test_Reporting/build_report.py` - Executable python script which can be used to generate a report for a 
     test results product, without needing to add it to this project. 
+  * `python/Test_Reporting/pack_results_tarball.py` - Executable python script which can be used to pack a test 
+    results data product and all datafiles it points to into a tarball for easy copying into this project for 
+    publication. 
   * `python/Test_Reporting/specialization_keys.py` - Python module which details which specialized implementations of
     building test reports are to be used on which files in the `manifest.json` file
 * `test_data/` - Directory containing data used in unit tests of Python code

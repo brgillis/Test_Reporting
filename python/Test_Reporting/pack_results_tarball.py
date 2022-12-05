@@ -29,7 +29,6 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import List, TYPE_CHECKING
 
-from Test_Reporting.specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
 from Test_Reporting.utility.constants import DATA_SUBDIR, JSON_EXT, TARBALL_EXT, XML_EXT
 from Test_Reporting.utility.misc import (get_qualified_path, get_relative_path, is_valid_json_filename,
                                          is_valid_xml_filename,

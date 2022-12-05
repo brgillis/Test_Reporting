@@ -30,7 +30,7 @@ from logging import getLogger
 from typing import List, TYPE_CHECKING
 
 from Test_Reporting.specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
-from Test_Reporting.utility.constants import JSON_EXT, TARBALL_EXT, XML_EXT
+from Test_Reporting.utility.constants import DATA_SUBDIR, JSON_EXT, TARBALL_EXT, XML_EXT
 from Test_Reporting.utility.misc import (get_qualified_path, get_relative_path, is_valid_json_filename,
                                          is_valid_xml_filename,
                                          log_entry_exit, tar_files, )
@@ -153,10 +153,20 @@ def run_pack_from_args(args):
 
     logger.debug("Packing files: %s", l_files_to_pack)
 
-    logger.info("Packing tarball %s", args.output)
+    # Check for any missing files and exclude them from the list
+    l_existing_files_to_pack = [f for f in l_files_to_pack if os.path.isfile(os.path.join(args.workdir, f))]
+
+    # Warn for any missing files
+    if len(l_existing_files_to_pack) < len(l_files_to_pack):
+        s_existing_files_to_pack = set(l_existing_files_to_pack)
+        logger.warning("%i files were referenced but could not be found. These files were: %s",
+                       len(l_files_to_pack) - len(l_existing_files_to_pack),
+                       [f for f in l_files_to_pack if f not in s_existing_files_to_pack])
+
+    logger.info("Packing tarball: %s", args.output)
 
     tar_files(tarball_filename=args.output,
-              l_filenames=l_files_to_pack,
+              l_filenames=l_existing_files_to_pack,
               workdir=args.workdir,
               delete_files=False)
 
@@ -216,8 +226,8 @@ def get_l_files_to_pack_from_product(product_filename, workdir):
 
     # Read the product into memory, then get all filenames from it
     product = parse_xml_product(os.path.join(workdir, product_filename))
-    l_files_to_pack += [tr.analysis_result.textfiles_tarball for tr in product.l_test_results]
-    l_files_to_pack = [tr.analysis_result.figures_tarball for tr in product.l_test_results]
+    l_files_to_pack += [f"{DATA_SUBDIR}/{tr.analysis_result.textfiles_tarball}" for tr in product.l_test_results]
+    l_files_to_pack = [f"{DATA_SUBDIR}/{tr.analysis_result.figures_tarball}" for tr in product.l_test_results]
 
     return l_files_to_pack
 

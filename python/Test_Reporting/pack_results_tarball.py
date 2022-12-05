@@ -141,7 +141,7 @@ def run_pack_from_args(args):
 
     # Get a list of all files to pack into the tarball by reading the product/listfile
 
-    target_relpath = get_relative_path(args.target)
+    target_relpath = get_relative_path(args.target, args.workdir)
     l_files_to_pack: List[str]
     if target_is_xml:
         l_files_to_pack = get_l_files_to_pack_from_product(product_filename=target_relpath,
@@ -161,8 +161,6 @@ def run_pack_from_args(args):
         logger.warning("%i files were referenced but could not be found. These files were: %s",
                        len(l_files_to_pack) - len(l_existing_files_to_pack),
                        [f for f in l_files_to_pack if f not in s_existing_files_to_pack])
-
-    logger.info("Packing tarball: %s", args.output)
 
     tar_files(tarball_filename=args.output,
               l_filenames=l_existing_files_to_pack,
@@ -225,8 +223,8 @@ def get_l_files_to_pack_from_product(product_filename, workdir):
 
     # Read the product into memory, then get all filenames from it
     product = parse_xml_product(os.path.join(workdir, product_filename))
-    l_files_to_pack += [f"{DATA_SUBDIR}/{tr.analysis_result.textfiles_tarball}" for tr in product.l_test_results]
-    l_files_to_pack = [f"{DATA_SUBDIR}/{tr.analysis_result.figures_tarball}" for tr in product.l_test_results]
+    l_files_to_pack += [tr.analysis_result.textfiles_tarball for tr in product.l_test_results]
+    l_files_to_pack += [tr.analysis_result.figures_tarball for tr in product.l_test_results]
 
     return l_files_to_pack
 

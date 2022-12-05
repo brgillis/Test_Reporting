@@ -48,3 +48,10 @@ HEADING_TOC = "## Table of Contents"
 
 # The subdir in which data associated with XML data products is stored
 DATA_SUBDIR = "data"
+
+# Filename extensions
+XML_EXT = ".xml"
+JSON_EXT = ".json"
+HTML_EXT = ".html"
+MD_EXT = ".md"
+TARBALL_EXT = ".tar.gz"

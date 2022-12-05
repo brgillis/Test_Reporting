@@ -28,7 +28,7 @@ import logging
 import os
 import re
 import subprocess
-from typing import List, TYPE_CHECKING, TextIO
+from typing import List, Sequence, TYPE_CHECKING, TextIO
 
 from Test_Reporting.utility.constants import DATA_SUBDIR, HEADING_TOC
 
@@ -116,6 +116,44 @@ def get_qualified_path(path, base=None):
 
 
 @log_entry_exit(logger)
+def get_relative_path(path, base):
+    """Takes a path (to a filename or directory) and makes it relative to another.
+
+    Parameters
+    ----------
+    path : str
+        The path to be made relative to `base`.
+    base : str
+        The path to make the result relative to.
+
+    Returns
+    -------
+    relative : str
+        The path to `path` relative to `base`
+    """
+
+    # Silently coerce `path` and `base` to strings
+    path = str(path)
+    base = str(base)
+
+    # If either starts with the special character `~`, replace it with the home directory
+    if path.startswith("~"):
+        path = os.path.join(os.environ["HOME"], path[1:])
+    if base.startswith("~"):
+        base = os.path.join(os.environ["HOME"], base[1:])
+
+    # Ensure `base` ends with "/", to allow easy replacement
+    if not base.endswith("/"):
+        base = f"{base}/"
+
+    # Get the relative path now and return it
+    if path.startswith(base):
+        return path[len(base):]
+    else:
+        return path
+
+
+@log_entry_exit(logger)
 def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
     """Extracts a tarball into the provided directory, performing security checks on the provided filename to ensure
     it doesn't contain any characters which are potentially unsafe in a `tar` command.
@@ -155,6 +193,59 @@ def extract_tarball(qualified_results_tarball_filename, qualified_tmpdir):
 
 
 @log_entry_exit(logger)
+def tar_files(tarball_filename,
+              l_filenames,
+              workdir,
+              delete_files=False):
+    """Create a tarball containing all files in the provided list of filenames.
+
+    Parameters
+    ----------
+    tarball_filename : str
+        The desired fully-qualified or workdir-relative filename of the tarball to be created.
+    l_filenames : Sequence[str]
+        A sequence of workdir-relative filenames to be put into the tarball.
+    workdir : str, default="."
+        The workdir in which the file exists. If `filename` is provided fully-qualified,
+        it is not necessary for this to be provided (and it will be ignored if it is).
+    delete_files : bool, default=False
+        If True, all files in `l_filenames` will be deleted after being put into the tarball
+    """
+
+    qualified_tarball_filename = os.path.join(workdir, tarball_filename)
+
+    filename_string = " ".join(l_filenames)
+
+    # Tar the files and fully log the process
+    logger.info("Creating tarball %s", qualified_tarball_filename)
+
+    tar_cmd = f"cd {workdir} && tar -cf {qualified_tarball_filename} {filename_string}"
+    tar_results = subprocess.run(tar_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    logger.info("tar stdout: %s", tar_results.stdout)
+    logger.debug("tar stderr: %s", tar_results.stderr)
+
+    # Check that the tar process succeeded
+    if not os.path.isfile(qualified_tarball_filename):
+        raise FileNotFoundError(f"{qualified_tarball_filename} not found. "
+                                f"stderr from tar process was: \n"
+                                f"{tar_results.stderr}")
+    if tar_results.returncode:
+        raise ValueError(f"Tarring of {qualified_tarball_filename} failed. stderr from tar process was: \n"
+                         f"{tar_results.stderr}")
+
+    # Delete the files if desired
+    if delete_files:
+        l_qualified_filenames = [os.path.join(workdir, filename) for filename in l_filenames]
+        for qualified_filename in l_qualified_filenames:
+            try:
+                os.remove(qualified_filename)
+            except IOError:
+                # Don't need to fail the whole process, but log the issue
+                logger.warning("Cannot delete file: %s", qualified_filename)
+
+
+@log_entry_exit(logger)
 def is_valid_tarball_filename(tarball_filename: str) -> bool:
     """Checks that a filename is valid and safe for a tarball."""
     filename_regex_match = re.match(r"^[a-zA-Z0-9\-_./+]*\.tar(\.gz)?$", tarball_filename)
@@ -165,6 +256,13 @@ def is_valid_tarball_filename(tarball_filename: str) -> bool:
 def is_valid_xml_filename(xml_filename: str) -> bool:
     """Checks that a filename is valid for an XML file."""
     filename_regex_match = re.match(r"^.*\.xml?$", xml_filename)
+    return bool(filename_regex_match)
+
+
+@log_entry_exit(logger)
+def is_valid_json_filename(json_filename: str) -> bool:
+    """Checks that a filename is valid for a JSON file."""
+    filename_regex_match = re.match(r"^.*\.json?$", json_filename)
     return bool(filename_regex_match)
 
 

@@ -85,7 +85,10 @@ class ValTestMeta(NamedTuple):
 
 
 # Define the expected type for callables used to build test reports, now that the output type from it is defined above
-BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]], str, str, str], List[ValTestMeta]]
+BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]],
+                                str,
+                                Optional[str],
+                                Optional[str]], List[ValTestMeta]]
 
 
 class ReportSummaryWriter:

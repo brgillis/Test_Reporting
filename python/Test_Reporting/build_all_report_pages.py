@@ -160,7 +160,7 @@ def run_build_all_from_args(args):
         else:
             logger.info("Using build callable %s to construct test report from data: %s.", build_callable, value)
 
-        l_test_meta += build_callable(value, args.rootdir)
+        l_test_meta += build_callable(value, args.rootdir, None, None)
 
     # Build the summary page for test reports
     build_test_report_summary(test_report_summary_filename=TEST_REPORT_SUMMARY_FILENAME,

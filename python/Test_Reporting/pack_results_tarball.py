@@ -26,6 +26,7 @@ import json
 import logging
 import os
 from argparse import ArgumentParser
+from copy import deepcopy
 from logging import getLogger
 from typing import List, TYPE_CHECKING
 
@@ -116,6 +117,9 @@ def run_pack_from_args(args):
     args : Namespace
         The parsed arguments for this script.
     """
+
+    # Work with a deepcopy of `args` to avoid surprise from modifying it
+    args = deepcopy(args)
 
     # Determine input, making sure all use fully-qualified paths
 

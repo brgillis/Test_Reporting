@@ -195,7 +195,7 @@ def get_l_files_to_pack_from_listfile(listfile_filename, workdir):
     l_files_to_pack = [listfile_filename]
     for product_filename in l_product_filenames:
         l_files_to_pack += get_l_files_to_pack_from_product(product_filename=product_filename,
-                                                            workdir=args.workdir)
+                                                            workdir=workdir)
 
     return l_files_to_pack
 

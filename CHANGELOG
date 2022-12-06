@@ -17,6 +17,7 @@ Deprecated Features
 Bug Fixes
 ---------
 - Names of some classes were confusing pytest. These have all been changed to avoid this confusion
+- Implemented catching of cases where figures/textfiles tarballs were corrupt, so this wouldn't crash the whole process
 
 New Features
 ------------

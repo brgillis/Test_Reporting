@@ -44,7 +44,7 @@ from typing import Any, List, Optional, Type
 from xml.etree import ElementTree
 from xml.etree.ElementTree import Element
 
-from Test_Reporting.utility.misc import log_entry_exit
+from Test_Reporting.utility.misc import ensure_data_prefix, log_entry_exit
 
 logger = getLogger(__name__)
 
@@ -174,6 +174,12 @@ class AnalysisResult:
     textfiles_tarball: Optional[str] = None
     figures_tarball: Optional[str] = None
     ana_comment: Optional[str] = None
+
+    def __post_init__(self):
+        """Fix potential issues with filenames, to ensure they always start with "data/"."""
+
+        self._textfiles_tarball = ensure_data_prefix(self.textfiles_tarball)
+        self.figures_tarball = ensure_data_prefix(self.figures_tarball)
 
     @classmethod
     @log_entry_exit(logger)

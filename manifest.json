@@ -1,6 +1,6 @@
 {
   "cti_gal": {
-    "obs": "she_obs_cti_gal.tar.gz",
-    "exp": null
+    "obs": "she_observation_cti_gal_validation_test_results_product.tar.gz",
+    "exp": "she_exposure_cti_gal_validation_test_results_listfile.tar.gz"
   }
 }

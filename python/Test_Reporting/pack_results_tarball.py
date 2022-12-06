@@ -42,7 +42,7 @@ logger = getLogger(__name__)
 
 
 @log_entry_exit(logger)
-def get_build_argument_parser():
+def get_pack_argument_parser():
     """Get an argument parser for this script.
 
     Returns
@@ -81,7 +81,7 @@ def parse_args():
         The parsed arguments.
     """
 
-    parser = get_build_argument_parser()
+    parser = get_pack_argument_parser()
 
     args = parser.parse_args()
 

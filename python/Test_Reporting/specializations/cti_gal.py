@@ -74,8 +74,8 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
 
         # Check that data is formatted as expected. If not, fall back to parent implementation
         if (not l_slope_bin_str) or (not l_int_bin_str) or (len(l_slope_bin_str) != len(l_int_bin_str)):
-            logger.error(f"CTI-Gal SupplementaryInfo not formatted as expected: {l_slope_bin_str=}, "
-                         f"{l_int_bin_str=}. Falling back to parent implementation.")
+            logger.warning(f"CTI-Gal SupplementaryInfo not formatted as expected: {l_slope_bin_str=}, "
+                           f"{l_int_bin_str=}. Falling back to parent implementation.")
             return super()._add_test_case_details_and_figures_with_tmpdir(writer=writer,
                                                                           test_case_results=test_case_results,
                                                                           reportdir=reportdir,
@@ -221,6 +221,6 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
         split_bin_info_str = bin_info_str.split()
 
         bin_min = split_bin_info_str[BIN_MIN_POSITION]
-        bin_max = split_bin_info_str[BIN_MAX_POSITION]
+        bin_max = split_bin_info_str[BIN_MAX_POSITION][-1]
 
         writer.add_line(f"Bin limits: {bin_min} to {bin_max}.\n\n")

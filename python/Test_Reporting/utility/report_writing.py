@@ -59,6 +59,8 @@ HEADING_TEST_CASES = "Test Cases"
 HEADING_GENERAL_INFO = "General Information"
 HEADING_DETAILED_RESULTS = "Detailed Results"
 
+MSG_TARBALL_CORRUPT = "Tarball %s appears to be corrupt."
+
 logger = getLogger(__name__)
 
 
@@ -896,8 +898,16 @@ class ReportSummaryWriter:
         if qualified_textfiles_tarball_filename is None or qualified_figures_tarball_filename is None:
             return None
 
-        extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)
-        extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)
+        try:
+            extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)
+        except ValueError:
+            logger.error(MSG_TARBALL_CORRUPT, qualified_figures_tarball_filename)
+            return None
+        try:
+            extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)
+        except ValueError:
+            logger.error(MSG_TARBALL_CORRUPT, qualified_textfiles_tarball_filename)
+            extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)
 
         # Find the "directory" file which should have been in the tarball, and get the labels and filenames of
         # figures from it

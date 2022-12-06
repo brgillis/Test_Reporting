@@ -25,7 +25,7 @@ import shutil
 
 from Test_Reporting.specializations.cti_gal import CtiGalReportSummaryWriter
 
-from Test_Reporting.testing.common import TEST_TARBALL_FILENAME, TEST_XML_FILENAME
+from Test_Reporting.testing.common import TEST_JSON_FILENAME, TEST_TARBALL_FILENAME, TEST_XML_FILENAME
 
 from Test_Reporting.specialization_keys import CTI_GAL_KEY
 
@@ -160,6 +160,28 @@ def test_pack_tarball_with_product(project_copy):
     # Set up the mock arguments
     parser = pack_results_tarball.get_pack_argument_parser()
     args = parser.parse_args([os.path.join(project_copy, DATA_DIR, TEST_XML_FILENAME)])
+    args.output = os.path.join(project_copy, OUTPUT_TARBALL_FILENAME)
+    args.workdir = project_copy
+
+    # Call the main workhorse function
+    pack_results_tarball.run_pack_from_args(args)
+
+    # Check that output looks as expected
+
+    assert os.path.isfile(args.output)
+
+
+def test_pack_tarball_with_listfile(project_copy):
+    """Tests a full execution of the `pack_results_tarball.py` script, targeting a listfile.
+
+    Parameters
+    ----------
+    project_copy : str
+    """
+
+    # Set up the mock arguments
+    parser = pack_results_tarball.get_pack_argument_parser()
+    args = parser.parse_args([os.path.join(project_copy, DATA_DIR, TEST_JSON_FILENAME)])
     args.output = os.path.join(project_copy, OUTPUT_TARBALL_FILENAME)
     args.workdir = project_copy
 

@@ -267,6 +267,25 @@ def is_valid_json_filename(json_filename: str) -> bool:
 
 
 @log_entry_exit(logger)
+def ensure_data_prefix(filename):
+    """Ensures that a filename for a datafile starts with "data/" by adding it if it isn't already present.
+
+    Parameters
+    ----------
+    filename : str
+        A relative filename which may or may not start with "data/"
+
+    Returns
+    -------
+    data_filename : str
+        A relative filename which starts with "data/"
+    """
+    if filename.startswith(f"{DATA_SUBDIR}/"):
+        return filename
+    return os.path.join(DATA_SUBDIR, filename)
+
+
+@log_entry_exit(logger)
 def hash_any(obj, max_length=None):
     """Hashes any immutable object into a base64 string of a given length.
 

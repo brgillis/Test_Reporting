@@ -221,6 +221,6 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
         split_bin_info_str = bin_info_str.split()
 
         bin_min = split_bin_info_str[BIN_MIN_POSITION]
-        bin_max = split_bin_info_str[BIN_MAX_POSITION]
+        bin_max = split_bin_info_str[BIN_MAX_POSITION][-1]
 
         writer.add_line(f"Bin limits: {bin_min} to {bin_max}.\n\n")

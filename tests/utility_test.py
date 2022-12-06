@@ -26,7 +26,7 @@ import pytest
 
 from Test_Reporting.testing.common import TEST_TARBALL_FILENAME, TEST_XML_FILENAME
 from Test_Reporting.utility.constants import TEST_DATA_DIR
-from Test_Reporting.utility.misc import extract_tarball, get_qualified_path, hash_any
+from Test_Reporting.utility.misc import ensure_data_prefix, extract_tarball, get_qualified_path, hash_any
 
 TEST_MAX_LEN = 16
 
@@ -104,6 +104,15 @@ def test_extract_tarball(rootdir, tmpdir):
         extract_tarball("Bad_filename.tar.gz>", tmpdir)
     with pytest.raises(ValueError):
         extract_tarball("Bad_filename.tar.gz!", tmpdir)
+
+
+def test_ensure_data_prefix():
+    """Unit test of the `ensure_data_prefix` method.
+    """
+    assert ensure_data_prefix("data/foo") == "data/foo"
+    assert ensure_data_prefix("foo") == "data/foo"
+    assert ensure_data_prefix("/data/foo") == "/data/foo"
+    assert ensure_data_prefix("datafoo") == "data/datafoo"
 
 
 def test_hash_any():

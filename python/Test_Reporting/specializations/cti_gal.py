@@ -74,8 +74,8 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
 
         # Check that data is formatted as expected. If not, fall back to parent implementation
         if (not l_slope_bin_str) or (not l_int_bin_str) or (len(l_slope_bin_str) != len(l_int_bin_str)):
-            logger.error(f"CTI-Gal SupplementaryInfo not formatted as expected: {l_slope_bin_str=}, "
-                         f"{l_int_bin_str=}. Falling back to parent implementation.")
+            logger.warning(f"CTI-Gal SupplementaryInfo not formatted as expected: {l_slope_bin_str=}, "
+                           f"{l_int_bin_str=}. Falling back to parent implementation.")
             return super()._add_test_case_details_and_figures_with_tmpdir(writer=writer,
                                                                           test_case_results=test_case_results,
                                                                           reportdir=reportdir,

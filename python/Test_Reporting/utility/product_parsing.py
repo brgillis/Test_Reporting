@@ -178,7 +178,7 @@ class AnalysisResult:
     def __post_init__(self):
         """Fix potential issues with filenames, to ensure they always start with "data/"."""
 
-        self._textfiles_tarball = ensure_data_prefix(self.textfiles_tarball)
+        self.textfiles_tarball = ensure_data_prefix(self.textfiles_tarball)
         self.figures_tarball = ensure_data_prefix(self.figures_tarball)
 
     @classmethod

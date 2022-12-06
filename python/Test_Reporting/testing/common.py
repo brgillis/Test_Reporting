@@ -24,6 +24,7 @@ from Test_Reporting.utility.report_writing import ValTestCaseMeta, ValTestMeta
 
 TEST_TARBALL_FILENAME = "she_obs_cti_gal.tar.gz"
 TEST_XML_FILENAME = "she_observation_cti_gal_validation_test_results_product.xml"
+TEST_JSON_FILENAME = "she_observation_cti_gal_validation_test_results_listfile.json"
 L_TEST_META = [ValTestMeta("T1", "T1.md", [ValTestCaseMeta("TC1-1", "TC1-1.md")]),
                ValTestMeta(name="T2",
                            filename="T2a.md",

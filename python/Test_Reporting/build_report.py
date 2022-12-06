@@ -3,7 +3,7 @@
 """
 :file: Test_Reporting/build_report.py
 
-:date: 10/11/2022
+:date: 11/22/2022
 :author: Bryan Gillis
 
 This python script is run to construct report pages for a single provided validation test. It may be provided with
@@ -27,6 +27,7 @@ it builds the report in the current directory, but this can be modified through 
 import logging
 import os
 from argparse import ArgumentParser
+from copy import deepcopy
 from logging import getLogger
 from typing import TYPE_CHECKING
 
@@ -117,6 +118,9 @@ def run_build_from_args(args):
     args : Namespace
         The parsed arguments for this script.
     """
+
+    # Work with a deepcopy of `args` to avoid surprise from modifying it
+    args = deepcopy(args)
 
     # Make sure all arguments give absolute paths
     args.target = get_qualified_path(args.target)

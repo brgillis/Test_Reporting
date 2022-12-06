@@ -17,12 +17,15 @@ Deprecated Features
 Bug Fixes
 ---------
 - Names of some classes were confusing pytest. These have all been changed to avoid this confusion
+- Implemented catching of cases where figures/textfiles tarballs were corrupt, so this wouldn't crash the whole process
 
 New Features
 ------------
 - Added specialized formatting for CTI-Gal validation test results
 - Added standalone script to build an individual report, "build_report.py"
 - Test results products contained within tarballs can now be found in subdirs within the tarball
+- Added script "pack_results_tarball.py" to create a tarball of a test results data product and the datafiles it points
+  to
 
 New config features
 -------------------

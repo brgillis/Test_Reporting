@@ -18,6 +18,7 @@ Bug Fixes
 ---------
 - Names of some classes were confusing pytest. These have all been changed to avoid this confusion
 - Implemented catching of cases where figures/textfiles tarballs were corrupt, so this wouldn't crash the whole process
+- Fixed bug where the time listed in .xml products couldn't be properly interpreted if trailing zeros were concatenated
 
 New Features
 ------------

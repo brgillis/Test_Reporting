@@ -358,7 +358,7 @@ def _construct_datetime(s: str) -> datetime:
 
     # Pad milliseconds with zeros if it's been truncated
     s_before_z = s.split('Z')[0]
-    s_before_milli, s_milli = s_before_z.split(',')
+    s_before_milli, s_milli = s_before_z.split('.')
     while len(s_milli) < 3:
         s_milli += "0"
 

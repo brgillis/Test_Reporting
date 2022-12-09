@@ -356,7 +356,16 @@ def _construct_datetime(s: str) -> datetime:
     """Converts a string value, formatted like "YYYY-MM-DDTHH:MM:SS.408Z", into a datetime object.
     """
 
-    return datetime.fromisoformat(s.replace('Z', '+00:00'))
+    # Pad milliseconds with zeros if it's been truncated
+    s_before_z = s.split('Z')[0]
+    s_before_milli, s_milli = s_before_z.split(',')
+    while len(s_milli) < 3:
+        s_milli += "0"
+
+    # Reconstruct in ISO format
+    s_iso = f"{s_before_milli}.{s_milli}+00:00"
+
+    return datetime.fromisoformat(s_iso)
 
 
 def _e_to_type(e: Optional[Element], t: Type) -> Optional[str]:

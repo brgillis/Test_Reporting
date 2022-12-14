@@ -31,7 +31,7 @@ from copy import deepcopy
 from logging import getLogger
 from typing import TYPE_CHECKING
 
-from Test_Reporting.specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
+from Test_Reporting.specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES, determine_build_callable
 from Test_Reporting.utility.misc import get_qualified_path, log_entry_exit
 
 if TYPE_CHECKING:
@@ -128,20 +128,8 @@ def run_build_from_args(args):
         args.datadir = get_qualified_path(args.datadir)
     args.reportdir = get_qualified_path(args.reportdir)
 
-    # Coerce the key to lower-case
-    key = args.key.lower()
-
-    build_callable = D_BUILD_CALLABLES.get(key)
-
-    # Rather than using the default functionality of the dict's `get` method, we check explicitly, so we can log
-    # in that case
-    if not build_callable:
-        logger.info("No build callable provided for key '%s'; using default implementation "
-                    "%s to construct test report from data: %s.", key, DEFAULT_BUILD_CALLABLE, args.target)
-        build_callable = DEFAULT_BUILD_CALLABLE
-    else:
-        logger.info("Using build callable %s to construct test report from data: %s.", build_callable, args.target)
-
+    # Get the proper build callable for the provided key and call it
+    build_callable = determine_build_callable(args.key, args.target)
     build_callable(args.target, os.path.split(args.target)[0], args.reportdir, args.datadir)
 
 

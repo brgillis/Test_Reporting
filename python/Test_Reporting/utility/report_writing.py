@@ -454,7 +454,9 @@ class ReportSummaryWriter:
         return l_test_meta
 
     def _summarize_results_product(self, l_product_filenames, reportdir, datadir, tag):
-        """Writes summary markdown files for the test results contained in a each of a list of data products.
+        """Writes summary markdown files for the test results contained in each of a list of data products. The
+        output will be sorted based on PointingId, and so may not be in the same order as the input list
+        `l_product_filenames`.
 
         Parameters
         ----------
@@ -470,19 +472,21 @@ class ReportSummaryWriter:
         l_test_meta : List[ValTestMeta]
         """
 
-        l_test_meta: List[ValTestMeta] = []
-        for i, qualified_product_filename in enumerate(l_product_filenames):
+        # Get a list of test results, sorted by pointing ID
+        l_test_results = [parse_xml_product(f) for f in l_product_filenames]
+        l_test_results.sort(key=lambda a: a.pnt_id)
 
-            test_results = parse_xml_product(qualified_product_filename)
+        l_test_meta: List[ValTestMeta] = []
+        for test_results in l_test_results:
 
             test_name_tail = ""
 
             if tag is not None:
                 test_name_tail += f"-{tag}"
 
-            # If we're processing more than one product, ensure they're all named uniquely
+            # If we're processing more than one product, ensure they're all named uniquely with their pointing ID
             if len(l_product_filenames) > 1:
-                test_name_tail += f"-{i}"
+                test_name_tail += f"-{test_results.pnt_id}"
 
             if self.test_name is None:
                 test_name = f"TR-{test_results.product_id}{test_name_tail}"

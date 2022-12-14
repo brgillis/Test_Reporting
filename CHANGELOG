@@ -5,7 +5,7 @@ Changes in v1.1
 
 API Changes
 -----------
-- Reorganized python code to all be in the "python/Test_reporting" directory, which is necessary for it to work after
+- Reorganized python code to all be in the "python/Test_Reporting" directory, which is necessary for it to work after
   installation
 
 Dependency Changes
@@ -20,6 +20,7 @@ Bug Fixes
 - Implemented catching of cases where figures/textfiles tarballs were corrupt, so this wouldn't crash the whole process
 - Fixed bug where the time listed in .xml products couldn't be properly interpreted if trailing zeros were concatenated
 - Fixed display bug of bin limits
+- Fixed bug causing exposure reports to be sorted incorrectly
 
 New Features
 ------------
@@ -39,6 +40,7 @@ Miscellaneous
 - Added this CHANGELOG
 - Added CONTRIBUTING.md
 - Added requirements.txt
+- Improved logging/exception raising for if a provided specialization key isn't recognized
 
 
 Changes in v1.0

@@ -477,16 +477,16 @@ class ReportSummaryWriter:
         l_test_results.sort(key=lambda a: a.pnt_id)
 
         l_test_meta: List[ValTestMeta] = []
-        for i, test_results in enumerate(l_test_results):
+        for test_results in l_test_results:
 
             test_name_tail = ""
 
             if tag is not None:
                 test_name_tail += f"-{tag}"
 
-            # If we're processing more than one product, ensure they're all named uniquely
+            # If we're processing more than one product, ensure they're all named uniquely with their pointing ID
             if len(l_product_filenames) > 1:
-                test_name_tail += f"-{i}"
+                test_name_tail += f"-{test_results.pnt_id}"
 
             if self.test_name is None:
                 test_name = f"TR-{test_results.product_id}{test_name_tail}"

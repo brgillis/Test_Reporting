@@ -129,7 +129,7 @@ def run_build_from_args(args):
     args.reportdir = get_qualified_path(args.reportdir)
 
     # Get the proper build callable for the provided key and call it
-    build_callable = determine_build_callable(args.key, args.target)
+    build_callable = determine_build_callable(args.key, args.target, raise_on_error=True)
     build_callable(args.target, os.path.split(args.target)[0], args.reportdir, args.datadir)
 
 

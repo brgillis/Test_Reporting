@@ -57,7 +57,7 @@ Result: PASSED
 							<Key>INTERCEPT_INFO</Key>
 							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
 							<StringValue>
-intercept = 0.03164852410554886
+Results for bin 0, for values from -1e99 to 1e99:intercept = 0.03164852410554886
 intercept_err = 0.12974394857883453
 intercept_z = 0.2439306378364563
 Maximum allowed intercept_z = 5.83720540034761
@@ -115,7 +115,7 @@ Result: PASSED
 							<Key>INTERCEPT_INFO</Key>
 							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
 							<StringValue>
-intercept = 0.026938743889331818
+Results for bin 0, for values from -1e99 to 1e99:intercept = 0.026938743889331818
 intercept_err = 0.1225176453590393
 intercept_z = 0.21987643837928772
 Maximum allowed intercept_z = 5.83720540034761
@@ -174,7 +174,7 @@ Result: FAILED
 							<Key>INTERCEPT_INFO</Key>
 							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
 							<StringValue>
-intercept = nan
+Results for bin 0, for values from -1e99 to 1e99:intercept = nan
 intercept_err = nan
 intercept_z = nan
 Maximum allowed intercept_z = 5.83720540034761
@@ -232,7 +232,7 @@ Result: PASSED
 							<Key>INTERCEPT_INFO</Key>
 							<Description>Information about the test on intercept of g1_image versus readout distance.</Description>
 							<StringValue>
-intercept = 0.0462455153465271
+Results for bin 0, for values from -1e99 to 1e99:intercept = 0.0462455153465271
 intercept_err = 0.15255558490753174
 intercept_z = 0.303138792514801
 Maximum allowed intercept_z = 5.83720540034761

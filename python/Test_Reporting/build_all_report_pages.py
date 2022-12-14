@@ -149,6 +149,9 @@ def run_build_all_from_args(args):
     # Call the build function for each file in the manifest
     for key, value in d_manifest.items():
 
+        # Coerce the key to lower-case
+        key = key.lower()
+
         build_callable = D_BUILD_CALLABLES.get(key)
 
         # Rather than using the default functionality of the dict's `get` method, we check explicitly, so we can log

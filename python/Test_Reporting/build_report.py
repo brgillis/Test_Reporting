@@ -128,13 +128,16 @@ def run_build_from_args(args):
         args.datadir = get_qualified_path(args.datadir)
     args.reportdir = get_qualified_path(args.reportdir)
 
-    build_callable = D_BUILD_CALLABLES.get(args.key)
+    # Coerce the key to lower-case
+    key = args.key.lower()
+
+    build_callable = D_BUILD_CALLABLES.get(key)
 
     # Rather than using the default functionality of the dict's `get` method, we check explicitly, so we can log
     # in that case
     if not build_callable:
         logger.info("No build callable provided for key '%s'; using default implementation "
-                    "%s to construct test report from data: %s.", args.key, DEFAULT_BUILD_CALLABLE, args.target)
+                    "%s to construct test report from data: %s.", key, DEFAULT_BUILD_CALLABLE, args.target)
         build_callable = DEFAULT_BUILD_CALLABLE
     else:
         logger.info("Using build callable %s to construct test report from data: %s.", build_callable, args.target)

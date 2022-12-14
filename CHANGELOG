@@ -5,7 +5,7 @@ Changes in v1.1
 
 API Changes
 -----------
-- Reorganized python code to all be in the "python/Test_reporting" directory, which is necessary for it to work after
+- Reorganized python code to all be in the "python/Test_Reporting" directory, which is necessary for it to work after
   installation
 
 Dependency Changes

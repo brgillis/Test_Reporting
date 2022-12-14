@@ -29,7 +29,7 @@ from Test_Reporting.utility.report_writing import ReportSummaryWriter
 
 RESULTS_FIGURES_HEADING = "Results and Figures"
 
-GLOBAL_LABEL = "Global"
+GLOBAL_LABEL = "All Data"
 BIN_LABEL = "Bin %i"
 
 MSG_NO_FIGURE = "No figure for this bin.\n\n"
@@ -140,13 +140,11 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
         l_slope_info_lines = slope_str.split("\n")
         l_intercept_info_lines = intercept_str.split("\n")
 
-        # Check if this is global or binned based on the length of the lines list. If binned, output the bin
-        # limits and adjust `l_info_lines` and `l_intercept_info_lines` to match the format it would be for
-        # the global case
+        # Check if this is global or binned based on the length of the lines list. If binned, output the bin limits
         if not is_global:
             self._write_bin_info(writer, l_slope_info_lines[0])
-            l_slope_info_lines = l_slope_info_lines[1:]
-            l_intercept_info_lines = l_intercept_info_lines[1:]
+        l_slope_info_lines = l_slope_info_lines[1:]
+        l_intercept_info_lines = l_intercept_info_lines[1:]
 
         # Get the slope and intercept info out of the info strings for this specific bin by properly parsing it. If
         # there's any error with either, fall back to outputting the raw lines.

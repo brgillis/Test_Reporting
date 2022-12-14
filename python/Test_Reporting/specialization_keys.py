@@ -49,8 +49,9 @@ from typing import Dict, Optional
 from Test_Reporting.specializations.cti_gal import CtiGalReportSummaryWriter
 from Test_Reporting.utility.report_writing import BUILD_CALLABLE_TYPE, ReportSummaryWriter
 
-# Primary keys
+# Primary keys and aliases
 CTI_GAL_KEY = "cti_gal"
+CTI_GAL_KEY_ALIASES = ["cti-gal", "ctigal", "cti"]
 
 # Secondary keys for the CTI-Gal test case
 OBS_KEY = "obs"
@@ -58,6 +59,8 @@ EXP_KEY = "exp"
 
 # The build functions assigned to each key. The function assigned to the `None` key will be used if a key is used
 # in the manifest which doesn't have a specific build function defined here
-D_BUILD_CALLABLES: Dict[Optional[str], BUILD_CALLABLE_TYPE] = {CTI_GAL_KEY: CtiGalReportSummaryWriter(), }
+D_BUILD_CALLABLES: Dict[Optional[str], BUILD_CALLABLE_TYPE] = {}
+for cti_gal_key in [CTI_GAL_KEY, *CTI_GAL_KEY_ALIASES]:
+    D_BUILD_CALLABLES[cti_gal_key] = CtiGalReportSummaryWriter()
 
 DEFAULT_BUILD_CALLABLE = ReportSummaryWriter()

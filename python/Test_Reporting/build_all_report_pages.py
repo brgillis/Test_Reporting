@@ -36,9 +36,9 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import Dict, List, TYPE_CHECKING
 
-from Test_Reporting.specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES
 from Test_Reporting.utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 from Test_Reporting.utility.misc import log_entry_exit
+from Test_Reporting.specialization_keys import determine_build_callable
 from Test_Reporting.utility.summary_files import build_test_report_summary, update_readme, update_summary
 from Test_Reporting.utility.report_writing import ValTestMeta
 
@@ -148,18 +148,7 @@ def run_build_all_from_args(args):
 
     # Call the build function for each file in the manifest
     for key, value in d_manifest.items():
-
-        build_callable = D_BUILD_CALLABLES.get(key)
-
-        # Rather than using the default functionality of the dict's `get` method, we check explicitly, so we can log
-        # in that case
-        if not build_callable:
-            logger.info("No build callable provided for key '%s'; using default implementation "
-                        "%s to construct test report from data: %s.", key, DEFAULT_BUILD_CALLABLE, value)
-            build_callable = DEFAULT_BUILD_CALLABLE
-        else:
-            logger.info("Using build callable %s to construct test report from data: %s.", build_callable, value)
-
+        build_callable = determine_build_callable(key, value)
         l_test_meta += build_callable(value, args.rootdir, None, None)
 
     # Build the summary page for test reports

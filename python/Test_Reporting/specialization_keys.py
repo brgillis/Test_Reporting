@@ -30,6 +30,7 @@ To define a new implementation, the following is the recommended procedure:
 
 5. Add appropriate unit tests of all added functionality, including extending existing tests as appropriate.
 """
+from __future__ import annotations
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -44,13 +45,18 @@ To define a new implementation, the following is the recommended procedure:
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-from typing import Dict, Optional
+from typing import Dict, Optional, TYPE_CHECKING
 
 from Test_Reporting.specializations.cti_gal import CtiGalReportSummaryWriter
+from Test_Reporting.utility.misc import logger
 from Test_Reporting.utility.report_writing import BUILD_CALLABLE_TYPE, ReportSummaryWriter
 
-# Primary keys
+if TYPE_CHECKING:
+    from Test_Reporting.utility.report_writing import BUILD_CALLABLE_TYPE  # noqa F401
+
+# Primary keys and aliases
 CTI_GAL_KEY = "cti_gal"
+CTI_GAL_KEY_ALIASES = ["cti-gal", "ctigal", "cti"]
 
 # Secondary keys for the CTI-Gal test case
 OBS_KEY = "obs"
@@ -58,6 +64,56 @@ EXP_KEY = "exp"
 
 # The build functions assigned to each key. The function assigned to the `None` key will be used if a key is used
 # in the manifest which doesn't have a specific build function defined here
-D_BUILD_CALLABLES: Dict[Optional[str], BUILD_CALLABLE_TYPE] = {CTI_GAL_KEY: CtiGalReportSummaryWriter(), }
+D_BUILD_CALLABLES: Dict[Optional[str], BUILD_CALLABLE_TYPE] = {}
+for cti_gal_key in [CTI_GAL_KEY, *CTI_GAL_KEY_ALIASES]:
+    D_BUILD_CALLABLES[cti_gal_key] = CtiGalReportSummaryWriter()
 
 DEFAULT_BUILD_CALLABLE = ReportSummaryWriter()
+
+
+def determine_build_callable(key, value, raise_on_error=False) -> BUILD_CALLABLE_TYPE:
+    """Uses user input for the build callable key (allowed values for which are specified in
+    `specialization_keys.py`) and the target of it to determine the build callable to use. This handles checking for
+    if `key` is None or the key is unrecognized and falls back to the default build callable, logging as appropriate.
+
+    Note on the code - output type is specified here via Python's type-hinting syntax deliberately, due to it not being
+    parsable in the docstring
+
+    Parameters
+    ----------
+    key : str
+        Case-insensitive key for the D_BUILD_CALLABLES dict, provided by the user as input.
+    value : str or dict[str, str or None]
+        The target on which the build callable is to be executed.
+    raise_on_error : bool, default False
+        If True, then if the key is unrecognized (and not None), a `ValueError` will be raised instead of logging an
+        error.
+
+    Returns
+    -------
+    build_callable : BUILD_CALLABLE_TYPE
+        The determined build callable.
+    """
+
+    # Coerce the key to lower-case
+    key = key.lower()
+    build_callable = D_BUILD_CALLABLES.get(key)
+
+    # Rather than using the default functionality of the dict's `get` method, we check explicitly, so we can log
+    # in that case
+    if not build_callable:
+        if key is None:
+            logger.info("No build callable key provided for data '%s'; using default implementation "
+                        "%s to construct test report.", value, DEFAULT_BUILD_CALLABLE)
+        elif raise_on_error:
+            raise ValueError(f"No build callable available for key {key}. Allowed keys and associated build "
+                             f"callables are: {D_BUILD_CALLABLES}.")
+        else:
+            logger.error("No build callable available for key '%s'; using default implementation "
+                         "%s to construct test report from data: %s. Allowed keys and associated build "
+                         "callables are: %s.", key, DEFAULT_BUILD_CALLABLE, value, D_BUILD_CALLABLES)
+        build_callable = DEFAULT_BUILD_CALLABLE
+    else:
+        logger.info("Using build callable %s to construct test report from data: %s.", build_callable, value)
+
+    return build_callable

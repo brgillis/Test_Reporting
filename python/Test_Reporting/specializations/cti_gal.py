@@ -82,6 +82,25 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
                                                                           datadir=datadir,
                                                                           figures_tmpdir=figures_tmpdir)
 
+        self._add_cti_gal_binned_details(writer=writer,
+                                         test_case_results=test_case_results,
+                                         reportdir=reportdir,
+                                         datadir=datadir,
+                                         figures_tmpdir=figures_tmpdir,
+                                         l_int_bin_str=l_int_bin_str,
+                                         l_slope_bin_str=l_slope_bin_str)
+
+    def _add_cti_gal_binned_details(self, writer: TocMarkdownWriter,
+                                    test_case_results: SingleTestResult,
+                                    reportdir: str,
+                                    datadir: str,
+                                    figures_tmpdir: str,
+                                    l_int_bin_str: List[str],
+                                    l_slope_bin_str: List[str]):
+        """Method to write details for CTI-Gal test results which is sorted into bins (or just one bin for global
+        results), and didn't fail to produce any results.
+        """
+
         # Get the figure label and filename for each bin
         l_figure_labels_and_filenames = self._prepare_figures(ana_result=test_case_results.analysis_result,
                                                               reportdir=reportdir,

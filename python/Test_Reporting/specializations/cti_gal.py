@@ -97,10 +97,10 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
 
         # If we have any error messages, print them out
         if l_slope_err_str:
-            for line in l_slope_bin_str:
+            for line in l_slope_err_str:
                 writer.add_line(f"**ERROR:** {line}\n\n")
         if l_int_err_str:
-            for line in l_slope_bin_str:
+            for line in l_int_err_str:
                 writer.add_line(f"**ERROR:** {line}\n\n")
 
         self._add_cti_gal_binned_details(writer=writer,

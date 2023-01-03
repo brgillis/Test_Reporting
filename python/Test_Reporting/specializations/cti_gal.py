@@ -21,11 +21,14 @@ Module providing a specialized ReportSummaryWriter for CTI-Gal test cases.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 from logging import getLogger
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 from Test_Reporting.utility.misc import TocMarkdownWriter
 from Test_Reporting.utility.product_parsing import SingleTestResult
 from Test_Reporting.utility.report_writing import ReportSummaryWriter
+
+STR_TEST_FAILED = "Test failed"
+STR_BIN_RESULTS = "Results for bin"
 
 RESULTS_FIGURES_HEADING = "Results and Figures"
 
@@ -44,6 +47,7 @@ MSG_INTERCEPT_RESULT = "Intercept result: **%s**\n\n"
 
 SLOPE_INFO_KEY = "SLOPE_INFO"
 INTERCEPT_INFO_KEY = "INTERCEPT_INFO"
+REASON_KEY = "REASON"
 
 VAL_SEPARATOR = " = "
 RESULT_SEPARATOR = ": "
@@ -70,17 +74,63 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
         writer.add_heading(RESULTS_FIGURES_HEADING, depth=0)
 
         # Dig out the data for each bin from the SupplementaryInfo
-        l_slope_bin_str, l_int_bin_str = self._get_slope_intercept_info(test_case_results)
+        (l_slope_bin_str,
+         l_int_bin_str,
+         l_slope_err_str,
+         l_int_err_str) = self._get_slope_intercept_info(test_case_results)
 
-        # Check that data is formatted as expected. If not, fall back to parent implementation
-        if (not l_slope_bin_str) or (not l_int_bin_str) or (len(l_slope_bin_str) != len(l_int_bin_str)):
-            logger.warning(f"CTI-Gal SupplementaryInfo not formatted as expected: {l_slope_bin_str=}, "
-                           f"{l_int_bin_str=}. Falling back to parent implementation.")
+        # Check for no data
+        if (not l_slope_bin_str) and (not l_int_bin_str):
+            self._add_no_data_details(writer, test_case_results)
+            return
+
+        # Check we have the same number of bins for both slope and intercept
+        if len(l_slope_bin_str) != len(l_int_bin_str):
+            # This isn't an expected format, so log an error and fall back to parent implementation of writing
+            logger.error(f"CTI-Gal SupplementaryInfo not formatted as expected: {l_slope_bin_str=}, "
+                         f"{l_int_bin_str=}. Falling back to parent implementation.")
             return super()._add_test_case_details_and_figures_with_tmpdir(writer=writer,
                                                                           test_case_results=test_case_results,
                                                                           reportdir=reportdir,
                                                                           datadir=datadir,
                                                                           figures_tmpdir=figures_tmpdir)
+
+        # If we have any error messages, print them out
+        if l_slope_err_str:
+            for line in l_slope_err_str:
+                writer.add_line(f"**Error reported:** {line}\n\n")
+        if l_int_err_str:
+            for line in l_int_err_str:
+                writer.add_line(f"**Error reported:** {line}\n\n")
+
+        self._add_cti_gal_binned_details(writer=writer,
+                                         test_case_results=test_case_results,
+                                         reportdir=reportdir,
+                                         datadir=datadir,
+                                         figures_tmpdir=figures_tmpdir,
+                                         l_int_bin_str=l_int_bin_str,
+                                         l_slope_bin_str=l_slope_bin_str)
+
+    @staticmethod
+    def _add_no_data_details(writer, test_case_results):
+        """Method to report details for the case where no test results data is available, including the reason for
+        the lack of data.
+        """
+        writer.add_line("No data available for this test. Reported reason(s):\n\n")
+        for si in test_case_results.l_requirements[0].l_supp_info:
+            if si.info_key == REASON_KEY:
+                writer.add_line(f"* {si.info_value.strip()}\n\n")
+
+    def _add_cti_gal_binned_details(self, writer: TocMarkdownWriter,
+                                    test_case_results: SingleTestResult,
+                                    reportdir: str,
+                                    datadir: str,
+                                    figures_tmpdir: str,
+                                    l_int_bin_str: List[str],
+                                    l_slope_bin_str: List[str]):
+        """Method to write details for CTI-Gal test results which is sorted into bins (or just one bin for global
+        results), and didn't fail to produce any results.
+        """
 
         # Get the figure label and filename for each bin
         l_figure_labels_and_filenames = self._prepare_figures(ana_result=test_case_results.analysis_result,
@@ -143,8 +193,12 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
         # Check if this is global or binned based on the length of the lines list. If binned, output the bin limits
         if not is_global:
             self._write_bin_info(writer, l_slope_info_lines[0])
-        l_slope_info_lines = l_slope_info_lines[1:]
-        l_intercept_info_lines = l_intercept_info_lines[1:]
+
+        # Strip bin info string if present
+        if l_slope_info_lines[0].startswith(STR_BIN_RESULTS):
+            l_slope_info_lines = l_slope_info_lines[1:]
+        if l_intercept_info_lines[0].startswith(STR_BIN_RESULTS):
+            l_intercept_info_lines = l_intercept_info_lines[1:]
 
         # Get the slope and intercept info out of the info strings for this specific bin by properly parsing it. If
         # there's any error with either, fall back to outputting the raw lines.
@@ -181,15 +235,17 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
         writer.add_line(msg_result % val_result)
 
     @staticmethod
-    def _get_slope_intercept_info(test_case_results: SingleTestResult) -> Tuple[Optional[List[str]],
-                                                                                Optional[List[str]]]:
+    def _get_slope_intercept_info(test_case_results: SingleTestResult) -> Tuple[List[str],
+                                                                                List[str],
+                                                                                List[str],
+                                                                                List[str]]:
         """Gets lists of supplementary info strings for the slope and intercept from the test case results object.
         """
 
         l_supp_info = test_case_results.l_requirements[0].l_supp_info
 
-        l_slope_bin_str: Optional[List[str]] = None
-        l_int_bin_str: Optional[List[str]] = None
+        l_slope_bin_str: List[str] = []
+        l_int_bin_str: List[str] = []
 
         for supp_info in l_supp_info:
             if supp_info.info_key == SLOPE_INFO_KEY:
@@ -199,7 +255,14 @@ class CtiGalReportSummaryWriter(ReportSummaryWriter):
                 int_supp_info_str = supp_info.info_value.strip()
                 l_int_bin_str = int_supp_info_str.split("\n\n")
 
-        return l_slope_bin_str, l_int_bin_str
+        # Remove any test failure notifications from the lists, and store them in separate lists
+        l_slope_err_str = [s for s in l_slope_bin_str if s.startswith(STR_TEST_FAILED)]
+        l_slope_bin_str = [s for s in l_slope_bin_str if not s.startswith(STR_TEST_FAILED)]
+
+        l_int_err_str = [s for s in l_int_bin_str if s.startswith(STR_TEST_FAILED)]
+        l_int_bin_str = [s for s in l_int_bin_str if not s.startswith(STR_TEST_FAILED)]
+
+        return l_slope_bin_str, l_int_bin_str, l_slope_err_str, l_int_err_str
 
     @staticmethod
     def _fix_bin_str(bin_str: str) -> str:

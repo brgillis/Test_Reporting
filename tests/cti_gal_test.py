@@ -62,6 +62,7 @@ def test_write_summary(project_copy):
 
     n_fig = 0
     n_result = 0
+    n_nyi = 0
     n_na = 0
     for test_case_meta in test_meta.l_test_case_meta:
 
@@ -119,12 +120,17 @@ def test_write_summary(project_copy):
 
             n_result += 1
 
+        elif test_line == "* This test has not yet been implemented.\n":
+
+            n_nyi += 1
+
         else:
 
             assert test_line == "N/A\n"
 
             n_na += 1
 
-    assert n_fig == 4
-    assert n_result == 15
-    assert n_na == 5
+    assert n_fig == 0
+    assert n_result == 20
+    assert n_nyi == 4
+    assert n_na == 0

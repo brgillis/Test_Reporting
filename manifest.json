@@ -2,5 +2,6 @@
   "cti_gal": {
     "obs": "she_observation_cti_gal_validation_test_results_product.tar.gz",
     "exp": "she_exposure_cti_gal_validation_test_results_listfile.tar.gz"
-  }
+  },
+  "shear_bias": "shear_bias_test_results.tar.gz"
 }

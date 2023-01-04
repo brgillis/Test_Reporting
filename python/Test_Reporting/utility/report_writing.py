@@ -914,11 +914,16 @@ class ReportSummaryWriter:
             extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)
         except ValueError:
             logger.error(MSG_TARBALL_CORRUPT, qualified_textfiles_tarball_filename)
-            extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)
+            return None
 
         # Find the "directory" file which should have been in the tarball, and get the labels and filenames of
         # figures from it
-        qualified_directory_filename = self.find_directory_filename(figures_tmpdir)
+        try:
+            qualified_directory_filename = self.find_directory_filename(figures_tmpdir)
+        except (FileNotFoundError, ValueError) as e:
+            logger.error(str(e), qualified_textfiles_tarball_filename)
+            return None
+
         l_figure_labels_and_filenames = self.read_figure_labels_and_filenames(qualified_directory_filename)
 
         # Make sure a data subdir exists in the images dir

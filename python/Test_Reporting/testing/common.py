@@ -32,3 +32,5 @@ L_TEST_META = [ValTestMeta("T1", "T1.md", [ValTestCaseMeta("TC1-1", "TC1-1.md")]
                                              ValTestCaseMeta("TC2-2", "TC2-2.md")],
                            num_passed=1,
                            num_failed=2)]
+
+TEST_SB_TARBALL_FILENAME = "shear_bias_test_results.tar.gz"

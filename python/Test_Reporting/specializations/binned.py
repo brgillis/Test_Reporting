@@ -21,7 +21,7 @@ Module providing a specialized ReportSummaryWriter for test cases which separate
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 from logging import getLogger
-from typing import List, Sequence, Tuple
+from typing import Any, List, Sequence, Tuple
 
 from Test_Reporting.utility.misc import TocMarkdownWriter
 from Test_Reporting.utility.product_parsing import SingleTestResult
@@ -63,15 +63,15 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
         writer.add_heading(RESULTS_FIGURES_HEADING, depth=0)
 
         # Dig out the data for each bin from the SupplementaryInfo
-        l_info_str, l_err_str = self._get_l_info(test_case_results)
+        l_info, l_err_str = self._get_l_info(test_case_results)
 
         # Check for no data
-        if not l_info_str:
+        if not l_info:
             self._add_no_data_details(writer, test_case_results)
             return
 
         # Check we have the same number of bins for both slope and intercept
-        if not self._check_valid_info(l_info_str):
+        if not self._check_valid_info(l_info):
             # The info is in an invalid format (determined by the specific test case)
             logger.error("Test results SupplementaryInfo is in invalid format; falling back to default implementation.")
             return super()._add_test_case_details_and_figures_with_tmpdir(writer=writer,
@@ -90,7 +90,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
                                  reportdir=reportdir,
                                  datadir=datadir,
                                  figures_tmpdir=figures_tmpdir,
-                                 l_info_str=l_info_str)
+                                 l_info=l_info)
 
     @staticmethod
     def _check_valid_info(l_info_str):
@@ -114,7 +114,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
                             reportdir: str,
                             datadir: str,
                             figures_tmpdir: str,
-                            l_info_str: Sequence, ):
+                            l_info: Sequence, ):
         """Method to write details for test results which is sorted into bins (or just one bin for global
         results), and didn't fail to produce any results.
         """
@@ -134,11 +134,11 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
 
         # Check if this is the global test case, which we'll format a bit differently
         is_global = False
-        if len(l_info_str) == 1:
+        if len(l_info) == 1:
             is_global = True
 
         # Write info for each bin
-        for bin_i, info_str in enumerate(l_info_str):
+        for bin_i, info in enumerate(l_info):
 
             if is_global:
                 label = GLOBAL_LABEL
@@ -157,21 +157,21 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
 
             # Use a try block, and any on exception here we'll fall back to simply dumping the SupplementaryInfo as-is
             try:
-                self._write_info(writer, info_str, is_global)
+                self._write_info(writer, info, is_global)
             except Exception as e:
                 logger.error("%s", e)
-                writer.add_line(f"```\n{info_str}\n\n```\n")
+                writer.add_line(f"```\n{info}\n\n```\n")
 
     def _write_info(self,
                     writer: TocMarkdownWriter,
-                    info_str: str,
+                    info: Any,
                     is_global: bool):
         """Parses strings containing slope and intercept info for a given bin and writes out the relevant info to a
         provided TocMarkdownWriter.
         """
 
         # Fix the bin strings for a missing line break that was in older versions
-        l_info_lines = info_str.split("\n")
+        l_info_lines = info.split("\n")
 
         # Check if this is global or binned based on the length of the lines list. If binned, output the bin limits
         if not is_global:
@@ -211,17 +211,17 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
 
         l_supp_info = test_case_results.l_requirements[0].l_supp_info
 
-        l_bin_str: List[str] = []
+        l_info: List[str] = []
 
         for supp_info in l_supp_info:
             slope_supp_info_str = supp_info.info_value.strip()
-            l_bin_str = slope_supp_info_str.split("\n\n")
+            l_info = slope_supp_info_str.split("\n\n")
 
         # Remove any test failure notifications from the lists, and store them in separate lists
-        l_err_str = [s for s in l_bin_str if s.startswith(STR_TEST_FAILED)]
-        l_bin_str = [s for s in l_bin_str if not s.startswith(STR_TEST_FAILED)]
+        l_err_str = [s for s in l_info if s.startswith(STR_TEST_FAILED)]
+        l_info = [s for s in l_info if not s.startswith(STR_TEST_FAILED)]
 
-        return l_bin_str, l_err_str
+        return l_info, l_err_str
 
     @staticmethod
     def _write_bin_info(writer: TocMarkdownWriter, bin_info_str: str) -> None:

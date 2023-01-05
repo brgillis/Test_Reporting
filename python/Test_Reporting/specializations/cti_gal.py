@@ -39,7 +39,6 @@ MSG_INTERCEPT_RESULT = "Intercept result: **%s**\n\n"
 
 SLOPE_INFO_KEY = "SLOPE_INFO"
 INTERCEPT_INFO_KEY = "INTERCEPT_INFO"
-REASON_KEY = "REASON"
 
 logger = getLogger(__name__)
 

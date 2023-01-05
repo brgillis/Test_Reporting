@@ -29,7 +29,7 @@ logger = getLogger(__name__)
 
 
 class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
-    test_name = "Shear Bias"
+    test_name = "Shear-Bias"
 
     @staticmethod
     def _get_d_figure_filenames(l_figure_labels_and_filenames):

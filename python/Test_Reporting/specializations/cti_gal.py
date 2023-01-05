@@ -6,7 +6,7 @@
 
 Module providing a specialized ReportSummaryWriter for CTI-Gal test cases.
 """
-from dataclasses import dataclass
+
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
 # This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
@@ -20,14 +20,14 @@ from dataclasses import dataclass
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+from dataclasses import dataclass
 from logging import getLogger
-from typing import List, Sequence, Tuple
+from typing import List, Tuple
 
 from Test_Reporting.specializations.binned import (BinnedReportSummaryWriter, RESULT_SEPARATOR, STR_BIN_RESULTS,
                                                    STR_TEST_FAILED, VAL_SEPARATOR, )
 from Test_Reporting.utility.misc import TocMarkdownWriter
 from Test_Reporting.utility.product_parsing import SingleTestResult
-from Test_Reporting.utility.report_writing import ReportSummaryWriter
 
 MSG_SLOPE_VAL = "Slope = %s +/- %s\n\n"
 MSG_SLOPE_Z = "Z(Slope) = %s (Max allowed: %s)\n\n"

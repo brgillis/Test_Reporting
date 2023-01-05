@@ -149,10 +149,21 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
             writer.add_heading(label, depth=1)
 
             # Check if there's a figure for this bin, and prepare and link to it if so
-            filename = d_figure_filenames.get(bin_i)
-            if filename:
-                relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
-                writer.add_line(f"![{label} Figure]({relative_figure_filename})\n\n")
+
+            l_figure_filenames = d_figure_filenames.get(bin_i)
+
+            # Coerce to list if we just have one filename
+            if isinstance(l_figure_filenames, str):
+                l_figure_filenames = [l_figure_filenames]
+
+            # Trim any Nones from the filename list
+            l_figure_filenames = [f for f in l_figure_filenames if f is not None]
+
+            # Draw all figures for this bin, if we have any. Otherwise report that we have no figures
+            if l_figure_filenames:
+                for filename in l_figure_filenames:
+                    relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
+                    writer.add_line(f"![{label} Figure]({relative_figure_filename})\n\n")
             else:
                 writer.add_line(MSG_NO_FIGURE)
 

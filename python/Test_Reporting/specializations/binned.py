@@ -21,7 +21,7 @@ Module providing a specialized ReportSummaryWriter for test cases which separate
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 from logging import getLogger
-from typing import Any, List, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 from Test_Reporting.utility.misc import TocMarkdownWriter
 from Test_Reporting.utility.product_parsing import SingleTestResult
@@ -150,20 +150,24 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
 
             # Check if there's a figure for this bin, and prepare and link to it if so
 
-            l_figure_filenames: Union[Optional[str], List[Optional[str]]] = d_figure_filenames.get(bin_i)
+            d_bin_figure_filenames: Union[Optional[str], Dict[Any, Optional[str]]] = d_figure_filenames.get(bin_i)
 
             # Coerce to list if we just have one filename
-            if isinstance(l_figure_filenames, str) or l_figure_filenames is None:
-                l_figure_filenames = [l_figure_filenames]
+            if isinstance(d_bin_figure_filenames, str) or d_bin_figure_filenames is None:
+                d_bin_figure_filenames = {None: d_bin_figure_filenames}
 
-            # Trim any Nones from the filename list
-            l_figure_filenames = [f for f in l_figure_filenames if f is not None]
+            # Trim any Nones from the filename dict
+            d_bin_figure_filenames = {k: v for k, v in d_bin_figure_filenames.items() if v is not None}
 
-            # Draw all figures for this bin, if we have any. Otherwise report that we have no figures
-            if l_figure_filenames:
-                for filename in l_figure_filenames:
+            # Draw all figures for this bin, if we have any. Otherwise, report that we have no figures
+            if d_bin_figure_filenames:
+                for key, filename in d_bin_figure_filenames.items():
                     relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
-                    writer.add_line(f"![{label} Figure]({relative_figure_filename})\n\n")
+                    if key:
+                        key_label = f" {key}"
+                    else:
+                        key_label = ""
+                    writer.add_line(f"![{label} Figure{key_label}]({relative_figure_filename})\n\n")
             else:
                 writer.add_line(MSG_NO_FIGURE)
 

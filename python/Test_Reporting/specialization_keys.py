@@ -30,7 +30,6 @@ To define a new implementation, the following is the recommended procedure:
 
 5. Add appropriate unit tests of all added functionality, including extending existing tests as appropriate.
 """
-from __future__ import annotations
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -44,6 +43,8 @@ from __future__ import annotations
 #
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+from __future__ import annotations
 
 from typing import Dict, Optional, TYPE_CHECKING
 

@@ -30,3 +30,24 @@ logger = getLogger(__name__)
 
 class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
     test_name = "Shear Bias"
+
+    @staticmethod
+    def _get_d_figure_filenames(l_figure_labels_and_filenames):
+        """Parses the figure labels and filenames from a directory and returns a dict appropriately sorting them.
+        This may be overridden by child classes if necessary.
+        """
+
+        d_figure_filenames = {}
+
+        for (figure_label, figure_filename) in l_figure_labels_and_filenames:
+
+            bin_index = int(figure_label.split("-")[-2])
+
+            if bin_index not in d_figure_filenames:
+                d_figure_filenames[bin_index] = {}
+
+            component_index = int(figure_label[-1])
+
+            d_figure_filenames[bin_index][component_index] = figure_filename
+
+        return d_figure_filenames

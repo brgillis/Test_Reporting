@@ -21,7 +21,7 @@ Module providing a specialized ReportSummaryWriter for test cases which separate
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 from logging import getLogger
-from typing import Any, List, Sequence, Tuple
+from typing import Any, List, Optional, Sequence, Tuple, Union
 
 from Test_Reporting.utility.misc import TocMarkdownWriter
 from Test_Reporting.utility.product_parsing import SingleTestResult
@@ -150,10 +150,10 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
 
             # Check if there's a figure for this bin, and prepare and link to it if so
 
-            l_figure_filenames = d_figure_filenames.get(bin_i)
+            l_figure_filenames: Union[Optional[str], List[Optional[str]]] = d_figure_filenames.get(bin_i)
 
             # Coerce to list if we just have one filename
-            if isinstance(l_figure_filenames, str):
+            if isinstance(l_figure_filenames, str) or l_figure_filenames is None:
                 l_figure_filenames = [l_figure_filenames]
 
             # Trim any Nones from the filename list

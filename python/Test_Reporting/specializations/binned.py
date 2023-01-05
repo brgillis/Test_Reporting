@@ -109,7 +109,8 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
             if si.info_key == REASON_KEY:
                 writer.add_line(f"* {si.info_value.strip()}\n\n")
 
-    def _add_binned_details(self, writer: TocMarkdownWriter,
+    def _add_binned_details(self,
+                            writer: TocMarkdownWriter,
                             test_case_results: SingleTestResult,
                             reportdir: str,
                             datadir: str,
@@ -126,9 +127,9 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
                                                               figures_tmpdir=figures_tmpdir)
 
         # Make a dict of bin indices to filenames
+
         if l_figure_labels_and_filenames:
-            d_figure_filenames = {int(figure_label.split("-")[-1]): figure_filename
-                                  for (figure_label, figure_filename) in l_figure_labels_and_filenames}
+            d_figure_filenames = self._get_d_figure_filenames(l_figure_labels_and_filenames)
         else:
             d_figure_filenames = {}
 
@@ -161,6 +162,17 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
             except Exception as e:
                 logger.error("%s", e)
                 writer.add_line(f"```\n{info}\n\n```\n")
+
+    @staticmethod
+    def _get_d_figure_filenames(l_figure_labels_and_filenames):
+        """Parses the figure labels and filenames from a directory and returns a dict appropriately sorting them.
+        This may be overridden by child classes if necessary.
+        """
+
+        d_figure_filenames = {int(figure_label.split("-")[-1]): figure_filename
+                              for (figure_label, figure_filename) in l_figure_labels_and_filenames}
+
+        return d_figure_filenames
 
     def _write_info(self,
                     writer: TocMarkdownWriter,

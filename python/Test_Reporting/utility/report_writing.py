@@ -921,7 +921,7 @@ class ReportSummaryWriter:
         try:
             qualified_directory_filename = self.find_directory_filename(figures_tmpdir)
         except (FileNotFoundError, ValueError) as e:
-            logger.error(str(e), qualified_textfiles_tarball_filename)
+            logger.error(str(e) + " This occurred when unpacking tarball %s", qualified_textfiles_tarball_filename)
             return None
 
         l_figure_labels_and_filenames = self.read_figure_labels_and_filenames(qualified_directory_filename)

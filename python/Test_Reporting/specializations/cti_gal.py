@@ -122,12 +122,11 @@ class CtiGalReportSummaryWriter(BinnedReportSummaryWriter):
         l_int_bin_str: List[str] = []
 
         for supp_info in l_supp_info:
+            supp_info_str = supp_info.info_value.strip()
             if supp_info.info_key == SLOPE_INFO_KEY:
-                slope_supp_info_str = supp_info.info_value.strip()
-                l_slope_bin_str = slope_supp_info_str.split("\n\n")
+                l_slope_bin_str = supp_info_str.split("\n\n")
             elif supp_info.info_key == INTERCEPT_INFO_KEY:
-                int_supp_info_str = supp_info.info_value.strip()
-                l_int_bin_str = int_supp_info_str.split("\n\n")
+                l_int_bin_str = supp_info_str.split("\n\n")
 
         # Remove any test failure notifications from the lists, and store them in separate lists
         l_slope_err_str = [s for s in l_slope_bin_str if s.startswith(STR_TEST_FAILED)]

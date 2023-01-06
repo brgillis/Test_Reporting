@@ -4,7 +4,7 @@
 :date: 10/17/2022
 :author: Bryan Gillis
 
-Unit tests of writing test reports.
+Unit tests of writing test reports with the CTI-gal specialization.
 """
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment

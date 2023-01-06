@@ -22,14 +22,100 @@ Module providing a specialized ReportSummaryWriter for Shear Bias test cases.
 
 from dataclasses import dataclass
 from logging import getLogger
+from typing import List, Tuple
 
-from Test_Reporting.specializations.binned import BinnedReportSummaryWriter
+from Test_Reporting.specializations.binned import (BinnedReportSummaryWriter, RESULT_SEPARATOR, STR_BIN_RESULTS,
+                                                   STR_TEST_FAILED,
+                                                   VAL_SEPARATOR, )
+from Test_Reporting.utility.misc import TocMarkdownWriter
+from Test_Reporting.utility.product_parsing import SingleTestResult
 
 logger = getLogger(__name__)
+
+M_REQ = "R-SHE-CAL-F-070"
+C_REQ = "R-SHE-CAL-F-080"
+
+STR_REPLACE_BIAS = "$REPLACEME_BIAS"
+STR_REPLACE_COMP = "$REPLACEME_COMP"
+STR_REPLACE_BIAS_COMP = f"{STR_REPLACE_BIAS}<sub>{STR_REPLACE_COMP}<\\sub>"
+
+MSG_B_VAL = f"{STR_REPLACE_BIAS_COMP} = %s +/- %s\n\n"
+MSG_B_Z = f"Z({STR_REPLACE_BIAS_COMP}) = %s (Max allowed: %s)\n\n"
+MSG_B_RESULT = f"{STR_REPLACE_BIAS_COMP} result: **%s**\n\n"
+
+G1_INFO_KEY = "G1_INFO"
+G2_INFO_KEY = "G2_INFO"
+
+
+@dataclass
+class BiasInfo:
+    g1_str: str
+    g2_str: str
+    bias: str
 
 
 class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
     test_name = "Shear-Bias"
+
+    def _write_info(self,
+                    writer: TocMarkdownWriter,
+                    info: BiasInfo,
+                    is_global: bool):
+        """Parses strings containing g1 and g2 bias info for a given bin and writes out the relevant info to a
+        provided TocMarkdownWriter.
+        """
+
+        # Fix the bin strings for a missing line break that was in older versions
+        g1_str = self._fix_bin_str(info.g1_str)
+        g2_str = self._fix_bin_str(info.g2_str)
+        l_g1_info_lines = g1_str.split("\n")
+        l_g2_info_lines = g2_str.split("\n")
+
+        # Check if this is global or binned based on the length of the lines list. If binned, output the bin limits
+        if not is_global:
+            self._write_bin_info(writer, l_g1_info_lines[0])
+
+        # Strip bin info string if present
+        if l_g1_info_lines[0].startswith(STR_BIN_RESULTS):
+            l_g1_info_lines = l_g1_info_lines[1:]
+        if l_g2_info_lines[0].startswith(STR_BIN_RESULTS):
+            l_g2_info_lines = l_g2_info_lines[1:]
+
+        # Get the g1 and g2 info out of the info strings for this specific bin by properly parsing it. If
+        # there's any error with either, fall back to outputting the raw lines.
+
+        for l_info_lines, comp_index in ((l_g1_info_lines, 1), (l_g2_info_lines, 2)):
+            try:
+                self._parse_and_write_g1_g2_info(writer, l_info_lines, info.bias, comp_index)
+            except Exception as e:
+                logger.error("%s", e)
+                writer.add_line("```\n")
+                for line in l_info_lines:
+                    writer.add_line(f"{line.strip()}\n")
+                writer.add_line("```\n")
+
+    @staticmethod
+    def _parse_and_write_g1_g2_info(writer: TocMarkdownWriter,
+                                    l_info_lines: List[str],
+                                    bias: str,
+                                    comp_index: int) -> None:
+        """Parses and writes info for the bias component.
+        """
+
+        val = l_info_lines[0].split(VAL_SEPARATOR)[1]
+        val_err = l_info_lines[1].split(VAL_SEPARATOR)[1]
+        val_z = l_info_lines[2].split(VAL_SEPARATOR)[1]
+        max_val_z = l_info_lines[3].split(VAL_SEPARATOR)[1]
+        val_result = l_info_lines[4].split(RESULT_SEPARATOR)[1]
+
+        msg_val = MSG_B_VAL.replace(STR_REPLACE_BIAS, bias).replace(STR_REPLACE_COMP, str(comp_index))
+        writer.add_line(msg_val % (val, val_err))
+
+        msg_z = MSG_B_Z.replace(STR_REPLACE_BIAS, bias).replace(STR_REPLACE_COMP, str(comp_index))
+        writer.add_line(msg_z % (val_z, max_val_z))
+
+        msg_result = MSG_B_RESULT.replace(STR_REPLACE_BIAS, bias).replace(STR_REPLACE_COMP, str(comp_index))
+        writer.add_line(msg_result % val_result)
 
     @staticmethod
     def _get_d_figure_filenames(l_figure_labels_and_filenames):
@@ -51,3 +137,61 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
             d_figure_filenames[bin_index][component_index] = figure_filename
 
         return d_figure_filenames
+
+    @staticmethod
+    def _get_l_info(test_case_results: SingleTestResult) -> Tuple[List[BiasInfo],
+                                                                  List[str]]:
+        """Gets lists of supplementary info strings for the slope and intercept from the test case results object.
+        """
+
+        req = test_case_results.l_requirements[0]
+        req_id = req.req_id
+
+        if req_id == M_REQ:
+            bias = "m"
+        elif req_id == C_REQ:
+            bias = "c"
+        else:
+            raise ValueError(f"Requirement {req_id} is not recognized to be associated with either m or c bias.")
+
+        l_supp_info = req.l_supp_info
+
+        l_g1_bin_str: List[str] = []
+        l_g2_bin_str: List[str] = []
+
+        for supp_info in l_supp_info:
+
+            supp_info_str = supp_info.info_value.strip()
+
+            # Remove the first line, which doesn't contain any relevant information for us (use length + 2 to include
+            # the
+            # \n at the end of the line
+            len_first_line = len(supp_info_str.split('\n')[0])
+            supp_info_str = supp_info_str[len_first_line + 2:]
+
+            if supp_info.info_key == G1_INFO_KEY:
+                l_g1_bin_str = supp_info_str.split("\n\n")
+            elif supp_info.info_key == G2_INFO_KEY:
+                l_g2_bin_str = supp_info_str.split("\n\n")
+
+        # Remove any test failure notifications from the lists, and store them in separate lists
+        l_g1_err_str = [s for s in l_g1_bin_str if s.startswith(STR_TEST_FAILED)]
+        l_g1_bin_str = [s for s in l_g1_bin_str if not s.startswith(STR_TEST_FAILED)]
+
+        l_g2_err_str = [s for s in l_g2_bin_str if s.startswith(STR_TEST_FAILED)]
+        l_g2_bin_str = [s for s in l_g2_bin_str if not s.startswith(STR_TEST_FAILED)]
+
+        # Combine results g2o expected output format
+        l_info = [BiasInfo(a[0], a[1], bias) for a in zip(l_g1_bin_str, l_g2_bin_str)]
+        l_err_str = [*l_g1_err_str, *l_g2_err_str]
+
+        return l_info, l_err_str
+
+    @staticmethod
+    def _fix_bin_str(bin_str: str) -> str:
+        """Fixes a bin string for a bug that was present in old code (if found to be present here), where a linebreak
+        was missing.
+        """
+        bin_str = bin_str.replace(":m", ":\nm")
+        bin_str = bin_str.replace(":c", ":\nc")
+        return bin_str

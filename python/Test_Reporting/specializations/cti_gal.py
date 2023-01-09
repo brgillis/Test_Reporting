@@ -29,10 +29,12 @@ from Test_Reporting.specializations.binned import (BinnedReportSummaryWriter, RE
 from Test_Reporting.utility.misc import TocMarkdownWriter, log_entry_exit
 from Test_Reporting.utility.product_parsing import SingleTestResult
 
+MSG_SLOPE_HEADING = "Slope Test Result"
 MSG_SLOPE_VAL = "Slope = %s +/- %s\n\n"
 MSG_SLOPE_Z = "Z(Slope) = %s (Max allowed: %s)\n\n"
 MSG_SLOPE_RESULT = "Slope result: **%s**\n\n"
 
+MSG_INTERCEPT_HEADING = "Intercept Test Result"
 MSG_INTERCEPT_VAL = "Intercept = %s +/- %s\n\n"
 MSG_INTERCEPT_Z = "Z(Intercept) = %s (Max allowed: %s)\n\n"
 MSG_INTERCEPT_RESULT = "Intercept result: **%s**\n\n"
@@ -80,9 +82,11 @@ class CtiGalReportSummaryWriter(BinnedReportSummaryWriter):
         # Get the slope and intercept info out of the info strings for this specific bin by properly parsing it. If
         # there's any error with either, fall back to outputting the raw lines.
 
-        for (l_info_lines, msg_val,
-             msg_z, msg_result) in ((l_slope_info_lines, MSG_SLOPE_VAL, MSG_SLOPE_Z, MSG_SLOPE_RESULT),
-                                    (l_intercept_info_lines, MSG_INTERCEPT_VAL, MSG_INTERCEPT_Z, MSG_INTERCEPT_RESULT)):
+        for (l_info_lines, msg_val, msg_heading, msg_z, msg_result) in \
+                ((l_slope_info_lines, MSG_SLOPE_HEADING, MSG_SLOPE_VAL, MSG_SLOPE_Z, MSG_SLOPE_RESULT),
+                 (l_intercept_info_lines, MSG_INTERCEPT_HEADING, MSG_INTERCEPT_VAL, MSG_INTERCEPT_Z,
+                  MSG_INTERCEPT_RESULT)):
+            writer.add_heading(msg_heading, depth=2)
             try:
                 self._parse_and_write_slope_intercept_info(writer, l_info_lines, msg_val, msg_z, msg_result)
             except Exception as e:

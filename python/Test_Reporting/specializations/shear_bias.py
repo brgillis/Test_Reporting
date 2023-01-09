@@ -125,7 +125,7 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
         # there's any error with either, fall back to outputting the raw lines.
 
         for l_info_lines, comp_index in ((l_g1_info_lines, 1), (l_g2_info_lines, 2)):
-            writer.add_heading(f"{info.bias}{comp_index}", depth=2)
+            writer.add_heading(f"{info.bias}{comp_index} Test Result", depth=2)
             try:
                 self._parse_and_write_g1_g2_info(writer, l_info_lines, info.bias, comp_index)
             except Exception as e:

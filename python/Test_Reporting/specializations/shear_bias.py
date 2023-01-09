@@ -6,7 +6,7 @@
 
 Module providing a specialized ReportSummaryWriter for Shear Bias test cases.
 """
-
+import re
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
 # This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
@@ -22,13 +22,13 @@ Module providing a specialized ReportSummaryWriter for Shear Bias test cases.
 
 from dataclasses import dataclass
 from logging import getLogger
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 from Test_Reporting.specializations.binned import (BinnedReportSummaryWriter, RESULT_SEPARATOR, STR_BIN_RESULTS,
                                                    STR_TEST_FAILED,
                                                    VAL_SEPARATOR, )
 from Test_Reporting.utility.misc import TocMarkdownWriter, log_entry_exit
-from Test_Reporting.utility.product_parsing import SingleTestResult
+from Test_Reporting.utility.product_parsing import SingleTestResult, TestResults
 
 logger = getLogger(__name__)
 
@@ -56,6 +56,41 @@ class BiasInfo:
 
 class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
     test_name = "Shear-Bias"
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _get_l_test_case_names(test_results: TestResults, test_name_tail: str):
+        """Since this test case has multiple binned tests, each with the same Test Case ID, we want to modify how
+        names of reports are generated to include the parameter used for binning.
+        """
+
+        d_test_name_instances: Dict[str, int] = {}
+        l_test_case_names: List[str] = []
+
+        for test_case_results in test_results.l_test_results:
+
+            test_case_id = test_case_results.test_id
+
+            # Use a Regex match on the test description to determine what binning is used
+            bin_parameter_regex_match = re.match(r".*Binned by ([a-zA-Z0-9./_\-]+)\..*",
+                                                 test_case_results.test_description)
+            if bin_parameter_regex_match:
+                test_case_root_name = f"{test_case_id}-{bin_parameter_regex_match.groups()[0]}"
+            else:
+                logger.error("Could not determine binning parameter from test description: "
+                             f"\"{test_case_results.test_description}\"")
+                test_case_root_name = test_case_id
+
+            if test_case_root_name in d_test_name_instances:
+                d_test_name_instances[test_case_root_name] += 1
+                test_case_name = f"{test_case_root_name}-{d_test_name_instances[test_case_root_name]}{test_name_tail}"
+            else:
+                d_test_name_instances[test_case_root_name] = 1
+                test_case_name = f"{test_case_root_name}{test_name_tail}"
+
+            l_test_case_names.append(test_case_name)
+
+        return l_test_case_names
 
     @log_entry_exit(logger)
     def _write_info(self,

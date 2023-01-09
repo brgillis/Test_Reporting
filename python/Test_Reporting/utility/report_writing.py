@@ -612,19 +612,10 @@ class ReportSummaryWriter:
             The names and generated file names of each test case associated with this test.
         """
 
-        # We handle naming the test cases in this method, so we can check for the presence of duplicates
-        d_test_name_instances: Dict[str, int] = {}
+        l_test_case_names = self._get_l_test_case_names(test_results, test_name_tail)
+
         l_test_case_names_and_filenames: List[ValTestCaseMeta] = []
-        for test_case_results in test_results.l_test_results:
-
-            test_case_id = test_case_results.test_id
-            if test_case_id in d_test_name_instances:
-                d_test_name_instances[test_case_id] += 1
-                test_case_name = f"{test_case_id}-{d_test_name_instances[test_case_id]}{test_name_tail}"
-            else:
-                d_test_name_instances[test_case_id] = 1
-                test_case_name = f"{test_case_id}{test_name_tail}"
-
+        for test_case_results, test_case_name in zip(test_results.l_test_results, l_test_case_names):
             test_case_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_case_name}.md")
 
             l_test_case_names_and_filenames.append(ValTestCaseMeta(name=test_case_name,
@@ -640,6 +631,31 @@ class ReportSummaryWriter:
                                                      datadir=datadir)
 
         return l_test_case_names_and_filenames
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _get_l_test_case_names(test_results: TestResults, test_name_tail: str):
+        """Generate names for each test case. This method can be overridden by child classes, but must result in
+        unique names for each test case. In the default implementation, this uses the test case ID as the basis of
+        the name, and in the case of clashes, appends an index to the name, e.g. "ID", "ID-2", "ID-3", etc.
+        """
+
+        d_test_name_instances: Dict[str, int] = {}
+        l_test_case_names: List[str] = []
+
+        for test_case_results in test_results.l_test_results:
+
+            test_case_id = test_case_results.test_id
+            if test_case_id in d_test_name_instances:
+                d_test_name_instances[test_case_id] += 1
+                test_case_name = f"{test_case_id}-{d_test_name_instances[test_case_id]}{test_name_tail}"
+            else:
+                d_test_name_instances[test_case_id] = 1
+                test_case_name = f"{test_case_id}{test_name_tail}"
+
+            l_test_case_names.append(test_case_name)
+
+        return l_test_case_names
 
     @log_entry_exit(logger)
     def _write_individual_test_case_results(self,
@@ -921,7 +937,7 @@ class ReportSummaryWriter:
         try:
             qualified_directory_filename = self.find_directory_filename(figures_tmpdir)
         except (FileNotFoundError, ValueError) as e:
-            logger.error(str(e), qualified_textfiles_tarball_filename)
+            logger.error(str(e) + " This occurred when unpacking tarball %s", qualified_textfiles_tarball_filename)
             return None
 
         l_figure_labels_and_filenames = self.read_figure_labels_and_filenames(qualified_directory_filename)

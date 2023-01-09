@@ -30,7 +30,6 @@ To define a new implementation, the following is the recommended procedure:
 
 5. Add appropriate unit tests of all added functionality, including extending existing tests as appropriate.
 """
-from __future__ import annotations
 
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
@@ -45,9 +44,12 @@ from __future__ import annotations
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+from __future__ import annotations
+
 from typing import Dict, Optional, TYPE_CHECKING
 
 from Test_Reporting.specializations.cti_gal import CtiGalReportSummaryWriter
+from Test_Reporting.specializations.shear_bias import ShearBiasReportSummaryWriter
 from Test_Reporting.utility.misc import logger
 from Test_Reporting.utility.report_writing import BUILD_CALLABLE_TYPE, ReportSummaryWriter
 
@@ -58,6 +60,9 @@ if TYPE_CHECKING:
 CTI_GAL_KEY = "cti_gal"
 CTI_GAL_KEY_ALIASES = ["cti-gal", "ctigal", "cti"]
 
+SHEAR_BIAS_KEY = "shear_bias"
+SHEAR_BIAS_KEY_ALIASES = ["shearbias", "sb"]
+
 # Secondary keys for the CTI-Gal test case
 OBS_KEY = "obs"
 EXP_KEY = "exp"
@@ -67,6 +72,8 @@ EXP_KEY = "exp"
 D_BUILD_CALLABLES: Dict[Optional[str], BUILD_CALLABLE_TYPE] = {}
 for cti_gal_key in [CTI_GAL_KEY, *CTI_GAL_KEY_ALIASES]:
     D_BUILD_CALLABLES[cti_gal_key] = CtiGalReportSummaryWriter()
+for shear_bias_key in [SHEAR_BIAS_KEY, *SHEAR_BIAS_KEY_ALIASES]:
+    D_BUILD_CALLABLES[shear_bias_key] = ShearBiasReportSummaryWriter()
 
 DEFAULT_BUILD_CALLABLE = ReportSummaryWriter()
 

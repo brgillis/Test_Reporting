@@ -22,9 +22,10 @@ import re
 
 from dataclasses import dataclass
 from logging import getLogger
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
-from Test_Reporting.specializations.binned import (BinnedReportSummaryWriter, RESULT_SEPARATOR, STR_BIN_RESULTS,
+from Test_Reporting.specializations.binned import (BinnedReportSummaryWriter, MSG_NO_FIGURE, RESULT_SEPARATOR,
+                                                   STR_BIN_RESULTS,
                                                    STR_TEST_FAILED,
                                                    VAL_SEPARATOR, )
 from Test_Reporting.utility.misc import TocMarkdownWriter, log_entry_exit
@@ -96,13 +97,16 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
 
         return l_test_case_names
 
-    @log_entry_exit(logger)
-    def _write_info(self,
-                    writer: TocMarkdownWriter,
-                    info: BiasInfo,
-                    is_global: bool):
+    def _write_bin_figures_and_info(self,
+                                    writer: TocMarkdownWriter,
+                                    d_bin_figure_filenames: Dict[Any, Optional[str]],
+                                    label: str,
+                                    reportdir: str,
+                                    figures_tmpdir: str,
+                                    info: BiasInfo,
+                                    is_global: bool):
         """Parses strings containing g1 and g2 bias info for a given bin and writes out the relevant info to a
-        provided TocMarkdownWriter.
+        provided TocMarkdownWriter, with appropriate figures alongside the g1 and g2 info.
         """
 
         # Fix the bin strings for a missing line break that was in older versions
@@ -121,11 +125,24 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
         if l_g2_info_lines[0].startswith(STR_BIN_RESULTS):
             l_g2_info_lines = l_g2_info_lines[1:]
 
-        # Get the g1 and g2 info out of the info strings for this specific bin by properly parsing it. If
-        # there's any error with either, fall back to outputting the raw lines.
-
+        # Write figure and info for each component separately
         for l_info_lines, comp_index in ((l_g1_info_lines, 1), (l_g2_info_lines, 2)):
             writer.add_heading(f"{info.bias}{comp_index} Test Result", depth=2)
+
+            # Draw the relevant figure, or else write a message that no figure is available
+            figure_drawn = False
+            if d_bin_figure_filenames:
+                for key, filename in d_bin_figure_filenames.items():
+                    if str(key) != str(comp_index):
+                        continue
+                    relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
+                    writer.add_line(f"![{label} {info.bias}{comp_index} Figure]({relative_figure_filename})\n\n")
+                    figure_drawn = True
+            if not figure_drawn:
+                writer.add_line(MSG_NO_FIGURE)
+
+            # Get the g1 and g2 info out of the info strings for this specific bin by properly parsing it. If
+            # there's any error with either, fall back to outputting the raw lines.
             try:
                 self._parse_and_write_g1_g2_info(writer, l_info_lines, info.bias, comp_index)
             except Exception as e:
@@ -207,11 +224,14 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
 
             supp_info_str = supp_info.info_value.strip()
 
-            # Remove the first line, which doesn't contain any relevant information for us (use length + 2 to include
-            # the
-            # \n at the end of the line
+            # Remove the first line, which doesn't contain any relevant information for us (use length + 1 to include
+            # the \n at the end of the line
             len_first_line = len(supp_info_str.split('\n')[0])
-            supp_info_str = supp_info_str[len_first_line + 2:]
+            supp_info_str = supp_info_str[len_first_line + 1:]
+
+            # Check for an extra linebreak
+            if supp_info_str.startswith("\n"):
+                supp_info_str = supp_info_str[1:]
 
             if supp_info.info_key == G1_INFO_KEY:
                 l_g1_bin_str = supp_info_str.split("\n\n")

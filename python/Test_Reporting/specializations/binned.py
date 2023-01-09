@@ -133,13 +133,13 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
         else:
             d_figure_filenames = {}
 
-        # Check if this is the global test case, which we'll format a bit differently
-        is_global = False
-        if len(l_info) == 1:
-            is_global = True
-
         # Write info for each bin
         for bin_i, info in enumerate(l_info):
+
+            # Check if this is the global test case, which we'll format a bit differently
+            is_global = False
+            if len(l_info) == 1:
+                is_global = True
 
             if is_global:
                 label = GLOBAL_LABEL
@@ -159,24 +159,38 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
             # Trim any Nones from the filename dict
             d_bin_figure_filenames = {k: v for k, v in d_bin_figure_filenames.items() if v is not None}
 
-            # Draw all figures for this bin, if we have any. Otherwise, report that we have no figures
-            if d_bin_figure_filenames:
-                for key, filename in d_bin_figure_filenames.items():
-                    relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
-                    if key:
-                        key_label = f" {key}"
-                    else:
-                        key_label = ""
-                    writer.add_line(f"![{label} Figure{key_label}]({relative_figure_filename})\n\n")
-            else:
-                writer.add_line(MSG_NO_FIGURE)
+            self._write_bin_figures_and_info(writer, d_bin_figure_filenames, label, reportdir, figures_tmpdir, info,
+                                             is_global)
 
-            # Use a try block, and any on exception here we'll fall back to simply dumping the SupplementaryInfo as-is
-            try:
-                self._write_info(writer, info, is_global)
-            except Exception as e:
-                logger.error("%s", e)
-                writer.add_line(f"```\n{info}\n\n```\n")
+    def _write_bin_figures_and_info(self,
+                                    writer: TocMarkdownWriter,
+                                    d_bin_figure_filenames: Union[Optional[str], Dict[Any, Optional[str]]],
+                                    label: str,
+                                    reportdir: str,
+                                    figures_tmpdir: str,
+                                    info: Any,
+                                    is_global: bool):
+        """Write out all info for a given bin. This can be overridden by child classes if desired.
+
+        """
+        # Draw all figures for this bin, if we have any. Otherwise, report that we have no figures
+        if d_bin_figure_filenames:
+            for key, filename in d_bin_figure_filenames.items():
+                relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
+                if key:
+                    key_label = f" {key}"
+                else:
+                    key_label = ""
+                writer.add_line(f"![{label} Figure{key_label}]({relative_figure_filename})\n\n")
+        else:
+            writer.add_line(MSG_NO_FIGURE)
+
+        # Use a try block, and any on exception here we'll fall back to simply dumping the SupplementaryInfo as-is
+        try:
+            self._write_info(writer, info, is_global)
+        except Exception as e:
+            logger.error("%s", e)
+            writer.add_line(f"```\n{info}\n\n```\n")
 
     @staticmethod
     def _get_d_figure_filenames(l_figure_labels_and_filenames):

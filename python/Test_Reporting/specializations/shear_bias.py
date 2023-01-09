@@ -76,6 +76,10 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
                                                  test_case_results.test_description)
             if bin_parameter_regex_match:
                 test_case_root_name = f"{test_case_id}-{bin_parameter_regex_match.groups()[0]}"
+            elif re.match(r".*Binned by background level\..*", test_case_results.test_description):
+                # Check also for the phrase "background level", which for some reason is written out fully, unlike other
+                # bin parameters
+                test_case_root_name = f"{test_case_id}-BG"
             else:
                 logger.error("Could not determine binning parameter from test description: "
                              f"\"{test_case_results.test_description}\"")

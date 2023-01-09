@@ -82,7 +82,7 @@ class CtiGalReportSummaryWriter(BinnedReportSummaryWriter):
         # Get the slope and intercept info out of the info strings for this specific bin by properly parsing it. If
         # there's any error with either, fall back to outputting the raw lines.
 
-        for (l_info_lines, msg_val, msg_heading, msg_z, msg_result) in \
+        for (l_info_lines, msg_heading, msg_val, msg_z, msg_result) in \
                 ((l_slope_info_lines, MSG_SLOPE_HEADING, MSG_SLOPE_VAL, MSG_SLOPE_Z, MSG_SLOPE_RESULT),
                  (l_intercept_info_lines, MSG_INTERCEPT_HEADING, MSG_INTERCEPT_VAL, MSG_INTERCEPT_Z,
                   MSG_INTERCEPT_RESULT)):

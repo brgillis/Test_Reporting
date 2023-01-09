@@ -27,7 +27,7 @@ from typing import List, Tuple
 from Test_Reporting.specializations.binned import (BinnedReportSummaryWriter, RESULT_SEPARATOR, STR_BIN_RESULTS,
                                                    STR_TEST_FAILED,
                                                    VAL_SEPARATOR, )
-from Test_Reporting.utility.misc import TocMarkdownWriter
+from Test_Reporting.utility.misc import TocMarkdownWriter, log_entry_exit
 from Test_Reporting.utility.product_parsing import SingleTestResult
 
 logger = getLogger(__name__)
@@ -57,6 +57,7 @@ class BiasInfo:
 class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
     test_name = "Shear-Bias"
 
+    @log_entry_exit(logger)
     def _write_info(self,
                     writer: TocMarkdownWriter,
                     info: BiasInfo,
@@ -95,6 +96,7 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
                 writer.add_line("```\n")
 
     @staticmethod
+    @log_entry_exit(logger)
     def _parse_and_write_g1_g2_info(writer: TocMarkdownWriter,
                                     l_info_lines: List[str],
                                     bias: str,
@@ -118,6 +120,7 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
         writer.add_line(msg_result % val_result)
 
     @staticmethod
+    @log_entry_exit(logger)
     def _get_d_figure_filenames(l_figure_labels_and_filenames):
         """Parses the figure labels and filenames from a directory and returns a dict appropriately sorting them.
         This may be overridden by child classes if necessary.
@@ -139,6 +142,7 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
         return d_figure_filenames
 
     @staticmethod
+    @log_entry_exit(logger)
     def _get_l_info(test_case_results: SingleTestResult) -> Tuple[List[BiasInfo],
                                                                   List[str]]:
         """Gets lists of supplementary info strings for the slope and intercept from the test case results object.
@@ -188,6 +192,7 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
         return l_info, l_err_str
 
     @staticmethod
+    @log_entry_exit(logger)
     def _fix_bin_str(bin_str: str) -> str:
         """Fixes a bin string for a bug that was present in old code (if found to be present here), where a linebreak
         was missing.

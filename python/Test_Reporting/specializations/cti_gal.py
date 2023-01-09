@@ -26,7 +26,7 @@ from typing import List, Tuple
 
 from Test_Reporting.specializations.binned import (BinnedReportSummaryWriter, RESULT_SEPARATOR, STR_BIN_RESULTS,
                                                    STR_TEST_FAILED, VAL_SEPARATOR, )
-from Test_Reporting.utility.misc import TocMarkdownWriter
+from Test_Reporting.utility.misc import TocMarkdownWriter, log_entry_exit
 from Test_Reporting.utility.product_parsing import SingleTestResult
 
 MSG_SLOPE_VAL = "Slope = %s +/- %s\n\n"
@@ -52,6 +52,7 @@ class SlopeInterceptInfo:
 class CtiGalReportSummaryWriter(BinnedReportSummaryWriter):
     test_name = "CTI-Gal"
 
+    @log_entry_exit(logger)
     def _write_info(self,
                     writer: TocMarkdownWriter,
                     info: SlopeInterceptInfo,
@@ -92,6 +93,7 @@ class CtiGalReportSummaryWriter(BinnedReportSummaryWriter):
                 writer.add_line("```\n")
 
     @staticmethod
+    @log_entry_exit(logger)
     def _parse_and_write_slope_intercept_info(writer: TocMarkdownWriter,
                                               l_info_lines: List[str],
                                               msg_val: str,
@@ -111,6 +113,7 @@ class CtiGalReportSummaryWriter(BinnedReportSummaryWriter):
         writer.add_line(msg_result % val_result)
 
     @staticmethod
+    @log_entry_exit(logger)
     def _get_l_info(test_case_results: SingleTestResult) -> Tuple[List[SlopeInterceptInfo],
                                                                   List[str]]:
         """Gets lists of supplementary info strings for the slope and intercept from the test case results object.
@@ -142,6 +145,7 @@ class CtiGalReportSummaryWriter(BinnedReportSummaryWriter):
         return l_info, l_err_str
 
     @staticmethod
+    @log_entry_exit(logger)
     def _fix_bin_str(bin_str: str) -> str:
         """Fixes a bin string for a bug that was present in old code (if found to be present here), where a linebreak
         was missing.

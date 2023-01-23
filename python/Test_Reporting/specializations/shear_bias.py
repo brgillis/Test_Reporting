@@ -6,7 +6,7 @@
 
 Module providing a specialized ReportSummaryWriter for Shear Bias test cases.
 """
-import re
+
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
 # This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
@@ -20,9 +20,11 @@ import re
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+import re
+
 from dataclasses import dataclass
 from logging import getLogger
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 from Test_Reporting.specializations.binned import (BinnedReportSummaryWriter, MSG_NO_FIGURE, RESULT_SEPARATOR,
                                                    STR_BIN_RESULTS,
@@ -97,6 +99,7 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
 
         return l_test_case_names
 
+    @log_entry_exit(logger)
     def _write_bin_figures_and_info(self,
                                     writer: TocMarkdownWriter,
                                     d_bin_figure_filenames: Dict[Any, Optional[str]],

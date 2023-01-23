@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:DpdSheValidationTestResults xmlns:ns1="http://euclid.esa.org/schema/dpd/she/validationtestresults">
+	<Header>
+		<ProductId>2b1861e1-9310-46cd-aa49-fa80ad73731f</ProductId>
+		<ProductType>DpdSheValidationTestResults</ProductType>
+		<SoftwareName>NA</SoftwareName>
+		<SoftwareRelease>0.0</SoftwareRelease>
+		<EuclidPipelineSoftwareRelease>0.0</EuclidPipelineSoftwareRelease>
+		<ProdSDC>SDC-IT</ProdSDC>
+		<DataSetRelease>NA</DataSetRelease>
+		<Purpose>UNKNOWN</Purpose>
+		<PlanId>566ae0e1-4926-42e6-9862-b0145e207c85</PlanId>
+		<PPOId>76b7eb95-1f0a-40fa-b378-e15cf5a704e0</PPOId>
+		<PipelineDefinitionId>PipelineDefinitionId</PipelineDefinitionId>
+		<PpoStatus>NA</PpoStatus>
+		<ManualValidationStatus>UNKNOWN</ManualValidationStatus>
+		<ExpirationDate>2023-01-23T14:56:31.329Z</ExpirationDate>
+		<ToBePublished>0</ToBePublished>
+		<Published>0</Published>
+		<Curator>Curator0</Curator>
+		<CreationDate>2023-01-23T14:56:31.329Z</CreationDate>
+	</Header>
+	<Data>
+		<ExposureProductId>-1</ExposureProductId>
+		<ObservationId>-1</ObservationId>
+		<PointingId>-1</PointingId>
+		<NumberExposures>-1</NumberExposures>
+		<TileId>-1</TileId>
+		<SourcePipeline>sheAnalysis</SourcePipeline>
+		<ValidationTestList>
+			<GlobalResult>FAILED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-PRD-F-010</Id>
+					<MeasuredValue>
+						<Parameter>True/False for whether or not all data is provided.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>FAILED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>INFO</Key>
+							<Description>Information about the results of the test.</Description>
+							<StringValue>Presence and validity of Shear Estimates Data Product: PASSED
+Details: N/A
+
+Presence and validity of Shear Estimates Catalog: FAILED
+Details: ERROR: No Shear Estimates table for method KSB found in data product.
+
+Presence and validity of Chains Data Product: PASSED
+Details: N/A
+
+Presence and validity of Chains Catalog: PASSED
+Details: N/A
+
+Result: FAILED</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>TC-SHE-100035-data-proc-KSB</TestId>
+			<TestDescription>Output calibrated shear estimates. Shear estimation method: ShearEstimationMethods.KSB.</TestDescription>
+			<AnalysisResult>
+				<Result>FAILED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>EUC_SHE_UNKNOWN-TYPE-TEXTFILES_DATAPROC---KSB_20230123T145631.467597Z_09.01.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>EUC_SHE_UNKNOWN-TYPE-FIGURES_DATAPROC---KSB_20230123T145631.546827Z_09.01.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>FAILED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-PRD-F-010</Id>
+					<MeasuredValue>
+						<Parameter>True/False for whether or not all data is provided.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>FAILED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>INFO</Key>
+							<Description>Information about the results of the test.</Description>
+							<StringValue>Presence and validity of Shear Estimates Data Product: PASSED
+Details: N/A
+
+Presence and validity of Shear Estimates Catalog: FAILED
+Details: ERROR: No Shear Estimates table for method REGAUSS found in data product.
+
+Presence and validity of Chains Data Product: PASSED
+Details: N/A
+
+Presence and validity of Chains Catalog: PASSED
+Details: N/A
+
+Result: FAILED</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>TC-SHE-100035-data-proc-REGAUSS</TestId>
+			<TestDescription>Output calibrated shear estimates. Shear estimation method: ShearEstimationMethods.REGAUSS.</TestDescription>
+			<AnalysisResult>
+				<Result>FAILED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>EUC_SHE_UNKNOWN-TYPE-TEXTFILES_DATAPROC---REGAUS_20230123T145631.623897Z_09.01.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>EUC_SHE_UNKNOWN-TYPE-FIGURES_DATAPROC---REGAUS_20230123T145631.692848Z_09.01.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>FAILED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-PRD-F-010</Id>
+					<MeasuredValue>
+						<Parameter>True/False for whether or not all data is provided.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>0.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>FAILED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>INFO</Key>
+							<Description>Information about the results of the test.</Description>
+							<StringValue>Presence and validity of Shear Estimates Data Product: PASSED
+Details: N/A
+
+Presence and validity of Shear Estimates Catalog: FAILED
+Details: ERROR: No Shear Estimates table for method MomentsML found in data product.
+
+Presence and validity of Chains Data Product: PASSED
+Details: N/A
+
+Presence and validity of Chains Catalog: PASSED
+Details: N/A
+
+Result: FAILED</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>TC-SHE-100035-data-proc-MomentsML</TestId>
+			<TestDescription>Output calibrated shear estimates. Shear estimation method: ShearEstimationMethods.MOMENTSML.</TestDescription>
+			<AnalysisResult>
+				<Result>FAILED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>EUC_SHE_UNKNOWN-TYPE-TEXTFILES_DATAPROC---MOMENT_20230123T145631.761290Z_09.01.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>EUC_SHE_UNKNOWN-TYPE-FIGURES_DATAPROC---MOMENT_20230123T145631.826492Z_09.01.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+		<ValidationTestList>
+			<GlobalResult>PASSED</GlobalResult>
+			<ValidatedRequirements>
+				<Requirement>
+					<Id>R-SHE-PRD-F-010</Id>
+					<MeasuredValue>
+						<Parameter>True/False for whether or not all data is provided.</Parameter>
+						<DataType>float</DataType>
+						<Value>
+							<FloatValue>1.0</FloatValue>
+						</Value>
+					</MeasuredValue>
+					<ValidationResult>PASSED</ValidationResult>
+					<Comment>INFO: Multiple notes; see SupplementaryInformation.</Comment>
+					<SupplementaryInformation>
+						<Parameter>
+							<Key>INFO</Key>
+							<Description>Information about the results of the test.</Description>
+							<StringValue>Presence and validity of Shear Estimates Data Product: PASSED
+Details: N/A
+
+Presence and validity of Shear Estimates Catalog: PASSED
+Details: N/A
+
+Presence and validity of Chains Data Product: PASSED
+Details: N/A
+
+Presence and validity of Chains Catalog: PASSED
+Details: N/A
+
+Result: PASSED</StringValue>
+							<Unit></Unit>
+						</Parameter>
+					</SupplementaryInformation>
+				</Requirement>
+			</ValidatedRequirements>
+			<TestId>TC-SHE-100035-data-proc-LensMC</TestId>
+			<TestDescription>Output calibrated shear estimates. Shear estimation method: ShearEstimationMethods.LENSMC.</TestDescription>
+			<AnalysisResult>
+				<Result>PASSED</Result>
+				<AnalysisFiles>
+					<TextFiles filestatus="PROPOSED">
+						<FileName>EUC_SHE_UNKNOWN-TYPE-TEXTFILES_DATAPROC---LENSMC_20230123T145631.898315Z_09.01.tar.gz</FileName>
+					</TextFiles>
+					<Figures filestatus="PROPOSED">
+						<FileName>EUC_SHE_UNKNOWN-TYPE-FIGURES_DATAPROC---LENSMC_20230123T145631.965276Z_09.01.tar.gz</FileName>
+					</Figures>
+				</AnalysisFiles>
+			</AnalysisResult>
+		</ValidationTestList>
+	</Data>
+	<QualityFlags>
+		<DummyFlag xpath="//Data/Some/Path/To/Quality/Parameter" minLimit="0.05" maxLimit="10.0" flagged="false">true</DummyFlag>
+		<AuxiliaryFlags flagName="RSG1j" xpath="p8hra" minLimit="-7.0" maxLimit="5.0" flagged="false">false</AuxiliaryFlags>
+	</QualityFlags>
+	<Parameters>
+		<Parameter>
+			<Key>pV73o</Key>
+			<Description>DUXcx</Description>
+			<StringValue>8kssj</StringValue>
+			<Unit>xYHIw</Unit>
+		</Parameter>
+	</Parameters>
+</ns1:DpdSheValidationTestResults>

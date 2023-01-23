@@ -797,7 +797,7 @@ class ReportSummaryWriter:
         writer.add_heading(HEADING_DETAILED_RESULTS, depth=0)
         for req_i, req in enumerate(test_case_results.l_requirements):
             writer.add_heading("Requirement", depth=1)
-            writer.add_line(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
+            self._add_measured_parameter_line(writer, req)
             self._add_measured_value_line(writer, req)
             if req.req_comment is not None:
                 writer.add_line(f"**Comments**: {req.req_comment}\n\n")
@@ -805,7 +805,28 @@ class ReportSummaryWriter:
 
     @staticmethod
     @log_entry_exit(logger)
+    def _add_measured_parameter_line(writer, req):
+        """Adds a line for the measured parameter associated with an individual test case to a MarkdownWriter.
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        req : RequirementResults
+            The object containing the results for a specific requirement.
+        """
+        writer.add_line(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
+
+    @staticmethod
+    @log_entry_exit(logger)
     def _add_measured_value_line(writer, req):
+        """Adds a line for the measured value associated with an individual test case to a MarkdownWriter.
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        req : RequirementResults
+            The object containing the results for a specific requirement.
+        """
         writer.add_line(f"**Measured Value**: {req.meas_value.value}\n\n")
 
     @staticmethod
@@ -817,7 +838,6 @@ class ReportSummaryWriter:
         ----------
         writer : TocMarkdownWriter
         req : RequirementResults
-            The object containing the results for a specific requirement.
         """
 
         for supp_info_i, supp_info in enumerate(req.l_supp_info):

@@ -34,6 +34,13 @@ class DataProcReportSummaryWriter(ReportSummaryWriter):
 
     @staticmethod
     @log_entry_exit(logger)
+    def _add_measured_value_line(writer, req):
+        """Override method to convert measured value to a boolean.
+        """
+        writer.add_line(f"**Measured Value**: {bool(req.meas_value.value)}\n\n")
+
+    @staticmethod
+    @log_entry_exit(logger)
     def _add_test_case_supp_info(writer, req):
         """Override method to slightly adjust format of supplementary info for more clean printing.
 

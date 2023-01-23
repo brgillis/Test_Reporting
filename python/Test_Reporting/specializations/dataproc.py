@@ -39,17 +39,24 @@ class DataProcReportSummaryWriter(ReportSummaryWriter):
         """
 
         for supp_info_i, supp_info in enumerate(req.l_supp_info):
+
             writer.add_heading(f"{supp_info.info_key}", depth=2)
-            writer.add_line(f"{supp_info.info_description}\n\n")
 
             # Trim excess line breaks from the supplementary info's beginning and end
             supp_info_str = supp_info.info_value.strip()
 
-            # Replace double linebreaks with a separator
-            supp_info_str = supp_info_str.replace("\n\n", "\n\n---\n\n")
+            # Replace single linebreaks with double linebreaks
+            supp_info_str = supp_info_str.replace("\n", "\n\n")
+
+            # Replace double linebreaks (which would have been turned into quadruple in the previous step) with a
+            # separator between double linebreaks
+            supp_info_str = supp_info_str.replace("\n\n\n\n", "\n\n---\n\n")
 
             # Format PASSED/FAILED in bold
             supp_info_str = supp_info_str.replace(STR_PASS, f"**{STR_PASS}**")
             supp_info_str = supp_info_str.replace(STR_FAIL, f"**{STR_FAIL}**")
+
+            # Add a double newline to the end
+            supp_info_str += "\n"
 
             writer.add_line(supp_info_str)

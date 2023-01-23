@@ -20,14 +20,20 @@ Module providing a specialized ReportSummaryWriter for DataProc test.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+from logging import getLogger
+
 from Test_Reporting.utility.constants import STR_FAIL, STR_PASS
+from Test_Reporting.utility.misc import log_entry_exit
 from Test_Reporting.utility.report_writing import ReportSummaryWriter
+
+logger = getLogger(__name__)
 
 
 class DataProcReportSummaryWriter(ReportSummaryWriter):
     test_name = "DataProc"
 
     @staticmethod
+    @log_entry_exit(logger)
     def _add_test_case_supp_info(writer, req):
         """Override method to slightly adjust format of supplementary info for more clean printing.
 
@@ -60,3 +66,10 @@ class DataProcReportSummaryWriter(ReportSummaryWriter):
             supp_info_str += "\n"
 
             writer.add_line(supp_info_str)
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_test_case_figures(writer, ana_result, reportdir, datadir, figures_tmpdir):
+        """Override parent method to exclude figures section, since we don't expect any.
+        """
+        pass

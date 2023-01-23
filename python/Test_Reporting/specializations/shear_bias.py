@@ -24,7 +24,7 @@ import re
 
 from dataclasses import dataclass
 from logging import getLogger
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 from Test_Reporting.specializations.binned import (BinnedReportSummaryWriter, MSG_NO_FIGURE, RESULT_SEPARATOR,
                                                    STR_BIN_RESULTS,

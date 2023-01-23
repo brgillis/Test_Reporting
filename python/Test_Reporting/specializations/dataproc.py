@@ -22,6 +22,36 @@ Module providing a specialized ReportSummaryWriter for DataProc test.
 
 from Test_Reporting.utility.report_writing import ReportSummaryWriter
 
+STR_PASS = "PASSED"
+STR_FAILED = "FAILED"
+
 
 class ShearBiasReportSummaryWriter(ReportSummaryWriter):
     test_name = "DataProc"
+
+    @staticmethod
+    def _add_test_case_supp_info(writer, req):
+        """Override method to slightly adjust format of supplementary info for more clean printing.
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        req : RequirementResults
+            The object containing the results for a specific requirement.
+        """
+
+        for supp_info_i, supp_info in enumerate(req.l_supp_info):
+            writer.add_heading(f"{supp_info.info_key}", depth=2)
+            writer.add_line(f"{supp_info.info_description}\n\n")
+
+            # Trim excess line breaks from the supplementary info's beginning and end
+            supp_info_str = supp_info.info_value.strip()
+
+            # Replace double linebreaks with a separator
+            supp_info_str = supp_info_str.replace("\n\n", "\n\n---\n\n")
+
+            # Format PASSED/FAILED in bold
+            supp_info_str = supp_info_str.replace(STR_PASS, f"**{STR_PASS}**")
+            supp_info_str = supp_info_str.replace(STR_FAILED, f"**{STR_FAILED}**")
+
+            writer.add_line(supp_info_str)

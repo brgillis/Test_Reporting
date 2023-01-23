@@ -55,3 +55,7 @@ JSON_EXT = ".json"
 HTML_EXT = ".html"
 MD_EXT = ".md"
 TARBALL_EXT = ".tar.gz"
+
+# Strings expected in test results products
+STR_PASS = "PASSED"
+STR_FAIL = "FAILED"

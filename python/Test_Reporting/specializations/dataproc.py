@@ -20,10 +20,8 @@ Module providing a specialized ReportSummaryWriter for DataProc test.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+from Test_Reporting.utility.constants import STR_FAIL, STR_PASS
 from Test_Reporting.utility.report_writing import ReportSummaryWriter
-
-STR_PASS = "PASSED"
-STR_FAILED = "FAILED"
 
 
 class DataProcReportSummaryWriter(ReportSummaryWriter):
@@ -52,6 +50,6 @@ class DataProcReportSummaryWriter(ReportSummaryWriter):
 
             # Format PASSED/FAILED in bold
             supp_info_str = supp_info_str.replace(STR_PASS, f"**{STR_PASS}**")
-            supp_info_str = supp_info_str.replace(STR_FAILED, f"**{STR_FAILED}**")
+            supp_info_str = supp_info_str.replace(STR_FAIL, f"**{STR_FAIL}**")
 
             writer.add_line(supp_info_str)

@@ -21,7 +21,6 @@ Unit tests of writing test reports with the DataProc specialization.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import os
-from typing import TYPE_CHECKING
 
 from Test_Reporting.specializations.dataproc import DataProcReportSummaryWriter
 from Test_Reporting.testing.common import TEST_DP_RESULTS_FILENAME

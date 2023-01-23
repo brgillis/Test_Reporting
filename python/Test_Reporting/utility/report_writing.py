@@ -38,7 +38,8 @@ from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tuple, Union
 
 from Test_Reporting.utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, hash_any, is_valid_tarball_filename,
+from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, get_qualified_path, hash_any,
+                                         is_valid_tarball_filename,
                                          is_valid_xml_filename, log_entry_exit, get_data_filename, )
 from Test_Reporting.utility.product_parsing import parse_xml_product
 
@@ -324,11 +325,18 @@ class ReportSummaryWriter:
         # process each individual tarball
         l_test_meta: List[ValTestMeta]
         if isinstance(value, str):
-            l_test_meta = self._summarize_results_file(value, rootdir, reportdir=reportdir, datadir=datadir, tag=None)
+            l_test_meta = self._summarize_results_file(value,
+                                                       rootdir=rootdir,
+                                                       reportdir=reportdir,
+                                                       datadir=datadir,
+                                                       tag=None)
         elif isinstance(value, dict):
             l_test_meta = []
             for sub_key, sub_value in value.items():
-                l_test_meta += self._summarize_results_file(sub_value, rootdir, reportdir=reportdir, datadir=datadir,
+                l_test_meta += self._summarize_results_file(sub_value,
+                                                            rootdir=rootdir,
+                                                            reportdir=reportdir,
+                                                            datadir=datadir,
                                                             tag=sub_key)
         else:
             raise ValueError("Value in manifest is of unrecognized type.\n"
@@ -363,6 +371,9 @@ class ReportSummaryWriter:
         # Check for no input
         if results_filename is None:
             return []
+
+        # Make sure the results_filename is fully-qualified
+        results_filename = get_qualified_path(results_filename, base=os.path.join(rootdir, DATA_DIR))
 
         # Split execution depending on if we're passed a tarball or an XML data product
 

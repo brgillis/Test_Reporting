@@ -26,7 +26,7 @@ STR_PASS = "PASSED"
 STR_FAILED = "FAILED"
 
 
-class ShearBiasReportSummaryWriter(ReportSummaryWriter):
+class DataProcReportSummaryWriter(ReportSummaryWriter):
     test_name = "DataProc"
 
     @staticmethod

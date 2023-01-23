@@ -99,6 +99,7 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
 
         return l_test_case_names
 
+    @log_entry_exit(logger)
     def _write_bin_figures_and_info(self,
                                     writer: TocMarkdownWriter,
                                     d_bin_figure_filenames: Dict[Any, Optional[str]],

@@ -464,6 +464,7 @@ class ReportSummaryWriter:
 
         return l_test_meta
 
+    @log_entry_exit(logger)
     def _summarize_results_product(self, l_product_filenames, reportdir, datadir, tag):
         """Writes summary markdown files for the test results contained in each of a list of data products. The
         output will be sorted based on PointingId, and so may not be in the same order as the input list
@@ -797,12 +798,18 @@ class ReportSummaryWriter:
         for req_i, req in enumerate(test_case_results.l_requirements):
             writer.add_heading("Requirement", depth=1)
             writer.add_line(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
-            writer.add_line(f"**Measured Value**: {req.meas_value.value}\n\n")
+            self._add_measured_value_line(writer, req)
             if req.req_comment is not None:
                 writer.add_line(f"**Comments**: {req.req_comment}\n\n")
             self._add_test_case_supp_info(writer, req)
 
     @staticmethod
+    @log_entry_exit(logger)
+    def _add_measured_value_line(writer, req):
+        writer.add_line(f"**Measured Value**: {req.meas_value.value}\n\n")
+
+    @staticmethod
+    @log_entry_exit(logger)
     def _add_test_case_supp_info(writer, req):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter.
 
@@ -863,6 +870,7 @@ class ReportSummaryWriter:
             writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
 
     @staticmethod
+    @log_entry_exit(logger)
     def _move_figure_to_public(filename, reportdir, figures_tmpdir):
         """Move a figure to the appropriate directory and return the relative filename for it.
 
@@ -898,6 +906,7 @@ class ReportSummaryWriter:
         # Return the path to the moved figure file, relative to where test reports will be stored
         return f"../{IMAGES_SUBDIR}/{filename}"
 
+    @log_entry_exit(logger)
     def _prepare_figures(self, ana_result, reportdir, datadir, figures_tmpdir):
         """Performs standard steps to prepare figures - unpacking them, reading the directory file, and setting up
         expected output directory.

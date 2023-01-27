@@ -50,6 +50,7 @@ from typing import Dict, Optional, TYPE_CHECKING
 
 from Test_Reporting.specializations.cti_gal import CtiGalReportSummaryWriter
 from Test_Reporting.specializations.dataproc import DataProcReportSummaryWriter
+from Test_Reporting.specializations.galinfo import GalInfoReportSummaryWriter
 from Test_Reporting.specializations.shear_bias import ShearBiasReportSummaryWriter
 from Test_Reporting.utility.misc import logger
 from Test_Reporting.utility.report_writing import BUILD_CALLABLE_TYPE, ReportSummaryWriter
@@ -67,6 +68,9 @@ SHEAR_BIAS_KEY_ALIASES = ["shearbias", "sb"]
 DATA_PROC_KEY = "dataproc"
 DATA_PROC_KEY_ALIASES = ["data_proc", "data-proc", "dp"]
 
+GAL_INFO_KEY = "galinfo"
+GAL_INFO_KEY_ALIASES = ["gal_info", "gal-info", "gi"]
+
 # Secondary keys for the CTI-Gal test case
 OBS_KEY = "obs"
 EXP_KEY = "exp"
@@ -80,6 +84,8 @@ for shear_bias_key in [SHEAR_BIAS_KEY, *SHEAR_BIAS_KEY_ALIASES]:
     D_BUILD_CALLABLES[shear_bias_key] = ShearBiasReportSummaryWriter()
 for dataproc_key in [DATA_PROC_KEY, *DATA_PROC_KEY_ALIASES]:
     D_BUILD_CALLABLES[dataproc_key] = DataProcReportSummaryWriter()
+for galinfo_key in [GAL_INFO_KEY, *GAL_INFO_KEY_ALIASES]:
+    D_BUILD_CALLABLES[galinfo_key] = GalInfoReportSummaryWriter()
 
 DEFAULT_BUILD_CALLABLE = ReportSummaryWriter()
 

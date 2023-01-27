@@ -34,3 +34,5 @@ L_TEST_META = [ValTestMeta("T1", "T1.md", [ValTestCaseMeta("TC1-1", "TC1-1.md")]
                            num_failed=2)]
 
 TEST_SB_TARBALL_FILENAME = "shear_bias_test_results.tar.gz"
+
+TEST_DP_RESULTS_FILENAME = "dataproc_test_results.xml"

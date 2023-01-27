@@ -38,7 +38,8 @@ from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tuple, Union
 
 from Test_Reporting.utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, hash_any, is_valid_tarball_filename,
+from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, get_qualified_path, hash_any,
+                                         is_valid_tarball_filename,
                                          is_valid_xml_filename, log_entry_exit, get_data_filename, )
 from Test_Reporting.utility.product_parsing import parse_xml_product
 
@@ -324,11 +325,18 @@ class ReportSummaryWriter:
         # process each individual tarball
         l_test_meta: List[ValTestMeta]
         if isinstance(value, str):
-            l_test_meta = self._summarize_results_file(value, rootdir, reportdir=reportdir, datadir=datadir, tag=None)
+            l_test_meta = self._summarize_results_file(value,
+                                                       rootdir=rootdir,
+                                                       reportdir=reportdir,
+                                                       datadir=datadir,
+                                                       tag=None)
         elif isinstance(value, dict):
             l_test_meta = []
             for sub_key, sub_value in value.items():
-                l_test_meta += self._summarize_results_file(sub_value, rootdir, reportdir=reportdir, datadir=datadir,
+                l_test_meta += self._summarize_results_file(sub_value,
+                                                            rootdir=rootdir,
+                                                            reportdir=reportdir,
+                                                            datadir=datadir,
                                                             tag=sub_key)
         else:
             raise ValueError("Value in manifest is of unrecognized type.\n"
@@ -363,6 +371,9 @@ class ReportSummaryWriter:
         # Check for no input
         if results_filename is None:
             return []
+
+        # Make sure the results_filename is fully-qualified
+        results_filename = get_qualified_path(results_filename, base=os.path.join(rootdir, DATA_DIR))
 
         # Split execution depending on if we're passed a tarball or an XML data product
 
@@ -453,6 +464,7 @@ class ReportSummaryWriter:
 
         return l_test_meta
 
+    @log_entry_exit(logger)
     def _summarize_results_product(self, l_product_filenames, reportdir, datadir, tag):
         """Writes summary markdown files for the test results contained in each of a list of data products. The
         output will be sorted based on PointingId, and so may not be in the same order as the input list
@@ -785,13 +797,40 @@ class ReportSummaryWriter:
         writer.add_heading(HEADING_DETAILED_RESULTS, depth=0)
         for req_i, req in enumerate(test_case_results.l_requirements):
             writer.add_heading("Requirement", depth=1)
-            writer.add_line(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
-            writer.add_line(f"**Measured Value**: {req.meas_value.value}\n\n")
+            self._add_measured_parameter_line(writer, req)
+            self._add_measured_value_line(writer, req)
             if req.req_comment is not None:
                 writer.add_line(f"**Comments**: {req.req_comment}\n\n")
             self._add_test_case_supp_info(writer, req)
 
     @staticmethod
+    @log_entry_exit(logger)
+    def _add_measured_parameter_line(writer, req):
+        """Adds a line for the measured parameter associated with an individual test case to a MarkdownWriter.
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        req : RequirementResults
+            The object containing the results for a specific requirement.
+        """
+        writer.add_line(f"**Measured Parameter**: {req.meas_value.parameter}\n\n")
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_measured_value_line(writer, req):
+        """Adds a line for the measured value associated with an individual test case to a MarkdownWriter.
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        req : RequirementResults
+            The object containing the results for a specific requirement.
+        """
+        writer.add_line(f"**Measured Value**: {req.meas_value.value}\n\n")
+
+    @staticmethod
+    @log_entry_exit(logger)
     def _add_test_case_supp_info(writer, req):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter.
 
@@ -799,7 +838,6 @@ class ReportSummaryWriter:
         ----------
         writer : TocMarkdownWriter
         req : RequirementResults
-            The object containing the results for a specific requirement.
         """
 
         for supp_info_i, supp_info in enumerate(req.l_supp_info):
@@ -852,6 +890,7 @@ class ReportSummaryWriter:
             writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
 
     @staticmethod
+    @log_entry_exit(logger)
     def _move_figure_to_public(filename, reportdir, figures_tmpdir):
         """Move a figure to the appropriate directory and return the relative filename for it.
 
@@ -887,6 +926,7 @@ class ReportSummaryWriter:
         # Return the path to the moved figure file, relative to where test reports will be stored
         return f"../{IMAGES_SUBDIR}/{filename}"
 
+    @log_entry_exit(logger)
     def _prepare_figures(self, ana_result, reportdir, datadir, figures_tmpdir):
         """Performs standard steps to prepare figures - unpacking them, reading the directory file, and setting up
         expected output directory.

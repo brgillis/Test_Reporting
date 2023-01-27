@@ -26,6 +26,7 @@ New Features
 ------------
 - Added specialized formatting for CTI-Gal validation test results
 - Added specialized formatting for Shear Bias validation test results
+- Added specialized formatting for DataProc validation test results
 - Added standalone script to build an individual report, "build_report.py"
 - Test results products contained within tarballs can now be found in subdirs within the tarball
 - Added script "pack_results_tarball.py" to create a tarball of a test results data product and the datafiles it points

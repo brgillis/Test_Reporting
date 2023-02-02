@@ -74,8 +74,16 @@ class DataProcReportSummaryWriter(ReportSummaryWriter):
 
             writer.add_line(supp_info_str)
 
+    @staticmethod
     @log_entry_exit(logger)
     def _add_test_case_figures(*args, **kwargs):
         """Override parent method to exclude figures section, since we don't expect any.
+        """
+        pass
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_test_case_textfiles(*args, **kwargs):
+        """Override parent method to exclude textfiles section, since we don't expect any.
         """
         pass

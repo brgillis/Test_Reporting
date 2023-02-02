@@ -104,6 +104,14 @@ BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]],
                                 Optional[str]], List[ValTestMeta]]
 
 
+class FileInfo(NamedTuple):
+    """NamedTuple containing file label, filename, and whether or not it's a figure.
+    """
+    label: Optional[str]
+    filename: str
+    is_figure: bool
+
+
 class ReportSummaryWriter:
     """Class to handle writing a markdown file containing the summary of a test case. See the documentation of this
     class's `__call__` method for further details of its functionality.
@@ -947,7 +955,7 @@ class ReportSummaryWriter:
         reportdir : str
         ana_files_tmpdir : str
             The fully-qualified path to the temporary directory set up to contain figures data for this test case.
-        l_ana_files_labels_and_filenames : List[Tuple[str or None, str]] or None
+        l_ana_files_labels_and_filenames : List[FileInfo] or None
             A list of (label,filename) tuples which were read in from the directory file. If expected files were not
             present, this will be None instead
         """
@@ -962,18 +970,19 @@ class ReportSummaryWriter:
         some_figures_added = False
 
         # Add a subsection for each figure to the writer
-        for i, (label, filename, is_figure) in enumerate(l_ana_files_labels_and_filenames):
+        for i, file_info in enumerate(l_ana_files_labels_and_filenames):
 
-            if not is_figure:
+            if not file_info.is_figure:
                 continue
             else:
                 some_figures_added = True
 
             # Make a label if we don't have one
+            label = file_info.label
             if label is None:
                 label = HEADING_FIGURE_N % i
 
-            relative_figure_filename = self._move_figure_to_public(filename, reportdir, ana_files_tmpdir)
+            relative_figure_filename = self._move_figure_to_public(file_info.filename, reportdir, ana_files_tmpdir)
 
             writer.add_heading(label, depth=1)
             writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
@@ -1030,7 +1039,7 @@ class ReportSummaryWriter:
         writer : TocMarkdownWriter
         ana_files_tmpdir : str
             The fully-qualified path to the temporary directory set up to contain figures data for this test case.
-        l_ana_files_labels_and_filenames : List[Tuple[str or None, str]] or None
+        l_ana_files_labels_and_filenames : List[FileInfo] or None
         """
 
         writer.add_heading(HEADING_TEXTFILES, depth=0)
@@ -1043,21 +1052,22 @@ class ReportSummaryWriter:
         some_textfiles_added = False
 
         # Add a subsection for each textfile to the writer
-        for i, (label, filename, is_figure) in enumerate(l_ana_files_labels_and_filenames):
+        for i, file_info in enumerate(l_ana_files_labels_and_filenames):
 
-            if is_figure:
+            if file_info.is_figure:
                 continue
             else:
                 some_textfiles_added = True
 
             # Make a label if we don't have one
+            label = file_info.label
             if label is None:
                 label = HEADING_TEXTFILE_N % i
 
             writer.add_heading(label, depth=1)
 
             # Read in the textfile in and write out its contents
-            l_textfile_lines: List[str] = open(os.path.join(ana_files_tmpdir, filename)).readlines()
+            l_textfile_lines: List[str] = open(os.path.join(ana_files_tmpdir, file_info.filename)).readlines()
 
             writer.add_line("```\n")
             [writer.add_line(f"{line}\n") for line in l_textfile_lines]
@@ -1114,7 +1124,7 @@ class ReportSummaryWriter:
 
         Returns
         -------
-        l_ana_files_labels_and_filenames: List[Tuple[str or None, str]] or None
+        l_ana_files_labels_and_filenames: List[FileInfo] or None
         """
 
         # Use the directory to find labels for figures, if it has them. Otherwise, just use it as a list of the figures
@@ -1148,7 +1158,9 @@ class ReportSummaryWriter:
                 figure_filename = directory_line
 
             if figure_filename is not None and figure_filename != "None":
-                l_ana_files_labels_and_filenames.append((figure_label, figure_filename, figures_section_started))
+                l_ana_files_labels_and_filenames.append(FileInfo(label=figure_label,
+                                                                 filename=figure_filename,
+                                                                 is_figure=figures_section_started))
 
         return l_ana_files_labels_and_filenames
 

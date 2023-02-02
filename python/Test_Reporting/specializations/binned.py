@@ -193,9 +193,9 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
         This may be overridden by child classes if necessary.
         """
 
-        d_figure_filenames = {int(figure_label.split("-")[-1]): figure_filename
-                              for (figure_label, figure_filename, is_figure) in l_figure_labels_and_filenames
-                              if is_figure}
+        d_figure_filenames = {int(file_info.label.split("-")[-1]): file_info.filename
+                              for file_info in l_figure_labels_and_filenames
+                              if file_info.is_figure}
 
         return d_figure_filenames
 

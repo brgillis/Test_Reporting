@@ -51,6 +51,7 @@ if TYPE_CHECKING:
 TMPDIR_MAXLEN = 16
 
 DIRECTORY_FILE_EXT = ".txt"
+DIRECTORY_FILE_TEXTFILES_HEADER = "# Textfiles:"
 DIRECTORY_FILE_FIGURES_HEADER = "# Figures:"
 DIRECTORY_FILE_SEPARATOR = ": "
 
@@ -961,9 +962,9 @@ class ReportSummaryWriter:
         some_figures_added = False
 
         # Add a subsection for each figure to the writer
-        for i, (label, filename) in enumerate(l_ana_files_labels_and_filenames):
+        for i, (label, filename, is_figure) in enumerate(l_ana_files_labels_and_filenames):
 
-            if not self.is_figure(filename):
+            if not is_figure:
                 continue
             else:
                 some_figures_added = True
@@ -981,15 +982,6 @@ class ReportSummaryWriter:
         if not some_figures_added:
             writer.add_line(f"{MSG_NA}\n\n")
             return
-
-    @staticmethod
-    @log_entry_exit(logger)
-    def is_figure(filename):
-        """Check that this is a recognized figure type
-        """
-        ext = os.path.splitext(filename)[-1]
-        is_figure = ext in L_FIGURE_EXTENSIONS
-        return is_figure
 
     @staticmethod
     @log_entry_exit(logger)
@@ -1051,9 +1043,9 @@ class ReportSummaryWriter:
         some_textfiles_added = False
 
         # Add a subsection for each textfile to the writer
-        for i, (label, filename) in enumerate(l_ana_files_labels_and_filenames):
+        for i, (label, filename, is_figure) in enumerate(l_ana_files_labels_and_filenames):
 
-            if self.is_figure(filename):
+            if is_figure:
                 continue
             else:
                 some_textfiles_added = True
@@ -1129,17 +1121,23 @@ class ReportSummaryWriter:
         with open(qualified_directory_filename, "r") as fi:
             l_directory_lines = fi.readlines()
 
-        l_ana_files_labels_and_filenames: List[Tuple[Optional[str], str]] = []
+        l_ana_files_labels_and_filenames: List[Tuple[Optional[str], str, bool]] = []
+        textfiles_section_started = False
         figures_section_started = False
         for directory_line in l_directory_lines:
             directory_line = directory_line.strip()
 
-            # If we haven't started the figures section, check for the header which starts it and then start reading
+            # If we haven't started the textfiles section, check for the header which starts it and then start reading
             # on the next iteration
+            if not textfiles_section_started:
+                if directory_line == DIRECTORY_FILE_TEXTFILES_HEADER:
+                    textfiles_section_started = True
+                    figures_section_started = False
+                continue
             if not figures_section_started:
                 if directory_line == DIRECTORY_FILE_FIGURES_HEADER:
                     figures_section_started = True
-                continue
+                    continue
 
             # If we get here, we're in the figures section
             figure_label: Optional[str] = None
@@ -1150,7 +1148,7 @@ class ReportSummaryWriter:
                 figure_filename = directory_line
 
             if figure_filename is not None and figure_filename != "None":
-                l_ana_files_labels_and_filenames.append((figure_label, figure_filename))
+                l_ana_files_labels_and_filenames.append((figure_label, figure_filename, figures_section_started))
 
         return l_ana_files_labels_and_filenames
 

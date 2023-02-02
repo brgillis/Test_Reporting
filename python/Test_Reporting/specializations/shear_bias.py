@@ -188,7 +188,10 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
 
         d_figure_filenames = {}
 
-        for (figure_label, figure_filename) in l_figure_labels_and_filenames:
+        for (figure_label, figure_filename, is_figure) in l_figure_labels_and_filenames:
+
+            if not is_figure:
+                continue
 
             bin_index = int(figure_label.split("-")[-2])
 

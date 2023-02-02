@@ -60,7 +60,18 @@ HEADING_TEST_CASES = "Test Cases"
 HEADING_GENERAL_INFO = "General Information"
 HEADING_DETAILED_RESULTS = "Detailed Results"
 
+HEADING_FIGURES = "Figures"
+HEADING_FIGURE_N = "Figure %i"
+HEADING_TEXTFILES = "Textfiles"
+HEADING_TEXTFILE_N = "Textfile #%i"
+
+MSG_NA = "N/A"
+
 MSG_TARBALL_CORRUPT = "Tarball %s appears to be corrupt."
+
+# File extensions associated with figures - Note that ".fits" is deliberately NOT included here, as it's more
+# commonly used for tables
+L_FIGURE_EXTENSIONS = [".eps", ".gif", ".jpeg", ".jpg", ".pdf", ".png", ".svg"]
 
 logger = getLogger(__name__)
 
@@ -731,7 +742,7 @@ class ReportSummaryWriter:
     @log_entry_exit(logger)
     def _add_test_case_details_and_figures(self, test_case_results, writer, reportdir, datadir):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
-        prepares figures, and also adds lines for them.
+        prepares figures and textfiles, and also adds lines for them.
 
         Parameters
         ----------
@@ -752,19 +763,15 @@ class ReportSummaryWriter:
             shutil.rmtree(figures_tmpdir)
 
     @log_entry_exit(logger)
-    def _add_test_case_details_and_figures_with_tmpdir(self,
-                                                       writer,
-                                                       test_case_results,
-                                                       reportdir,
-                                                       datadir,
-                                                       figures_tmpdir):
+    def _add_test_case_details_and_figures_with_tmpdir(self, writer, test_case_results, reportdir, datadir,
+                                                       ana_files_tmpdir):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
-        prepares figures, and also adds lines for them, after a temporary directory has been created to store figures
-        data.
+        prepares figures and textfiles, and also adds lines for them, after a temporary directory has been created to
+        store figures data.
 
         In the default implementation, this method performs these tasks sequentially and separately since nothing
-        can be assumed about how the supplementary info and figures relate. In child classes where the relationship is
-        know, this may be overridden to handle the two together if desired.
+        can be assumed about how the supplementary info, figures, and textfiles relate. In child classes where the
+        relationship is known, this may be overridden to handle them together if desired.
 
         Parameters
         ----------
@@ -772,15 +779,30 @@ class ReportSummaryWriter:
         test_case_results : SingleTestResult
         reportdir : str
         datadir : str
-        figures_tmpdir : str
-            The fully-qualified path to the temporary directory set up to contain figures data for this test case.
+        ana_files_tmpdir : str
+            The fully-qualified path to the temporary directory set up to contain extracted analysis files for this
+            test case.
         """
+
+        # Write the primary details for the test case
         self._add_test_case_details(writer, test_case_results)
+
+        # Write details contained in analysis files (figures and textfiles)
+
+        ana_result = test_case_results.analysis_result
+
+        l_ana_files_labels_and_filenames = self._prepare_ana_files(ana_result=ana_result,
+                                                                   reportdir=reportdir,
+                                                                   datadir=datadir,
+                                                                   ana_files_tmpdir=ana_files_tmpdir)
+
         self._add_test_case_figures(writer=writer,
-                                    ana_result=test_case_results.analysis_result,
                                     reportdir=reportdir,
-                                    datadir=datadir,
-                                    figures_tmpdir=figures_tmpdir)
+                                    ana_files_tmpdir=ana_files_tmpdir,
+                                    l_ana_files_labels_and_filenames=l_ana_files_labels_and_filenames)
+        self._add_test_case_textfiles(writer=writer,
+                                      ana_files_tmpdir=ana_files_tmpdir,
+                                      l_ana_files_labels_and_filenames=l_ana_files_labels_and_filenames)
 
     @log_entry_exit(logger)
     def _add_test_case_details(self, writer, test_case_results):
@@ -853,83 +875,9 @@ class ReportSummaryWriter:
             writer.add_line("\n```\n\n")
 
     @log_entry_exit(logger)
-    def _add_test_case_figures(self, writer, ana_result, reportdir, datadir, figures_tmpdir):
-        """Prepares figures and adds lines for them to a MarkdownWriter, after a new temporary directory has been
-        created to store extracted files in.
-
-        Parameters
-        ----------
-        writer : TocMarkdownWriter
-        ana_result : AnalysisResult
-            The AnalysisResult object containing the filenames of textfiles and figures tarballs for this test case.
-        reportdir : str
-        datadir : str
-        figures_tmpdir : str
-            The fully-qualified path to the temporary directory set up to contain figures data for this test case.
-        """
-
-        writer.add_heading("Figures", depth=0)
-
-        l_figure_labels_and_filenames = self._prepare_figures(ana_result, reportdir, datadir, figures_tmpdir)
-
-        # Check we prepared successfully; if not, return, so we don't hit any further errors
-        if not l_figure_labels_and_filenames:
-            writer.add_line("N/A\n\n")
-            return
-
-        # Add a subsection for each figure to the writer
-        for i, (label, filename) in enumerate(l_figure_labels_and_filenames):
-
-            # Make a label if we don't have one
-            if label is None:
-                label = f"Figure #{i}"
-
-            relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
-
-            writer.add_heading(label, depth=1)
-            writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
-
-    @staticmethod
-    @log_entry_exit(logger)
-    def _move_figure_to_public(filename, reportdir, figures_tmpdir):
-        """Move a figure to the appropriate directory and return the relative filename for it.
-
-        Parameters
-        ----------
-        filename : str
-            The filename of the figure relative to the `figures_tmpdir`
-        reportdir : str
-        figures_tmpdir : str
-            The fully-qualified path to the tmpdir created to store unpacked figures.
-
-        Returns
-        -------
-        relative_figure_filename : str or None
-            The path to the moved figure relative to where test reports are stored. In case of an error where the
-            file wasn't present, the error will be logged and None will be returned instead.
-        """
-
-        qualified_src_filename = os.path.join(figures_tmpdir, filename)
-        qualified_dest_filename = os.path.join(reportdir, IMAGES_SUBDIR, filename)
-
-        # Check for file existence
-        if not os.path.isfile(qualified_src_filename):
-            # Source doesn't exist. If destination does, then there's no issue - presumably it's already been moved
-            # for another page, and so we don't need to move it again. If destination doesn't exist, then we have an
-            # error.
-            if not os.path.isfile(qualified_dest_filename):
-                logger.error(f"Expected figure {filename} does not exist.")
-                return None
-        else:
-            shutil.move(qualified_src_filename, qualified_dest_filename)
-
-        # Return the path to the moved figure file, relative to where test reports will be stored
-        return f"../{IMAGES_SUBDIR}/{filename}"
-
-    @log_entry_exit(logger)
-    def _prepare_figures(self, ana_result, reportdir, datadir, figures_tmpdir):
-        """Performs standard steps to prepare figures - unpacking them, reading the directory file, and setting up
-        expected output directory.
+    def _prepare_ana_files(self, ana_result, reportdir, datadir, ana_files_tmpdir):
+        """Performs standard steps to prepare figures and textfiles - unpacking them, reading the directory file,
+        and setting up expected output directory.
 
         Parameters
         ----------
@@ -937,12 +885,12 @@ class ReportSummaryWriter:
             Object containing information about the textfiles and figures for a given test case.
         reportdir : str
         datadir : str
-        figures_tmpdir : str
+        ana_files_tmpdir : str
             The tmpdir to be used to extract the textfiles and figures in their respective tarballs.
 
         Returns
         -------
-        l_figure_labels_and_filenames : List[Tuple[str or None,str]] or None
+        l_ana_files_labels_and_filenames : List[Tuple[str or None,str]] or None
             A list of (label,filename) tuples which were read in from the directory file. If expected files are not
             present, None will be returned instead.
         """
@@ -962,12 +910,12 @@ class ReportSummaryWriter:
             return None
 
         try:
-            extract_tarball(qualified_figures_tarball_filename, figures_tmpdir)
+            extract_tarball(qualified_figures_tarball_filename, ana_files_tmpdir)
         except ValueError:
             logger.error(MSG_TARBALL_CORRUPT, qualified_figures_tarball_filename)
             return None
         try:
-            extract_tarball(qualified_textfiles_tarball_filename, figures_tmpdir)
+            extract_tarball(qualified_textfiles_tarball_filename, ana_files_tmpdir)
         except ValueError:
             logger.error(MSG_TARBALL_CORRUPT, qualified_textfiles_tarball_filename)
             return None
@@ -975,17 +923,158 @@ class ReportSummaryWriter:
         # Find the "directory" file which should have been in the tarball, and get the labels and filenames of
         # figures from it
         try:
-            qualified_directory_filename = self.find_directory_filename(figures_tmpdir)
+            qualified_directory_filename = self.find_directory_filename(ana_files_tmpdir)
         except (FileNotFoundError, ValueError) as e:
             logger.error(str(e) + " This occurred when unpacking tarball %s", qualified_textfiles_tarball_filename)
             return None
 
-        l_figure_labels_and_filenames = self.read_figure_labels_and_filenames(qualified_directory_filename)
+        l_ana_files_labels_and_filenames = self.read_ana_files_labels_and_filenames(qualified_directory_filename)
 
         # Make sure a data subdir exists in the images dir
         os.makedirs(os.path.join(reportdir, IMAGES_SUBDIR, DATA_DIR), exist_ok=True)
 
-        return l_figure_labels_and_filenames
+        return l_ana_files_labels_and_filenames
+
+    @log_entry_exit(logger)
+    def _add_test_case_figures(self, writer, reportdir, ana_files_tmpdir, l_ana_files_labels_and_filenames):
+        """Prepares figures and adds lines for them to a MarkdownWriter, after a new temporary directory has been
+        created to store extracted files in.
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        reportdir : str
+        ana_files_tmpdir : str
+            The fully-qualified path to the temporary directory set up to contain figures data for this test case.
+        l_ana_files_labels_and_filenames : List[Tuple[str or None, str]] or None
+            A list of (label,filename) tuples which were read in from the directory file. If expected files were not
+            present, this will be None instead
+        """
+
+        writer.add_heading(HEADING_FIGURES, depth=0)
+
+        # Check we prepared successfully; if not, return, so we don't hit any further errors
+        if not l_ana_files_labels_and_filenames:
+            writer.add_line(f"{MSG_NA}\n\n")
+            return
+
+        some_figures_added = False
+
+        # Add a subsection for each figure to the writer
+        for i, (label, filename) in enumerate(l_ana_files_labels_and_filenames):
+
+            if not self.is_figure(filename):
+                continue
+            else:
+                some_figures_added = True
+
+            # Make a label if we don't have one
+            if label is None:
+                label = HEADING_FIGURE_N % i
+
+            relative_figure_filename = self._move_figure_to_public(filename, reportdir, ana_files_tmpdir)
+
+            writer.add_heading(label, depth=1)
+            writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
+
+        # Check if we output any figures, and output N/A if not
+        if not some_figures_added:
+            writer.add_line(f"{MSG_NA}\n\n")
+            return
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def is_figure(filename):
+        """Check that this is a recognized figure type
+        """
+        ext = os.path.splitext(filename)[-1]
+        is_figure = ext in L_FIGURE_EXTENSIONS
+        return is_figure
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _move_figure_to_public(filename, reportdir, ana_files_tmpdir):
+        """Move a figure to the appropriate directory and return the relative filename for it.
+
+        Parameters
+        ----------
+        filename : str
+            The filename of the figure relative to the `figures_tmpdir`
+        reportdir : str
+        ana_files_tmpdir : str
+            The fully-qualified path to the tmpdir created to store unpacked figures.
+
+        Returns
+        -------
+        relative_figure_filename : str or None
+            The path to the moved figure relative to where test reports are stored. In case of an error where the
+            file wasn't present, the error will be logged and None will be returned instead.
+        """
+
+        qualified_src_filename = os.path.join(ana_files_tmpdir, filename)
+        qualified_dest_filename = os.path.join(reportdir, IMAGES_SUBDIR, filename)
+
+        # Check for file existence
+        if not os.path.isfile(qualified_src_filename):
+            # Source doesn't exist. If destination does, then there's no issue - presumably it's already been moved
+            # for another page, and so we don't need to move it again. If destination doesn't exist, then we have an
+            # error.
+            if not os.path.isfile(qualified_dest_filename):
+                logger.error(f"Expected figure {filename} does not exist.")
+                return None
+        else:
+            shutil.move(qualified_src_filename, qualified_dest_filename)
+
+        # Return the path to the moved figure file, relative to where test reports will be stored
+        return f"../{IMAGES_SUBDIR}/{filename}"
+
+    @log_entry_exit(logger)
+    def _add_test_case_textfiles(self, writer, ana_files_tmpdir, l_ana_files_labels_and_filenames):
+        """Prepares textfiles and adds lines for them to a MarkdownWriter, after a new temporary directory has been
+        created to store extracted files in.
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        ana_files_tmpdir : str
+            The fully-qualified path to the temporary directory set up to contain figures data for this test case.
+        l_ana_files_labels_and_filenames : List[Tuple[str or None, str]] or None
+        """
+
+        writer.add_heading(HEADING_TEXTFILES, depth=0)
+
+        # Check we prepared successfully; if not, return, so we don't hit any further errors
+        if not l_ana_files_labels_and_filenames:
+            writer.add_line(f"{MSG_NA}\n\n")
+            return
+
+        some_textfiles_added = False
+
+        # Add a subsection for each textfile to the writer
+        for i, (label, filename) in enumerate(l_ana_files_labels_and_filenames):
+
+            if self.is_figure(filename):
+                continue
+            else:
+                some_textfiles_added = True
+
+            # Make a label if we don't have one
+            if label is None:
+                label = HEADING_TEXTFILE_N % i
+
+            writer.add_heading(label, depth=1)
+
+            # Read in the textfile in and write out its contents
+            l_textfile_lines: List[str] = open(os.path.join(ana_files_tmpdir, filename)).readlines()
+
+            writer.add_line("```\n")
+            [writer.add_line(f"{line}\n") for line in l_textfile_lines]
+            writer.add_line("```\n\n")
+
+        # Check if we output any textfiles, and output N/A if not
+        if not some_textfiles_added:
+            writer.add_line(f"{MSG_NA}\n\n")
+            return
 
     @staticmethod
     @log_entry_exit(logger)
@@ -1022,8 +1111,8 @@ class ReportSummaryWriter:
 
     @staticmethod
     @log_entry_exit(logger)
-    def read_figure_labels_and_filenames(qualified_directory_filename):
-        """Reads a directory file, and returns a list of figure labels and filenames. Note that any figure label
+    def read_ana_files_labels_and_filenames(qualified_directory_filename):
+        """Reads a directory file, and returns a list of analysis file labels and filenames. Note that any file label
         might be None if it's not supplied in the directory file.
 
         Parameters
@@ -1033,14 +1122,14 @@ class ReportSummaryWriter:
 
         Returns
         -------
-        l_figure_labels_and_filenames: List[Tuple[str or None, str]]
+        l_ana_files_labels_and_filenames: List[Tuple[str or None, str]] or None
         """
 
         # Use the directory to find labels for figures, if it has them. Otherwise, just use it as a list of the figures
         with open(qualified_directory_filename, "r") as fi:
             l_directory_lines = fi.readlines()
 
-        l_figure_labels_and_filenames: List[Tuple[Optional[str], str]] = []
+        l_ana_files_labels_and_filenames: List[Tuple[Optional[str], str]] = []
         figures_section_started = False
         for directory_line in l_directory_lines:
             directory_line = directory_line.strip()
@@ -1061,9 +1150,9 @@ class ReportSummaryWriter:
                 figure_filename = directory_line
 
             if figure_filename is not None and figure_filename != "None":
-                l_figure_labels_and_filenames.append((figure_label, figure_filename))
+                l_ana_files_labels_and_filenames.append((figure_label, figure_filename))
 
-        return l_figure_labels_and_filenames
+        return l_ana_files_labels_and_filenames
 
     @log_entry_exit(logger)
     def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, reportdir):

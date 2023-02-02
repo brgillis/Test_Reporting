@@ -30,7 +30,8 @@ from Test_Reporting.testing.common import TEST_TARBALL_FILENAME
 from Test_Reporting.utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
 from Test_Reporting.utility.misc import TocMarkdownWriter
 from Test_Reporting.utility.report_writing import (DIRECTORY_FILE_EXT, DIRECTORY_FILE_FIGURES_HEADER,
-                                                   DIRECTORY_FILE_SEPARATOR, HEADING_DETAILED_RESULTS,
+                                                   DIRECTORY_FILE_SEPARATOR, DIRECTORY_FILE_TEXTFILES_HEADER,
+                                                   HEADING_DETAILED_RESULTS,
                                                    HEADING_GENERAL_INFO, HEADING_PRODUCT_METADATA,
                                                    HEADING_TEST_CASES, HEADING_TEST_METADATA, HEADING_TEXTFILES,
                                                    MSG_NA, ValTestCaseMeta,
@@ -53,10 +54,11 @@ L_COMMON_MOCK_UNPACKED_FILENAMES = ["foo.bar",
 EX_DIRECTORY_FILENAME = f"foo{DIRECTORY_FILE_EXT}"
 EX_EXTRA_DIRECTORY_FILENAME = f"foo2{DIRECTORY_FILE_EXT}"
 
-L_MOCK_DIRECTORY_LABELS_AND_FILENAMES = [("foo", "foo.jpeg"),
-                                         ("bar", "bar.png"),
-                                         (None, "foobar.jpeg"),
-                                         (None, "foobar.png")]
+L_MOCK_DIRECTORY_LABELS_AND_FILENAMES = [("fooey", "fooeytooey.txt", False),
+                                         ("foo", "foo.jpeg", True),
+                                         ("bar", "bar.png", True),
+                                         (None, "foobar.jpeg", True),
+                                         (None, "foobar.png", True)]
 
 TEST_TITLE = "Test Title"
 TEST_NAME = "Test Name"
@@ -283,8 +285,18 @@ def mock_directory_file(tmpdir):
     qualified_directory_filename = os.path.join(tmpdir, f"mock_dir{DIRECTORY_FILE_EXT}")
 
     with open(qualified_directory_filename, 'w') as fo:
+        fo.write(f"{DIRECTORY_FILE_TEXTFILES_HEADER}\n")
+        for label, filename, is_figure in L_MOCK_DIRECTORY_LABELS_AND_FILENAMES:
+            if is_figure:
+                continue
+            if label is None:
+                fo.write(f"{filename}\n")
+            else:
+                fo.write(f"{label}{DIRECTORY_FILE_SEPARATOR}{filename}\n")
         fo.write(f"{DIRECTORY_FILE_FIGURES_HEADER}\n")
-        for label, filename in L_MOCK_DIRECTORY_LABELS_AND_FILENAMES:
+        for label, filename, is_figure in L_MOCK_DIRECTORY_LABELS_AND_FILENAMES:
+            if not is_figure:
+                continue
             if label is None:
                 fo.write(f"{filename}\n")
             else:

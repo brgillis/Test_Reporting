@@ -70,6 +70,9 @@ MSG_NA = "N/A"
 
 MSG_TARBALL_CORRUPT = "Tarball %s appears to be corrupt."
 
+TEXTFILE_LINE_LIMIT = 100
+MSG_TEXTFILE_LIMIT = f"...\n(only first {TEXTFILE_LINE_LIMIT} lines of textfiles shown)"
+
 logger = getLogger(__name__)
 
 
@@ -1066,7 +1069,11 @@ class ReportSummaryWriter:
             l_textfile_lines: List[str] = open(os.path.join(ana_files_tmpdir, file_info.filename)).readlines()
 
             writer.add_line("```\n")
-            [writer.add_line(f"{line}\n") for line in l_textfile_lines]
+            for line_index, line in enumerate(l_textfile_lines):
+                if line_index >= TEXTFILE_LINE_LIMIT:
+                    writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n")
+                    break
+                writer.add_line(f"{line}\n")
             writer.add_line("```\n\n")
 
         # Check if we output any textfiles, and output N/A if not

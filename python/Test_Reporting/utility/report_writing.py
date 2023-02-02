@@ -70,10 +70,6 @@ MSG_NA = "N/A"
 
 MSG_TARBALL_CORRUPT = "Tarball %s appears to be corrupt."
 
-# File extensions associated with figures - Note that ".fits" is deliberately NOT included here, as it's more
-# commonly used for tables
-L_FIGURE_EXTENSIONS = [".eps", ".gif", ".jpeg", ".jpg", ".pdf", ".png", ".svg"]
-
 logger = getLogger(__name__)
 
 

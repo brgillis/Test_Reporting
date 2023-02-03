@@ -5,5 +5,5 @@
   },
   "shear_bias": "shear_bias_test_results.tar.gz",
   "dataproc": "dataproc_test_results.xml",
-  "galinfo": "galinfo_test_results.xml"
+  "galinfo": "galinfo_test_results.tar.gz"
 }

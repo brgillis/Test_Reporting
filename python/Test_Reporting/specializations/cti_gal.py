@@ -157,3 +157,10 @@ class CtiGalReportSummaryWriter(BinnedReportSummaryWriter):
         bin_str = bin_str.replace(":slope", ":\nslope")
         bin_str = bin_str.replace(":intercept", ":\nintercept")
         return bin_str
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_test_case_textfiles(*args, **kwargs):
+        """Override parent method to exclude textfiles section, since we don't expect any.
+        """
+        pass

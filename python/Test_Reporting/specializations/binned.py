@@ -50,12 +50,9 @@ logger = getLogger(__name__)
 
 class BinnedReportSummaryWriter(ReportSummaryWriter):
 
-    def _add_test_case_details_and_figures_with_tmpdir(self,
-                                                       writer: TocMarkdownWriter,
-                                                       test_case_results: SingleTestResult,
-                                                       reportdir: str,
-                                                       datadir: str,
-                                                       figures_tmpdir: str) -> None:
+    def _add_test_case_details_and_figures_with_tmpdir(self, writer: TocMarkdownWriter,
+                                                       test_case_results: SingleTestResult, reportdir: str,
+                                                       datadir: str, ana_files_tmpdir: str) -> None:
         """Overload of parent method, to implement specialized writing for a test case which parses info from the
         SupplementaryInfo and places figures alongside associated data for each bin.
         """
@@ -76,9 +73,8 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
             logger.error("Test results SupplementaryInfo is in invalid format; falling back to default implementation.")
             return super()._add_test_case_details_and_figures_with_tmpdir(writer=writer,
                                                                           test_case_results=test_case_results,
-                                                                          reportdir=reportdir,
-                                                                          datadir=datadir,
-                                                                          figures_tmpdir=figures_tmpdir)
+                                                                          reportdir=reportdir, datadir=datadir,
+                                                                          ana_files_tmpdir=ana_files_tmpdir)
 
         # If we have any error messages, print them out
         if l_err_str:
@@ -89,7 +85,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
                                  test_case_results=test_case_results,
                                  reportdir=reportdir,
                                  datadir=datadir,
-                                 figures_tmpdir=figures_tmpdir,
+                                 figures_tmpdir=ana_files_tmpdir,
                                  l_info=l_info)
 
     @staticmethod
@@ -121,10 +117,9 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
         """
 
         # Get the figure label and filename for each bin
-        l_figure_labels_and_filenames = self._prepare_figures(ana_result=test_case_results.analysis_result,
-                                                              reportdir=reportdir,
-                                                              datadir=datadir,
-                                                              figures_tmpdir=figures_tmpdir)
+        l_figure_labels_and_filenames = self._prepare_ana_files(ana_result=test_case_results.analysis_result,
+                                                                reportdir=reportdir, datadir=datadir,
+                                                                ana_files_tmpdir=figures_tmpdir)
 
         # Make a dict of bin indices to filenames
 
@@ -198,8 +193,9 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
         This may be overridden by child classes if necessary.
         """
 
-        d_figure_filenames = {int(figure_label.split("-")[-1]): figure_filename
-                              for (figure_label, figure_filename) in l_figure_labels_and_filenames}
+        d_figure_filenames = {int(file_info.label.split("-")[-1]): file_info.filename
+                              for file_info in l_figure_labels_and_filenames
+                              if file_info.is_figure}
 
         return d_figure_filenames
 

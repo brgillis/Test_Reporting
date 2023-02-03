@@ -188,16 +188,19 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
 
         d_figure_filenames = {}
 
-        for (figure_label, figure_filename) in l_figure_labels_and_filenames:
+        for file_info in l_figure_labels_and_filenames:
 
-            bin_index = int(figure_label.split("-")[-2])
+            if not file_info.is_figure:
+                continue
+
+            bin_index = int(file_info.label.split("-")[-2])
 
             if bin_index not in d_figure_filenames:
                 d_figure_filenames[bin_index] = {}
 
-            component_index = int(figure_label[-1])
+            component_index = int(file_info.label[-1])
 
-            d_figure_filenames[bin_index][component_index] = figure_filename
+            d_figure_filenames[bin_index][component_index] = file_info.filename
 
         return d_figure_filenames
 
@@ -263,3 +266,10 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
         bin_str = bin_str.replace(":m", ":\nm")
         bin_str = bin_str.replace(":c", ":\nc")
         return bin_str
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_test_case_textfiles(*args, **kwargs):
+        """Override parent method to exclude textfiles section, since we don't expect any.
+        """
+        pass

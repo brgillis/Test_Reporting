@@ -31,6 +31,7 @@ New Features
 - Test results products contained within tarballs can now be found in subdirs within the tarball
 - Added script "pack_results_tarball.py" to create a tarball of a test results data product and the datafiles it points
   to
+- Added default formatting for any textfiles included with test results
 
 New config features
 -------------------

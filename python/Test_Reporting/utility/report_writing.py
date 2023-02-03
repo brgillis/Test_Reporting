@@ -1065,15 +1065,16 @@ class ReportSummaryWriter:
 
             writer.add_heading(label, depth=1)
 
-            # Read in the textfile in and write out its contents
-            l_textfile_lines: List[str] = open(os.path.join(ana_files_tmpdir, file_info.filename)).readlines()
-
+            # Read in the textfile in and write out its contents in a math section to avoid formatting issues
             writer.add_line("```\n")
-            for line_index, line in enumerate(l_textfile_lines):
+
+            for line_index, line in enumerate(open(os.path.join(ana_files_tmpdir, file_info.filename), "r")):
                 if line_index >= TEXTFILE_LINE_LIMIT:
                     writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n")
                     break
-                writer.add_line(f"{line}\n")
+                # Lines read in this way already include a linebreak at the end, so we don't need to add one in
+                writer.add_line(line)
+
             writer.add_line("```\n\n")
 
         # Check if we output any textfiles, and output N/A if not

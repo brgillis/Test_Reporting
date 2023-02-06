@@ -28,13 +28,13 @@ import logging
 import os
 import re
 import subprocess
-from typing import List, Sequence, TYPE_CHECKING, TextIO
+from typing import List, TYPE_CHECKING, TextIO
 
 from Test_Reporting.utility.constants import DATA_SUBDIR, HEADING_TOC
 
 if TYPE_CHECKING:
     from logging import Logger  # noqa F401
-    from typing import Callable  # noqa F401
+    from typing import Callable, Sequence  # noqa F401
     from Test_Reporting.utility.report_writing import BUILD_CALLABLE_TYPE  # noqa F401
 
 logger = logging.getLogger(__name__)

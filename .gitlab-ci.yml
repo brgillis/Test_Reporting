@@ -57,10 +57,6 @@ PEP8:
     entrypoint: [ '' ]
   script:
     - flake8 --max-line-length 120 python/Test_Reporting
-  only:
-    - branches # this job will affect every branch except 'master'
-  except:
-    - master
 
 # the 'pages' job will deploy and build your site to the 'public' path
 pages:

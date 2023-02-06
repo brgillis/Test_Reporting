@@ -20,8 +20,6 @@ This python module defines constants used throughout this project.
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-from __future__ import annotations
-
 # Filenames and directories. All are relative to the root of the project
 
 # Files and directories which already exist in the project

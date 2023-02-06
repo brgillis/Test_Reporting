@@ -21,7 +21,6 @@ Module providing a specialized ReportSummaryWriter for Shear Bias test cases.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import re
-
 from dataclasses import dataclass
 from logging import getLogger
 from typing import Any, Dict, List, Optional, Tuple
@@ -59,6 +58,7 @@ class BiasInfo:
 
 class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
     test_name = "Shear-Bias"
+    has_textfiles = False
 
     @staticmethod
     @log_entry_exit(logger)
@@ -266,10 +266,3 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
         bin_str = bin_str.replace(":m", ":\nm")
         bin_str = bin_str.replace(":c", ":\nc")
         return bin_str
-
-    @staticmethod
-    @log_entry_exit(logger)
-    def _add_test_case_textfiles(*args, **kwargs):
-        """Override parent method to exclude textfiles section, since we don't expect any.
-        """
-        pass

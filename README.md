@@ -42,6 +42,7 @@ Software Problem Reports. It also automatically generates human-readable reports
   * [`build` Job](#build-job)
   * [`pages` Job](#pages-job)
   * [`pages-test` Job](#pages-test-job)
+  * [`PEP8` Job](#pep8-job)
 * [Troubleshooting](#troubleshooting)
   * [A test failed when I ran `pytest`](#a-test-failed-when-i-ran-pytest)
   * [An exception was raised, what do I do?](#an-exception-was-raised-what-do-i-do)
@@ -414,14 +415,17 @@ The CI pipeline runs the following jobs in sequence, described in the sections b
 * `pytest`
 * `build`
 * `pages` (only run on master branch) / `pages-test` (run on all other branches)
+* `PEP8` (run in parallel with `pages`/`pages-test` job)
 
 If any of these jobs fail, the pipeline will fail and no further jobs will be executed. This project is configured so
-that the `master` branch can only be modified via Merge Request, and the pipeline must succeed for an MR to be merged.
+that the `master` branch can only be modified via Merge Request, and the pipeline must succeed on the candidate branch 
+for an MR to be merged.
 
 ### `pytest` Job
 
 This job uses `pytest` to run all unit tests contained in the `tests/` directory of this project. If any of these tests
-fail, the job fails. If the tests all succeed, this job then tests that the project can be successfully installed via setuptools.
+fail, the job fails. If the tests all succeed, this job then tests that the project can be successfully installed via
+setuptools.
 
 ### `build` Job
 
@@ -453,6 +457,10 @@ directories as artifacts:
 These artifacts can be found linked from the page for this job on GitLab, to either be downloaded or browsed. Note that
 due to limitations of the browser, some links between published files may not work when browsed this way, even if they
 will work when properly published.
+
+### `PEP8` Job
+
+This job uses `flake8` to check that all python code in the project complies with PEP8 formatting. 
 
 
 ## Troubleshooting

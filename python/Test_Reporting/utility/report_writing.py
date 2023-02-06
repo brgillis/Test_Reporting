@@ -35,7 +35,7 @@ from __future__ import annotations
 import os
 import shutil
 from logging import getLogger
-from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tuple, Union
+from typing import Callable, Dict, List, NamedTuple, Optional, Sequence, TYPE_CHECKING, Tuple, Union
 
 from Test_Reporting.utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
 from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, get_data_filename, get_qualified_path,
@@ -43,7 +43,7 @@ from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, get
 from Test_Reporting.utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:
-    from typing import Sequence, TextIO  # noqa F401
+    from typing import TextIO  # noqa F401
     from Test_Reporting.utility.product_parsing import (AnalysisResult, RequirementResults,  # noqa F401
                                                         SingleTestResult, TestResults, )  # noqa F401
 

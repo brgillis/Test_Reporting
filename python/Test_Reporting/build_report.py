@@ -31,7 +31,7 @@ from copy import deepcopy
 from logging import getLogger
 from typing import TYPE_CHECKING
 
-from Test_Reporting.specialization_keys import DEFAULT_BUILD_CALLABLE, D_BUILD_CALLABLES, determine_build_callable
+from Test_Reporting.specialization_keys import determine_build_callable
 from Test_Reporting.utility.misc import get_qualified_path, log_entry_exit
 
 if TYPE_CHECKING:

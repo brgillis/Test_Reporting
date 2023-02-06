@@ -36,11 +36,11 @@ from argparse import ArgumentParser
 from logging import getLogger
 from typing import Dict, List, TYPE_CHECKING
 
+from Test_Reporting.specialization_keys import determine_build_callable
 from Test_Reporting.utility.constants import MANIFEST_FILENAME, TEST_REPORT_SUMMARY_FILENAME
 from Test_Reporting.utility.misc import log_entry_exit
-from Test_Reporting.specialization_keys import determine_build_callable
-from Test_Reporting.utility.summary_files import build_test_report_summary, update_readme, update_summary
 from Test_Reporting.utility.report_writing import ValTestMeta
+from Test_Reporting.utility.summary_files import build_test_report_summary, update_readme, update_summary
 
 if TYPE_CHECKING:
     import Namespace  # noqa F401

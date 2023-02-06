@@ -21,7 +21,6 @@ Module providing a specialized ReportSummaryWriter for Shear Bias test cases.
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 import re
-
 from dataclasses import dataclass
 from logging import getLogger
 from typing import Any, Dict, List, Optional, Tuple

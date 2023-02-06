@@ -9,7 +9,7 @@
 This python script is run to collect a validation test results product (or listfile thereof) and all its associated
 datafiles into a tarball which can be easily moved into this project for publishing.
 """
-import json
+
 # Copyright (C) 2012-2020 Euclid Science Ground Segment
 #
 # This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
@@ -23,6 +23,7 @@ import json
 # You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+import json
 import logging
 import os
 from argparse import ArgumentParser
@@ -30,7 +31,7 @@ from copy import deepcopy
 from logging import getLogger
 from typing import List, TYPE_CHECKING
 
-from Test_Reporting.utility.constants import DATA_SUBDIR, JSON_EXT, TARBALL_EXT, XML_EXT
+from Test_Reporting.utility.constants import JSON_EXT, TARBALL_EXT, XML_EXT
 from Test_Reporting.utility.misc import (get_qualified_path, get_relative_path, is_valid_json_filename,
                                          is_valid_xml_filename,
                                          log_entry_exit, tar_files, )

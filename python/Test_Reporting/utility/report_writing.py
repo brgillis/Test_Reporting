@@ -38,9 +38,8 @@ from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, TYPE_CHECKING, Tuple, Union
 
 from Test_Reporting.utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
-from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, get_qualified_path, hash_any,
-                                         is_valid_tarball_filename,
-                                         is_valid_xml_filename, log_entry_exit, get_data_filename, )
+from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, get_data_filename, get_qualified_path,
+                                         hash_any, is_valid_tarball_filename, is_valid_xml_filename, log_entry_exit, )
 from Test_Reporting.utility.product_parsing import parse_xml_product
 
 if TYPE_CHECKING:

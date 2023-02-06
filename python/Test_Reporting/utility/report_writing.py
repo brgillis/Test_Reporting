@@ -291,21 +291,30 @@ class ReportSummaryWriter:
     ```
     """
 
-    # Class attribute definitions - these can be overridden by child classes to specify the value without needing to
-    # use the `__init__`
+    # Class attribute definitions - these can be set either by overriding the values of the class attributes in child
+    # classes or set at initialization
+
+    # The name of the test, which will be used to name and title report pages
     test_name: Optional[str] = None
 
-    @log_entry_exit(logger)
-    def __init__(self, test_name: Optional[str] = None):
-        """Initializer for ReportSummaryWriter, which allows specifying the test name.
+    # Whether any of the test cases are expected to have associated figures. If set to False, no Figures section will
+    # be added to reports even if figures are present. If set to True and figures are not present, the section will
+    # be present with "N/A"
+    has_figures: bool = True
 
-        Parameters
-        ----------
-        test_name : str or None
-            The name of the test, which will be used for titling its page in the output. If not provided, will be set
-            to the `test_name` class attribute.
+    # Same as `has_figures`, but for textfiles
+    has_textfiles: bool = True
+
+    @log_entry_exit(logger)
+    def __init__(self, **kwargs):
+        """Initializer for ReportSummaryWriter, which allows specifying any desired attributes via kwargs. The
+        allowed attributes are listed as class attributes above
         """
-        self.test_name = test_name if test_name is not None else self.test_name
+        for key, value in kwargs.items():
+            if not hasattr(self, key):
+                raise ValueError(
+                    f"Class {self.__class__.__name__} has no attribute {key} which can be set at initialization.")
+            setattr(self, key, value)
 
     @log_entry_exit(logger)
     def __call__(self, value, rootdir, reportdir=None, datadir=None):
@@ -958,6 +967,10 @@ class ReportSummaryWriter:
             present, this will be None instead
         """
 
+        # Don't output anything if this class is defined as not having figures
+        if not self.has_figures:
+            return
+
         writer.add_heading(HEADING_FIGURES, depth=0)
 
         # Check we prepared successfully; if not, return, so we don't hit any further errors
@@ -1039,6 +1052,10 @@ class ReportSummaryWriter:
             The fully-qualified path to the temporary directory set up to contain figures data for this test case.
         l_ana_files_labels_and_filenames : List[FileInfo] or None
         """
+
+        # Don't output anything if this class is defined as not having textfiles
+        if not self.has_textfiles:
+            return
 
         writer.add_heading(HEADING_TEXTFILES, depth=0)
 

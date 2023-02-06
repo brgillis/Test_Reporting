@@ -167,7 +167,7 @@ def test_add_test_case_meta(cti_gal_test_results):
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
     test_case_results = cti_gal_test_results.l_test_results[0]
-    ReportSummaryWriter(TEST_NAME)._add_test_case_meta(writer, test_case_results)
+    ReportSummaryWriter(test_name=TEST_NAME)._add_test_case_meta(writer, test_case_results)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_GENERAL_INFO}](#"
@@ -187,7 +187,7 @@ def test_add_test_case_details(cti_gal_test_results):
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
     test_case_results = cti_gal_test_results.l_test_results[0]
-    ReportSummaryWriter(TEST_NAME)._add_test_case_details(writer, test_case_results)
+    ReportSummaryWriter(test_name=TEST_NAME)._add_test_case_details(writer, test_case_results)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_DETAILED_RESULTS}](#"
@@ -253,7 +253,7 @@ def test_find_product_filenames(mock_unpacked_dir):
         set up to have multiple possible product files, some being in subdirs.
     """
 
-    l_product_filenames = ReportSummaryWriter(TEST_NAME)._find_product_filenames(mock_unpacked_dir)
+    l_product_filenames = ReportSummaryWriter(test_name=TEST_NAME)._find_product_filenames(mock_unpacked_dir)
 
     assert "foo.xml" in l_product_filenames
     assert "foo2.xml" in l_product_filenames
@@ -265,7 +265,7 @@ def test_find_product_filenames(mock_unpacked_dir):
     qualified_empty_dir = os.path.join(mock_unpacked_dir, "empty_dir")
     os.makedirs(qualified_empty_dir, exist_ok=True)
     with pytest.raises(ValueError):
-        ReportSummaryWriter(TEST_NAME)._find_product_filenames(qualified_empty_dir)
+        ReportSummaryWriter(test_name=TEST_NAME)._find_product_filenames(qualified_empty_dir)
 
 
 @pytest.fixture
@@ -330,7 +330,7 @@ def test_write_product_metadata(cti_gal_test_results):
 
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
-    ReportSummaryWriter(TEST_NAME)._add_product_metadata(writer, cti_gal_test_results)
+    ReportSummaryWriter(test_name=TEST_NAME)._add_product_metadata(writer, cti_gal_test_results)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_PRODUCT_METADATA}](#"
@@ -349,7 +349,7 @@ def test_write_test_metadata(cti_gal_test_results):
 
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
-    ReportSummaryWriter(TEST_NAME)._add_test_metadata(writer, cti_gal_test_results)
+    ReportSummaryWriter(test_name=TEST_NAME)._add_test_metadata(writer, cti_gal_test_results)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_TEST_METADATA}](#"
@@ -372,7 +372,7 @@ def test_write_test_case_table(cti_gal_test_results):
 
     # Run the function with an empty writer
     writer = TocMarkdownWriter(TEST_TITLE)
-    ReportSummaryWriter(TEST_NAME)._add_test_case_table(writer, cti_gal_test_results, l_test_case_meta)
+    ReportSummaryWriter(test_name=TEST_NAME)._add_test_case_table(writer, cti_gal_test_results, l_test_case_meta)
 
     # Check that a sample of the writer's lines are as expected
     assert writer._l_toc_lines[0] == (f"1. [{HEADING_TEST_CASES}](#"

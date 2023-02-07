@@ -1044,6 +1044,9 @@ class ReportSummaryWriter:
                 logger.error(f"Expected analysis file {filename} does not exist.")
                 return None
         else:
+            # Make sure the path to where we're moving the destination filename exists
+            os.makedirs(os.path.split(qualified_dest_filename)[0], exist_ok=True)
+
             shutil.move(qualified_src_filename, qualified_dest_filename)
 
         # Return the path to the moved file, relative to where test reports will be stored

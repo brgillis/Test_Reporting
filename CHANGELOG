@@ -32,6 +32,7 @@ New Features
 - Added script "pack_results_tarball.py" to create a tarball of a test results data product and the datafiles it points
   to
 - Added default formatting for any textfiles included with test results
+- Download links are now provided for textfiles
 - Added PEP8-format-checking stage to CI pipeline (only for feature branches, not master)
 
 New config features

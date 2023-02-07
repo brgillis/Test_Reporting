@@ -115,6 +115,7 @@ This script creates the following output:
 
 * Directory `<rootdir>/public/TR/`, containing the generated reports for each test
 * Directory `<rootdir>/images/`, containing images referenced by the report
+* Directory `<rootdir>/textfiles/`, containing textfiles referenced by the report
 * Markdown file `<rootdir>/public/Test_Reports.md`, containing a table linking to all generated test reports
 
 And modifies the following existing files:

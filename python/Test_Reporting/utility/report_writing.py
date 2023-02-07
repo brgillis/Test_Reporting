@@ -37,7 +37,7 @@ import shutil
 from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, Sequence, TYPE_CHECKING, Tuple, Union
 
-from Test_Reporting.utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
+from Test_Reporting.utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR, TEXTFILES_SUBDIR
 from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, get_data_filename, get_qualified_path,
                                          hash_any, is_valid_tarball_filename, is_valid_xml_filename, log_entry_exit, )
 from Test_Reporting.utility.product_parsing import parse_xml_product
@@ -69,6 +69,7 @@ MSG_NA = "N/A"
 
 MSG_TARBALL_CORRUPT = "Tarball %s appears to be corrupt."
 
+MSG_TEXTFILE_DOWNLOAD = "Download link: [%s](%s)"
 TEXTFILE_LINE_LIMIT = 100
 MSG_TEXTFILE_LIMIT = f"...\n(only first {TEXTFILE_LINE_LIMIT} lines of textfiles shown)"
 
@@ -268,7 +269,7 @@ class ReportSummaryWriter:
 
             # Copy the figure to the appropriate directory and get the relative filename for it using the provided
             # method
-            relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
+            relative_figure_filename = self._move_ana_file_to_public(filename, reportdir, figures_tmpdir)
 
             # Add a heading for this bin's subsection, at a depth 1 greater than that of this section
             bin_label = f"Bin {bin_i}"
@@ -817,6 +818,7 @@ class ReportSummaryWriter:
                                     ana_files_tmpdir=ana_files_tmpdir,
                                     l_ana_files_labels_and_filenames=l_ana_files_labels_and_filenames)
         self._add_test_case_textfiles(writer=writer,
+                                      reportdir=reportdir,
                                       ana_files_tmpdir=ana_files_tmpdir,
                                       l_ana_files_labels_and_filenames=l_ana_files_labels_and_filenames)
 
@@ -993,7 +995,8 @@ class ReportSummaryWriter:
             if label is None:
                 label = HEADING_FIGURE_N % i
 
-            relative_figure_filename = self._move_figure_to_public(file_info.filename, reportdir, ana_files_tmpdir)
+            relative_figure_filename = self._move_ana_file_to_public(file_info.filename, reportdir, ana_files_tmpdir,
+                                                                     is_figure=True)
 
             writer.add_heading(label, depth=1)
             writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
@@ -1005,26 +1008,33 @@ class ReportSummaryWriter:
 
     @staticmethod
     @log_entry_exit(logger)
-    def _move_figure_to_public(filename, reportdir, ana_files_tmpdir):
-        """Move a figure to the appropriate directory and return the relative filename for it.
+    def _move_ana_file_to_public(filename, reportdir, ana_files_tmpdir, is_figure=True):
+        """Move an analysis file to the appropriate directory and return the relative filename for it.
 
         Parameters
         ----------
         filename : str
-            The filename of the figure relative to the `figures_tmpdir`
+            The filename of the figure relative to the `ana_files_tmpdir`
         reportdir : str
         ana_files_tmpdir : str
-            The fully-qualified path to the tmpdir created to store unpacked figures.
+            The fully-qualified path to the tmpdir created to store unpacked analysis files.
+        is_figure : bool, default=True
+            Whether the file is a figure. This affects which directory the file will be moved to
 
         Returns
         -------
-        relative_figure_filename : str or None
-            The path to the moved figure relative to where test reports are stored. In case of an error where the
+        relative_filename : str or None
+            The path to the moved file relative to where test reports are stored. In case of an error where the
             file wasn't present, the error will be logged and None will be returned instead.
         """
 
+        if is_figure:
+            subdir = IMAGES_SUBDIR
+        else:
+            subdir = TEXTFILES_SUBDIR
+
         qualified_src_filename = os.path.join(ana_files_tmpdir, filename)
-        qualified_dest_filename = os.path.join(reportdir, IMAGES_SUBDIR, filename)
+        qualified_dest_filename = os.path.join(reportdir, subdir, filename)
 
         # Check for file existence
         if not os.path.isfile(qualified_src_filename):
@@ -1032,24 +1042,27 @@ class ReportSummaryWriter:
             # for another page, and so we don't need to move it again. If destination doesn't exist, then we have an
             # error.
             if not os.path.isfile(qualified_dest_filename):
-                logger.error(f"Expected figure {filename} does not exist.")
+                logger.error(f"Expected analysis file {filename} does not exist.")
                 return None
         else:
+            # Make sure the path to where we're moving the destination filename exists
+            os.makedirs(os.path.split(qualified_dest_filename)[0], exist_ok=True)
+
             shutil.move(qualified_src_filename, qualified_dest_filename)
 
-        # Return the path to the moved figure file, relative to where test reports will be stored
-        return f"../{IMAGES_SUBDIR}/{filename}"
+        # Return the path to the moved file, relative to where test reports will be stored
+        return f"../{subdir}/{filename}"
 
     @log_entry_exit(logger)
-    def _add_test_case_textfiles(self, writer, ana_files_tmpdir, l_ana_files_labels_and_filenames):
+    def _add_test_case_textfiles(self, writer, reportdir, ana_files_tmpdir, l_ana_files_labels_and_filenames):
         """Prepares textfiles and adds lines for them to a MarkdownWriter, after a new temporary directory has been
         created to store extracted files in.
 
         Parameters
         ----------
         writer : TocMarkdownWriter
+        reportdir : str
         ana_files_tmpdir : str
-            The fully-qualified path to the temporary directory set up to contain figures data for this test case.
         l_ana_files_labels_and_filenames : List[FileInfo] or None
         """
 
@@ -1081,10 +1094,17 @@ class ReportSummaryWriter:
 
             writer.add_heading(label, depth=1)
 
+            # Move the figure to public and print a download link for it
+            relative_textfile_filename = self._move_ana_file_to_public(file_info.filename, reportdir, ana_files_tmpdir,
+                                                                       is_figure=False)
+
+            writer.add_line(f"{MSG_TEXTFILE_DOWNLOAD % (file_info.filename, relative_textfile_filename)}\n\n")
+
             # Read in the textfile in and write out its contents in a math section to avoid formatting issues
             writer.add_line("```\n")
 
-            for line_index, line in enumerate(open(os.path.join(ana_files_tmpdir, file_info.filename), "r")):
+            for line_index, line in enumerate(
+                    open(os.path.join(reportdir, TEXTFILES_SUBDIR, file_info.filename), "r")):
                 if line_index >= TEXTFILE_LINE_LIMIT:
                     writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n")
                     break

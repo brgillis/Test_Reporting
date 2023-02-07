@@ -1101,7 +1101,8 @@ class ReportSummaryWriter:
             # Read in the textfile in and write out its contents in a math section to avoid formatting issues
             writer.add_line("```\n")
 
-            for line_index, line in enumerate(open(os.path.join(ana_files_tmpdir, relative_textfile_filename), "r")):
+            for line_index, line in enumerate(
+                    open(os.path.join(reportdir, TEXTFILES_SUBDIR, file_info.filename), "r")):
                 if line_index >= TEXTFILE_LINE_LIMIT:
                     writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n")
                     break

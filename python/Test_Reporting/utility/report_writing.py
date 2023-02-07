@@ -995,7 +995,8 @@ class ReportSummaryWriter:
             if label is None:
                 label = HEADING_FIGURE_N % i
 
-            relative_figure_filename = self._move_ana_file_to_public(file_info.filename, reportdir, ana_files_tmpdir)
+            relative_figure_filename = self._move_ana_file_to_public(file_info.filename, reportdir, ana_files_tmpdir,
+                                                                     is_figure=True)
 
             writer.add_heading(label, depth=1)
             writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
@@ -1094,7 +1095,8 @@ class ReportSummaryWriter:
             writer.add_heading(label, depth=1)
 
             # Move the figure to public and print a download link for it
-            relative_textfile_filename = self._move_ana_file_to_public(file_info.filename, reportdir, ana_files_tmpdir)
+            relative_textfile_filename = self._move_ana_file_to_public(file_info.filename, reportdir, ana_files_tmpdir,
+                                                                       is_figure=False)
 
             writer.add_line(f"{MSG_TEXTFILE_DOWNLOAD % (file_info.filename, relative_textfile_filename)}\n\n")
 

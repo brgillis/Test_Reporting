@@ -1018,7 +1018,7 @@ class ReportSummaryWriter:
         ana_files_tmpdir : str
             The fully-qualified path to the tmpdir created to store unpacked analysis files.
         is_figure : bool, default=True
-            Whether or not the file is a figure. This affects which directory the file will be moved to
+            Whether the file is a figure. This affects which directory the file will be moved to
 
         Returns
         -------
@@ -1101,7 +1101,7 @@ class ReportSummaryWriter:
             # Read in the textfile in and write out its contents in a math section to avoid formatting issues
             writer.add_line("```\n")
 
-            for line_index, line in enumerate(open(os.path.join(ana_files_tmpdir, file_info.filename), "r")):
+            for line_index, line in enumerate(open(os.path.join(ana_files_tmpdir, relative_textfile_filename), "r")):
                 if line_index >= TEXTFILE_LINE_LIMIT:
                     writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n")
                     break

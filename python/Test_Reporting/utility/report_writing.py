@@ -70,7 +70,9 @@ MSG_NA = "N/A"
 MSG_TARBALL_CORRUPT = "Tarball %s appears to be corrupt."
 
 TEXTFILE_LINE_LIMIT = 100
-MSG_TEXTFILE_LIMIT = f"...\n(only first {TEXTFILE_LINE_LIMIT} lines of textfiles shown)"
+MSG_TEXTFILE_LIMIT = (f"...\n(only first {TEXTFILE_LINE_LIMIT} lines of textfiles shown. The full textfile may be "
+                      f"retrieved from the tarball containing data for this test in this project's repository, "
+                      f"in the appropriate textfiles tarball for this test case.)")
 
 logger = getLogger(__name__)
 

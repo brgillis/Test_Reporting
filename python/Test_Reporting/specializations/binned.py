@@ -171,8 +171,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
         # Draw all figures for this bin, if we have any. Otherwise, report that we have no figures
         if d_bin_figure_filenames:
             for key, filename in d_bin_figure_filenames.items():
-                relative_figure_filename = self._move_ana_file_to_public(filename, reportdir, figures_tmpdir,
-                                                                         is_figure=True)
+                relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
                 if key:
                     key_label = f" {key}"
                 else:

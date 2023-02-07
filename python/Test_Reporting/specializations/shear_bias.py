@@ -138,7 +138,7 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
                 for key, filename in d_bin_figure_filenames.items():
                     if str(key) != str(comp_index):
                         continue
-                    relative_figure_filename = self._move_ana_file_to_public(filename, reportdir, figures_tmpdir)
+                    relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
                     writer.add_line(f"![{label} {info.bias}{comp_index} Figure]({relative_figure_filename})\n\n")
                     figure_drawn = True
             if not figure_drawn:

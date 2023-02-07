@@ -545,3 +545,8 @@ If all else fails, try running the script yourself with a debugger and stepping 
 
 Since the pipeline requires downloading the GitBooks package to install it, things can go wrong every once in a while.
 Most likely this issue will resolve itself if you try re-running the pipeline.
+
+If the pipeline failed on the `pages:deploy` job specifically, then check the reason provided for this when mousing 
+over that step. One issue that has occurred in the past is that deployment will fail if the files produced are too 
+large. If this happens, it may be necessary to adjust the code to limit the size of deployed files, or contact the 
+administrator to see if it is possible to increase the size limit.

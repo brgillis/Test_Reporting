@@ -31,6 +31,7 @@ PYTHON_DIR = "python"
 
 PUBLIC_DIR = "public"
 IMAGES_SUBDIR = "images"
+TEXTFILES_SUBDIR = "textfiles"
 README_FILENAME = "README.md"
 SUMMARY_FILENAME = "SUMMARY.md"
 

@@ -72,11 +72,14 @@ MSG_NA = "N/A"
 
 MSG_TARBALL_CORRUPT = "Tarball %s appears to be corrupt."
 
+MSG_LINE_LIMIT = ("(only first %i lines of %s shown. The full textfile may be "
+                  "retrieved from the tarball containing data for this test in this project's repository, "
+                  "in the appropriate textfiles tarball for this test case.)")
+
+TABLE_LINE_LIMIT = 1000
+MSG_TABLE_LIMIT = MSG_LINE_LIMIT % (TABLE_LINE_LIMIT, "tables")
 TEXTFILE_LINE_LIMIT = 100
-MSG_TEXTFILE_LIMIT = (f"(only first {TEXTFILE_LINE_LIMIT} lines of textfiles shown. The full textfile may be "
-                      f"retrieved from the tarball containing data for this test in this project's repository, "
-                      f"in the appropriate textfiles tarball for this test case.)")
-MSG_TEXTFILE_LIMIT_WE = f"...\n{MSG_TEXTFILE_LIMIT}"
+MSG_TEXTFILE_LIMIT = f"...\n{MSG_LINE_LIMIT % (TEXTFILE_LINE_LIMIT, 'textfiles')}"
 
 logger = getLogger(__name__)
 
@@ -1131,7 +1134,7 @@ class ReportSummaryWriter:
         hit_row_limit = False
         for row_index, row in enumerate(table):
 
-            if row_index >= TEXTFILE_LINE_LIMIT:
+            if row_index >= TABLE_LINE_LIMIT:
                 hit_row_limit = True
                 break
 
@@ -1150,7 +1153,7 @@ class ReportSummaryWriter:
 
         # If we hit the row limit, make a note of this
         if hit_row_limit:
-            writer.add_line(f"\n{MSG_TEXTFILE_LIMIT}\n\n")
+            writer.add_line(f"\n{MSG_TABLE_LIMIT}\n\n")
 
     @staticmethod
     @log_entry_exit(logger)
@@ -1167,7 +1170,7 @@ class ReportSummaryWriter:
         writer.add_line("```\n")
         for line_index, line in enumerate(open(qualified_filename, "r")):
             if line_index >= TEXTFILE_LINE_LIMIT:
-                writer.add_line(f"{MSG_TEXTFILE_LIMIT_WE}\n")
+                writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n")
                 break
             # Lines read in this way already include a linebreak at the end, so we don't need to add one in
             writer.add_line(line)

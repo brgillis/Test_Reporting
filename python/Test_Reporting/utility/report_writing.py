@@ -1104,7 +1104,7 @@ class ReportSummaryWriter:
     @staticmethod
     @log_entry_exit(logger)
     def _add_table_contents(writer, table):
-        """Adds the contents of an astropy table to a markdown writer, formatted as a markdown table
+        """Adds the contents of an astropy table to a markdown writer, formatted as an html table
 
         Parameters
         ----------
@@ -1113,35 +1113,38 @@ class ReportSummaryWriter:
             An astropy table, which is to be printed out cleanly in the markdown writer
         """
 
-        # Put the table in a scrollable div
-        writer.add_line("<div class=\"scrollable\">\n\n")
+        # Put the table in a scrollable div container
+        writer.add_line("<div class=\"tableContainer\">\n<table>\n")
 
-        # Add a header row with the column names, then a separator line below it
+        # Add the table header
 
-        num_columns = len(table.colnames)
+        writer.add_line("<thead>\n<tr>\n")
+        for colname in table.colnames:
+            writer.add_line(f"<th style=\"text-align:left\"><strong>{colname}</strong></th>\n")
+        writer.add_line("</tr>\n</thead>\n")
 
-        writer.add_line((("| **%s** " * num_columns) + "|\n") % tuple(table.colnames))
-        writer.add_line("|:--" * num_columns + "|\n")
+        # Start the table body
+        writer.add_line("<tbody>\n")
 
         # Add data for each row
-
-        row_line_template = ("| %s " * num_columns) + "|"
-        hit_row_limit = False
-
         for row_index, row in enumerate(table):
 
             if row_index >= TEXTFILE_LINE_LIMIT:
                 hit_row_limit = True
                 break
 
-            row_line = row_line_template % tuple(map(str, row))
+            writer.add_line("<tr>\n")
 
-            # Clean the line of any newlines and add it to the writer
-            row_line_cleaned = row_line.replace("\n", "")
-            writer.add_line(f"{row_line_cleaned}\n")
+            # Add each item in the row
+            for item in row:
+                # Convert each item into a string, and remove any linebreaks in that string
+                cleaned_item = str(item).replace("\n", "")
+                writer.add_line(f"<td style=\"text-align:left\">{cleaned_item}</td>\n")
 
-        # Close the div and add a double linebreak after the table
-        writer.add_line("\n</div>\n")
+            writer.add_line("</tr>\n")
+
+        # Close the table body, table, and div
+        writer.add_line("</tbody>\n</table>\n</div>\n")
 
         # If we hit the row limit, make a note of this
         if hit_row_limit:

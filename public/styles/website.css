@@ -1,4 +1,12 @@
-div.scrollable {
+div.tableContainer {
   overflow: auto;
+  overflow-y: auto;
   white-space: nowrap;
+  height: 500px;
+}
+.th.fixed {
+    top: 0;
+    z-index: 2;
+    position: sticky;
+    background-color: white;
 }

@@ -7,16 +7,15 @@
   height: 750px;
 }
 
-/* Make the header row of tables fixed */
-.th.fixed {
-    top: 0;
-    z-index: 2;
-    position: sticky;
-    background-color: white;
-}
-
 /* In tables, align all text to the left by default */
 td,
 th {
   text-align: left;
+}
+
+/* Make the header row of tables fixed */
+th {
+  position: sticky;
+  z-index: 2;
+  top: 0;
 }

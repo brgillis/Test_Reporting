@@ -1127,6 +1127,7 @@ class ReportSummaryWriter:
         writer.add_line("<tbody>\n")
 
         # Add data for each row
+        hit_row_limit = False
         for row_index, row in enumerate(table):
 
             if row_index >= TEXTFILE_LINE_LIMIT:

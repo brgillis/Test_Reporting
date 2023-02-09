@@ -1117,7 +1117,7 @@ class ReportSummaryWriter:
 
         num_columns = len(table.colnames)
 
-        colname_line = (("| **%s** " * num_columns) + "|\n") % table.colnames
+        colname_line = (("| **%s** " * num_columns) + "|\n") % tuple(table.colnames)
         writer.add_line(colname_line)
         sep_line = "|:--" * num_columns + "|\n"
         writer.add_line(sep_line)
@@ -1130,7 +1130,7 @@ class ReportSummaryWriter:
             if row_index >= TEXTFILE_LINE_LIMIT:
                 hit_row_limit = True
                 break
-            row_line = row_line_template % map(str, row.data)
+            row_line = row_line_template % tuple(map(str, row.data))
             writer.add_line(row_line)
 
         # Add an extra linebreak after the table

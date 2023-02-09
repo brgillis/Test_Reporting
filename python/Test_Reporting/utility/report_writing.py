@@ -73,9 +73,10 @@ MSG_NA = "N/A"
 MSG_TARBALL_CORRUPT = "Tarball %s appears to be corrupt."
 
 TEXTFILE_LINE_LIMIT = 100
-MSG_TEXTFILE_LIMIT = (f"...\n(only first {TEXTFILE_LINE_LIMIT} lines of textfiles shown. The full textfile may be "
+MSG_TEXTFILE_LIMIT = (f"(only first {TEXTFILE_LINE_LIMIT} lines of textfiles shown. The full textfile may be "
                       f"retrieved from the tarball containing data for this test in this project's repository, "
                       f"in the appropriate textfiles tarball for this test case.)")
+MSG_TEXTFILE_LIMIT_WE = f"...\n{MSG_TEXTFILE_LIMIT}"
 
 logger = getLogger(__name__)
 
@@ -1118,10 +1119,10 @@ class ReportSummaryWriter:
 
         # Add the table header
 
-        writer.add_line("<thead>\n<tr>\n")
+        writer.add_line("tr>\n")
         for colname in table.colnames:
-            writer.add_line(f"<th style=\"text-align:left\"><strong>{colname}</strong></th>\n")
-        writer.add_line("</tr>\n</thead>\n")
+            writer.add_line(f"<th><strong>{colname}</strong></th>\n")
+        writer.add_line("</tr>\n")
 
         # Start the table body
         writer.add_line("<tbody>\n")
@@ -1140,7 +1141,7 @@ class ReportSummaryWriter:
             for item in row:
                 # Convert each item into a string, and remove any linebreaks in that string
                 cleaned_item = str(item).replace("\n", "")
-                writer.add_line(f"<td style=\"text-align:left\">{cleaned_item}</td>\n")
+                writer.add_line(f"<td>{cleaned_item}</td>\n")
 
             writer.add_line("</tr>\n")
 
@@ -1149,7 +1150,7 @@ class ReportSummaryWriter:
 
         # If we hit the row limit, make a note of this
         if hit_row_limit:
-            writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n\n")
+            writer.add_line(f"\n{MSG_TEXTFILE_LIMIT}\n\n")
 
     @staticmethod
     @log_entry_exit(logger)
@@ -1166,7 +1167,7 @@ class ReportSummaryWriter:
         writer.add_line("```\n")
         for line_index, line in enumerate(open(qualified_filename, "r")):
             if line_index >= TEXTFILE_LINE_LIMIT:
-                writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n")
+                writer.add_line(f"{MSG_TEXTFILE_LIMIT_WE}\n")
                 break
             # Lines read in this way already include a linebreak at the end, so we don't need to add one in
             writer.add_line(line)

@@ -1,12 +1,22 @@
-div.tableContainer {
+
+/* Table container div which can be used to contain tables we want to be scrollable */
+.tableContainer {
   overflow: auto;
   overflow-y: auto;
   white-space: nowrap;
-  height: 500px;
+  height: 750px;
 }
+
+/* Make the header row of tables fixed */
 .th.fixed {
     top: 0;
     z-index: 2;
     position: sticky;
     background-color: white;
+}
+
+/* In tables, align all text to the left by default */
+td,
+th {
+  text-align: left;
 }

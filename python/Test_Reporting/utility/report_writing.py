@@ -1113,6 +1113,9 @@ class ReportSummaryWriter:
             An astropy table, which is to be printed out cleanly in the markdown writer
         """
 
+        # Put the table in a scrollable div
+        writer.add_line("<div class=\"scrollable\">")
+
         # Add a header row with the column names, then a separator line below it
 
         num_columns = len(table.colnames)
@@ -1121,9 +1124,6 @@ class ReportSummaryWriter:
         writer.add_line(colname_line)
         sep_line = "|:--" * num_columns + "|\n"
         writer.add_line(sep_line)
-
-        # Put the table in a scrollable div
-        writer.add_line("<div class=\"scrollable\">")
 
         # Add data for each row
 

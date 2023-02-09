@@ -1124,14 +1124,18 @@ class ReportSummaryWriter:
 
         # Add data for each row
 
-        row_line_template = ("| **%s** " * num_columns) + "|\n"
+        row_line_template = ("| %s " * num_columns) + "|\n"
         hit_row_limit = False
+
         for row_index, row in enumerate(table):
+
             if row_index >= TEXTFILE_LINE_LIMIT:
                 hit_row_limit = True
                 break
-            row_line = row_line_template % tuple(map(str, row.data))
-            writer.add_line(row_line)
+            row_line = row_line_template % tuple(map(str, row))
+
+            # Clean the line of any newlines and add it to the writer
+            writer.add_line(row_line.replace("\n", ""))
 
         # Add an extra linebreak after the table
         writer.add_line("\n")

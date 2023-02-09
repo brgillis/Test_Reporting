@@ -1119,7 +1119,7 @@ class ReportSummaryWriter:
 
         # Add the table header
 
-        writer.add_line("tr>\n")
+        writer.add_line("<tr>\n")
         for colname in table.colnames:
             writer.add_line(f"<th><strong>{colname}</strong></th>\n")
         writer.add_line("</tr>\n")

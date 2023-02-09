@@ -37,6 +37,9 @@ import shutil
 from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, Sequence, TYPE_CHECKING, Tuple, Union
 
+from astropy.io.registry import IORegistryError
+from astropy.table import Table
+
 from Test_Reporting.utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
 from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, get_data_filename, get_qualified_path,
                                          hash_any, is_valid_tarball_filename, is_valid_xml_filename, log_entry_exit, )
@@ -1083,22 +1086,80 @@ class ReportSummaryWriter:
 
             writer.add_heading(label, depth=1)
 
-            # Read in the textfile in and write out its contents in a math section to avoid formatting issues
-            writer.add_line("```\n")
+            qualified_filename = os.path.join(ana_files_tmpdir, file_info.filename)
 
-            for line_index, line in enumerate(open(os.path.join(ana_files_tmpdir, file_info.filename), "r")):
-                if line_index >= TEXTFILE_LINE_LIMIT:
-                    writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n")
-                    break
-                # Lines read in this way already include a linebreak at the end, so we don't need to add one in
-                writer.add_line(line)
-
-            writer.add_line("```\n\n")
+            # Check if the file contains a table, and print it neatly if so
+            try:
+                table = Table.read(qualified_filename)
+                self._add_table_contents(writer=writer, table=table)
+            except IORegistryError:
+                # Fall back to printing raw contents of the file
+                self._add_raw_textfile_contents(writer=writer, qualified_filename=qualified_filename)
 
         # Check if we output any textfiles, and output N/A if not
         if not some_textfiles_added:
             writer.add_line(f"{MSG_NA}\n\n")
             return
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_table_contents(writer, table):
+        """Adds the contents of an astropy table to a markdown writer, formatted as a markdown table
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        table : Table
+            An astropy table, which is to be printed out cleanly in the markdown writer
+        """
+
+        # Add a header row with the column names, then a separator line below it
+
+        num_columns = len(table.colnames)
+
+        colname_line = (("| **%s** " * num_columns) + "|\n") % table.colnames
+        writer.add_line(colname_line)
+        sep_line = "|:--" * num_columns + "|\n"
+        writer.add_line(sep_line)
+
+        # Add data for each row
+
+        row_line_template = ("| **%s** " * num_columns) + "|\n"
+        hit_row_limit = False
+        for row_index, row in enumerate(table):
+            if row_index >= TEXTFILE_LINE_LIMIT:
+                hit_row_limit = True
+                break
+            row_line = row_line_template % map(str, row.data)
+            writer.add_line(row_line)
+
+        # Add an extra linebreak after the table
+        writer.add_line("\n")
+
+        # If we hit the row limit, make a note of this
+        if hit_row_limit:
+            writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n\n")
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_raw_textfile_contents(writer, qualified_filename):
+        """Adds the contents of a textfile directly to a maths section, without any modification.
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        qualified_filename : str
+            The fully-qualified filename of the textfile
+        """
+        # Read in the textfile in and write out its contents in a math section to avoid formatting issues
+        writer.add_line("```\n")
+        for line_index, line in enumerate(open(qualified_filename, "r")):
+            if line_index >= TEXTFILE_LINE_LIMIT:
+                writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n")
+                break
+            # Lines read in this way already include a linebreak at the end, so we don't need to add one in
+            writer.add_line(line)
+        writer.add_line("```\n\n")
 
     @staticmethod
     @log_entry_exit(logger)

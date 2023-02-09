@@ -1114,7 +1114,7 @@ class ReportSummaryWriter:
         """
 
         # Put the table in a scrollable div
-        writer.add_line("<div class=\"scrollable\">")
+        writer.add_line("<div class=\"scrollable\">\n\n")
 
         # Add a header row with the column names, then a separator line below it
 
@@ -1141,7 +1141,7 @@ class ReportSummaryWriter:
             writer.add_line(f"{row_line_cleaned}\n")
 
         # Close the div and add a double linebreak after the table
-        writer.add_line("</div>\n")
+        writer.add_line("\n</div>\n")
 
         # If we hit the row limit, make a note of this
         if hit_row_limit:

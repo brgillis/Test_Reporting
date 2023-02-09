@@ -1122,6 +1122,9 @@ class ReportSummaryWriter:
         sep_line = "|:--" * num_columns + "|\n"
         writer.add_line(sep_line)
 
+        # Put the table in a scrollable div
+        writer.add_line("<div class=\"scrollable\">")
+
         # Add data for each row
 
         row_line_template = ("| %s " * num_columns) + "|"
@@ -1138,8 +1141,8 @@ class ReportSummaryWriter:
             row_line_cleaned = row_line.replace("\n", "")
             writer.add_line(f"{row_line_cleaned}\n")
 
-        # Add an extra linebreak after the table
-        writer.add_line("\n")
+        # Close the div and add a double linebreak after the table
+        writer.add_line("</div>\n")
 
         # If we hit the row limit, make a note of this
         if hit_row_limit:

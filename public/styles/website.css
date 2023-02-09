@@ -1,0 +1,4 @@
+div.scrollable {
+  overflow: auto;
+  white-space: nowrap;
+}

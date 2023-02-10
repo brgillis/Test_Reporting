@@ -1,0 +1,9 @@
+{
+  "plugins": [
+    "expandable-chapters",
+    "back-to-top-button",
+    "-sharing"
+  ],
+  "author": "Bryan Gillis and Euclid OU-SHE Ground Segment",
+  "gitbook": "3.2.3"
+}

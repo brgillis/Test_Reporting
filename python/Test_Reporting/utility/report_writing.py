@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import os
 import shutil
+from enum import Enum
 from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, Sequence, TYPE_CHECKING, Tuple, Union
 
@@ -82,6 +83,15 @@ TEXTFILE_LINE_LIMIT = 100
 MSG_TEXTFILE_LIMIT = f"...\n{MSG_LINE_LIMIT % (TEXTFILE_LINE_LIMIT, 'textfiles')}"
 
 logger = getLogger(__name__)
+
+
+class OutputFormat(Enum):
+    """Enum, specifying possible formats that the report is intended to ultimately be output in. When building for
+    online compiled display, `HTML` will result in better formatting, while `MD` will result in better formatting when
+    building for offline display.
+    """
+    MD = "markdown"
+    HTML = "html"
 
 
 class ValTestCaseMeta(NamedTuple):
@@ -315,10 +325,20 @@ class ReportSummaryWriter:
     has_textfiles: bool = True
 
     @log_entry_exit(logger)
-    def __init__(self, **kwargs):
+    def __init__(self, output_format=OutputFormat.HTML, **kwargs):
         """Initializer for ReportSummaryWriter, which allows specifying any desired attributes via kwargs. The
         allowed attributes are listed as class attributes above
+
+        Parameters
+        ----------
+        output_format : OutputFormat, default=OutputFormat.HTML
+            The format that the report is intended to ultimately be output in. When building for online compiled
+            display, `HTML` will result in better formatting, while `MD` will result in better formatting when
+            building for offline display.
         """
+
+        self.output_format = output_format
+
         for key, value in kwargs.items():
             if not hasattr(self, key):
                 raise ValueError(
@@ -1105,16 +1125,35 @@ class ReportSummaryWriter:
             writer.add_line(f"{MSG_NA}\n\n")
             return
 
-    @staticmethod
     @log_entry_exit(logger)
-    def _add_table_contents(writer, table):
-        """Adds the contents of an astropy table to a markdown writer, formatted as an html table
+    def _add_table_contents(self, writer, table):
+        """Adds the contents of an astropy table to a markdown writer. The formatting depends on the current
+        execution mode - will be markdown-formatted if called via standalone `build_report.py` script,
+        or html-formatted if called via the `build_all_report_pages.py` script.
 
         Parameters
         ----------
         writer : TocMarkdownWriter
         table : Table
             An astropy table, which is to be printed out cleanly in the markdown writer
+        """
+
+        if self.output_format == OutputFormat.HTML:
+            self._add_table_contents_html(writer, table)
+        elif self.output_format == OutputFormat.MD:
+            self._add_table_contents_html(writer, table)
+        else:
+            raise ValueError(f"Unrecognized output format: {self.output_format=}")
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_table_contents_html(writer, table):
+        """Adds the contents of an astropy table to a markdown writer, formatted as an html table
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        table : Table
         """
 
         # Put the table in a scrollable div container

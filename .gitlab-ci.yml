@@ -35,7 +35,7 @@ pages-test:
   before_script:
     - npm install gitbook-cli -g # install gitbook
     - gitbook fetch 3.2.3 # fetch final stable version
-    - cd public && gitbook install # add any requested plugins in book.json
+    - gitbook install public/book.json # add any requested plugins in book.json
   script:
     - cd public
     - gitbook build . test_output # build to test path
@@ -67,7 +67,7 @@ pages:
   before_script:
     - npm install gitbook-cli -g # install gitbook
     - gitbook fetch 3.2.3 # fetch final stable version
-    - cd public && gitbook install # add any requested plugins in public/book.json
+    - gitbook install public/book.json # add any requested plugins in public/book.json
   script:
     - cd public
     - gitbook build . public # build to public path

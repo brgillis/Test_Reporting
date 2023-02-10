@@ -1,10 +1,16 @@
 {
+  "author": "Bryan Gillis and Euclid OU-SHE Ground Segment",
+  "gitbook": "3.2.3",
   "plugins": [
     "back-to-top-button",
     "expandable-chapters",
     "insert-logo",
     "-sharing"
   ],
-  "author": "Bryan Gillis and Euclid OU-SHE Ground Segment",
-  "gitbook": "3.2.3"
+  "pluginsConfig": {
+    "insert-logo": {
+      "url": "/logo.png",
+      "style": "background: none;"
+    }
+  }
 }

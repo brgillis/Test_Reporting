@@ -1,3 +1,7 @@
+/* Allow the pages to fill more of the horizontal space of the screen */
+.book .book-body .page-wrapper .page-inner {
+  max-width: 90%;
+}
 
 /* Table container div which can be used to contain tables we want to be scrollable */
 .tableContainer {

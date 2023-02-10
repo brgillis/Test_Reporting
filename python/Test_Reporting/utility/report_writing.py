@@ -77,8 +77,10 @@ MSG_LINE_LIMIT = ("(only first %i lines of %s shown. The full textfile may be "
                   "retrieved from the tarball containing data for this test in this project's repository, "
                   "in the appropriate textfiles tarball for this test case.)")
 
-TABLE_LINE_LIMIT = 1000
-MSG_TABLE_LIMIT = MSG_LINE_LIMIT % (TABLE_LINE_LIMIT, "tables")
+HTML_TABLE_LINE_LIMIT = 1000
+MSG_HTML_TABLE_LIMIT = MSG_LINE_LIMIT % (HTML_TABLE_LINE_LIMIT, "tables")
+MD_TABLE_LINE_LIMIT = 100
+MSG_MD_TABLE_LIMIT = MSG_LINE_LIMIT % (MD_TABLE_LINE_LIMIT, "tables")
 TEXTFILE_LINE_LIMIT = 100
 MSG_TEXTFILE_LIMIT = f"...\n{MSG_LINE_LIMIT % (TEXTFILE_LINE_LIMIT, 'textfiles')}"
 
@@ -1141,7 +1143,7 @@ class ReportSummaryWriter:
         if self.output_format == OutputFormat.HTML:
             self._add_table_contents_html(writer, table)
         elif self.output_format == OutputFormat.MD:
-            self._add_table_contents_html(writer, table)
+            self._add_table_contents_md(writer, table)
         else:
             raise ValueError(f"Unrecognized output format: {self.output_format=}")
 
@@ -1173,7 +1175,7 @@ class ReportSummaryWriter:
         hit_row_limit = False
         for row_index, row in enumerate(table):
 
-            if row_index >= TABLE_LINE_LIMIT:
+            if row_index >= HTML_TABLE_LINE_LIMIT:
                 hit_row_limit = True
                 break
 
@@ -1188,11 +1190,52 @@ class ReportSummaryWriter:
             writer.add_line("</tr>\n")
 
         # Close the table body, table, and div
-        writer.add_line("</tbody>\n</table>\n</div>\n")
+        writer.add_line("</tbody>\n</table>\n</div>\n\n")
 
         # If we hit the row limit, make a note of this
         if hit_row_limit:
-            writer.add_line(f"\n{MSG_TABLE_LIMIT}\n\n")
+            writer.add_line(f"{MSG_HTML_TABLE_LIMIT}\n\n") \
+ \
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_table_contents_md(writer, table):
+        """Adds the contents of an astropy table to a markdown writer, formatted as a markdown table
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        table : Table
+        """
+
+        # Add a header row with the column names, then a separator line below it
+
+        num_columns = len(table.colnames)
+
+        writer.add_line((("| **%s** " * num_columns) + "|\n") % tuple(table.colnames))
+        writer.add_line("|:--" * num_columns + "|\n")
+
+        # Add data for each row
+
+        row_line_template = ("| %s " * num_columns) + "|"
+        hit_row_limit = False
+
+        for row_index, row in enumerate(table):
+
+            if row_index >= MD_TABLE_LINE_LIMIT:
+                hit_row_limit = True
+                break
+            row_line = row_line_template % tuple(map(str, row))
+
+            # Clean the line of any newlines and add it to the writer
+            row_line_cleaned = row_line.replace("\n", "")
+            writer.add_line(f"{row_line_cleaned}\n")
+
+        # Add an extra linebreak after the table
+        writer.add_line("\n")
+
+        # If we hit the row limit, make a note of this
+        if hit_row_limit:
+            writer.add_line(f"{MSG_MD_TABLE_LIMIT}\n\n")
 
     @staticmethod
     @log_entry_exit(logger)

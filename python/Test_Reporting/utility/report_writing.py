@@ -1195,8 +1195,8 @@ class ReportSummaryWriter:
 
         # If we hit the row limit, make a note of this
         if hit_row_limit:
-            writer.add_line(f"{MSG_HTML_TABLE_LIMIT}\n\n") \
- \
+            writer.add_line(f"{MSG_HTML_TABLE_LIMIT}\n\n")
+
     @staticmethod
     @log_entry_exit(logger)
     def _add_table_contents_md(writer, table):

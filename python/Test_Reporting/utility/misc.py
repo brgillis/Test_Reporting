@@ -378,7 +378,7 @@ class TocMarkdownWriter:
     def add_line(self, line):
         """Add a standard line to be written as part of the body text of the file. Note that this class does not
         automatically add linebreaks after lines, so the line added here must include any desired linebreaks. This
-        can be thought of as acting like the `write` method of a filehandle opened to write or append.
+        can be thought of as acting as the `write` method of a filehandle opened to write or append.
 
         Parameters
         ----------

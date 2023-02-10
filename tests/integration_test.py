@@ -34,6 +34,7 @@ from Test_Reporting.utility.constants import DATA_DIR, PUBLIC_DIR, TEST_REPORTS_
 
 OUTPUT_TARBALL_FILENAME = "output_tarball.tar.gz"
 
+
 def test_build_all_integration(project_copy, test_manifest):
     """Tests a slimmed-down full execution of the build_all script, using the default implementation.
 

@@ -50,9 +50,11 @@ logger = getLogger(__name__)
 
 class BinnedReportSummaryWriter(ReportSummaryWriter):
 
-    def _add_test_case_details_and_figures_with_tmpdir(self, writer: TocMarkdownWriter,
-                                                       test_case_results: SingleTestResult, reportdir: str,
-                                                       datadir: str, ana_files_tmpdir: str) -> None:
+    def _add_test_case_details_and_figures_with_tmpdir(self,
+                                                       writer: TocMarkdownWriter,
+                                                       test_case_results: SingleTestResult,
+                                                       qualified_tmp_datadir: str,
+                                                       ana_files_tmpdir: str) -> None:
         """Overload of parent method, to implement specialized writing for a test case which parses info from the
         SupplementaryInfo and places figures alongside associated data for each bin.
         """
@@ -73,7 +75,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
             logger.error("Test results SupplementaryInfo is in invalid format; falling back to default implementation.")
             return super()._add_test_case_details_and_figures_with_tmpdir(writer=writer,
                                                                           test_case_results=test_case_results,
-                                                                          reportdir=reportdir, datadir=datadir,
+                                                                          qualified_tmp_datadir=qualified_tmp_datadir,
                                                                           ana_files_tmpdir=ana_files_tmpdir)
 
         # If we have any error messages, print them out
@@ -83,14 +85,13 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
 
         self._add_binned_details(writer=writer,
                                  test_case_results=test_case_results,
-                                 reportdir=reportdir,
-                                 datadir=datadir,
-                                 figures_tmpdir=ana_files_tmpdir,
+                                 qualified_tmp_datadir=qualified_tmp_datadir,
+                                 ana_files_tmpdir=ana_files_tmpdir,
                                  l_info=l_info)
 
     @staticmethod
     def _check_valid_info(l_info_str):
-        """Method-specific check that info is valid. Should be overidden by child classes to implement any necessary
+        """Method-specific check that info is valid. Should be overridden by child classes to implement any necessary
         checks.
         """
         return True
@@ -108,9 +109,8 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
     def _add_binned_details(self,
                             writer: TocMarkdownWriter,
                             test_case_results: SingleTestResult,
-                            reportdir: str,
-                            datadir: str,
-                            figures_tmpdir: str,
+                            qualified_tmp_datadir: str,
+                            ana_files_tmpdir: str,
                             l_info: Sequence, ):
         """Method to write details for test results which is sorted into bins (or just one bin for global
         results), and didn't fail to produce any results.
@@ -118,8 +118,8 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
 
         # Get the figure label and filename for each bin
         l_figure_labels_and_filenames = self._prepare_ana_files(ana_result=test_case_results.analysis_result,
-                                                                reportdir=reportdir, datadir=datadir,
-                                                                ana_files_tmpdir=figures_tmpdir)
+                                                                qualified_tmp_datadir=qualified_tmp_datadir,
+                                                                ana_files_tmpdir=ana_files_tmpdir)
 
         # Make a dict of bin indices to filenames
 
@@ -154,15 +154,13 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
             # Trim any Nones from the filename dict
             d_bin_figure_filenames = {k: v for k, v in d_bin_figure_filenames.items() if v is not None}
 
-            self._write_bin_figures_and_info(writer, d_bin_figure_filenames, label, reportdir, figures_tmpdir, info,
-                                             is_global)
+            self._write_bin_figures_and_info(writer, d_bin_figure_filenames, label, ana_files_tmpdir, info, is_global)
 
     def _write_bin_figures_and_info(self,
                                     writer: TocMarkdownWriter,
                                     d_bin_figure_filenames: Union[Optional[str], Dict[Any, Optional[str]]],
                                     label: str,
-                                    reportdir: str,
-                                    figures_tmpdir: str,
+                                    ana_files_tmpdir: str,
                                     info: Any,
                                     is_global: bool):
         """Write out all info for a given bin. This can be overridden by child classes if desired.
@@ -171,7 +169,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
         # Draw all figures for this bin, if we have any. Otherwise, report that we have no figures
         if d_bin_figure_filenames:
             for key, filename in d_bin_figure_filenames.items():
-                relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
+                relative_figure_filename = self._move_figure_to_public(filename, ana_files_tmpdir)
                 if key:
                     key_label = f" {key}"
                 else:

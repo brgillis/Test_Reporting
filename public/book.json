@@ -3,7 +3,7 @@
   "gitbook": "3.2.3",
   "plugins": [
     "back-to-top-button",
-    "expandable-chapters",
+    "expandable-chapters-revised",
     "insert-logo",
     "-sharing"
   ],

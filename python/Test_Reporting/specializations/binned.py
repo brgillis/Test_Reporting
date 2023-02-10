@@ -53,6 +53,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
     def _add_test_case_details_and_figures_with_tmpdir(self,
                                                        writer: TocMarkdownWriter,
                                                        test_case_results: SingleTestResult,
+                                                       qualified_tmp_datadir: str,
                                                        ana_files_tmpdir: str) -> None:
         """Overload of parent method, to implement specialized writing for a test case which parses info from the
         SupplementaryInfo and places figures alongside associated data for each bin.
@@ -74,6 +75,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
             logger.error("Test results SupplementaryInfo is in invalid format; falling back to default implementation.")
             return super()._add_test_case_details_and_figures_with_tmpdir(writer=writer,
                                                                           test_case_results=test_case_results,
+                                                                          qualified_tmp_datadir=qualified_tmp_datadir,
                                                                           ana_files_tmpdir=ana_files_tmpdir)
 
         # If we have any error messages, print them out
@@ -83,6 +85,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
 
         self._add_binned_details(writer=writer,
                                  test_case_results=test_case_results,
+                                 qualified_tmp_datadir=qualified_tmp_datadir,
                                  ana_files_tmpdir=ana_files_tmpdir,
                                  l_info=l_info)
 
@@ -106,6 +109,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
     def _add_binned_details(self,
                             writer: TocMarkdownWriter,
                             test_case_results: SingleTestResult,
+                            qualified_tmp_datadir: str,
                             ana_files_tmpdir: str,
                             l_info: Sequence, ):
         """Method to write details for test results which is sorted into bins (or just one bin for global
@@ -114,6 +118,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
 
         # Get the figure label and filename for each bin
         l_figure_labels_and_filenames = self._prepare_ana_files(ana_result=test_case_results.analysis_result,
+                                                                qualified_tmp_datadir=qualified_tmp_datadir,
                                                                 ana_files_tmpdir=ana_files_tmpdir)
 
         # Make a dict of bin indices to filenames

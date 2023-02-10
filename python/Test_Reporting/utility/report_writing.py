@@ -795,12 +795,14 @@ class ReportSummaryWriter:
         ana_files_tmpdir = self._make_tmpdir(test_case_results, qualified_tmp_datadir)
 
         try:
-            self._add_test_case_details_and_figures_with_tmpdir(writer, test_case_results, ana_files_tmpdir)
+            self._add_test_case_details_and_figures_with_tmpdir(writer, test_case_results, qualified_tmp_datadir,
+                                                                ana_files_tmpdir)
         finally:
             shutil.rmtree(ana_files_tmpdir)
 
     @log_entry_exit(logger)
-    def _add_test_case_details_and_figures_with_tmpdir(self, writer, test_case_results, ana_files_tmpdir):
+    def _add_test_case_details_and_figures_with_tmpdir(self, writer, test_case_results, qualified_tmp_datadir,
+                                                       ana_files_tmpdir):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
         prepares figures and textfiles, and also adds lines for them, after a temporary directory has been created to
         store figures data.
@@ -813,6 +815,7 @@ class ReportSummaryWriter:
         ----------
         writer : TocMarkdownWriter
         test_case_results : SingleTestResult
+        qualified_tmp_datadir : str
         ana_files_tmpdir : str
             The fully-qualified path to the temporary directory set up to contain extracted analysis files for this
             test case.
@@ -826,6 +829,7 @@ class ReportSummaryWriter:
         ana_result = test_case_results.analysis_result
 
         l_ana_files_labels_and_filenames = self._prepare_ana_files(ana_result=ana_result,
+                                                                   qualified_tmp_datadir=qualified_tmp_datadir,
                                                                    ana_files_tmpdir=ana_files_tmpdir)
 
         self._add_test_case_figures(writer=writer,
@@ -906,7 +910,7 @@ class ReportSummaryWriter:
             writer.add_line("\n```\n\n")
 
     @log_entry_exit(logger)
-    def _prepare_ana_files(self, ana_result, ana_files_tmpdir):
+    def _prepare_ana_files(self, ana_result, qualified_tmp_datadir, ana_files_tmpdir):
         """Performs standard steps to prepare figures and textfiles - unpacking them, reading the directory file,
         and setting up expected output directory.
 
@@ -914,6 +918,7 @@ class ReportSummaryWriter:
         ----------
         ana_result : AnalysisResult
             Object containing information about the textfiles and figures for a given test case.
+        qualified_tmp_datadir : str
         ana_files_tmpdir : str
             The tmpdir to be used to extract the textfiles and figures in their respective tarballs.
 
@@ -931,8 +936,8 @@ class ReportSummaryWriter:
             return None
 
         # Extract the textfiles and figures tarballs
-        qualified_textfiles_tarball_filename = get_data_filename(ana_result.textfiles_tarball, ana_files_tmpdir)
-        qualified_figures_tarball_filename = get_data_filename(ana_result.figures_tarball, ana_files_tmpdir)
+        qualified_textfiles_tarball_filename = get_data_filename(ana_result.textfiles_tarball, qualified_tmp_datadir)
+        qualified_figures_tarball_filename = get_data_filename(ana_result.figures_tarball, qualified_tmp_datadir)
 
         # Return None if either expected tarball doesn't exist
         if qualified_textfiles_tarball_filename is None or qualified_figures_tarball_filename is None:

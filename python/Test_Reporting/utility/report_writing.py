@@ -34,8 +34,12 @@ from __future__ import annotations
 
 import os
 import shutil
+from enum import Enum
 from logging import getLogger
 from typing import Callable, Dict, List, NamedTuple, Optional, Sequence, TYPE_CHECKING, Tuple, Union
+
+from astropy.io.registry import IORegistryError
+from astropy.table import Table
 
 from Test_Reporting.utility.constants import DATA_DIR, IMAGES_SUBDIR, PUBLIC_DIR, TEST_REPORTS_SUBDIR
 from Test_Reporting.utility.misc import (TocMarkdownWriter, extract_tarball, get_data_filename, get_qualified_path,
@@ -69,12 +73,27 @@ MSG_NA = "N/A"
 
 MSG_TARBALL_CORRUPT = "Tarball %s appears to be corrupt."
 
+MSG_LINE_LIMIT = ("(only first %i lines of %s shown. The full textfile may be "
+                  "retrieved from the tarball containing data for this test in this project's repository, "
+                  "in the appropriate textfiles tarball for this test case.)")
+
+HTML_TABLE_LINE_LIMIT = 1000
+MSG_HTML_TABLE_LIMIT = MSG_LINE_LIMIT % (HTML_TABLE_LINE_LIMIT, "tables")
+MD_TABLE_LINE_LIMIT = 100
+MSG_MD_TABLE_LIMIT = MSG_LINE_LIMIT % (MD_TABLE_LINE_LIMIT, "tables")
 TEXTFILE_LINE_LIMIT = 100
-MSG_TEXTFILE_LIMIT = (f"...\n(only first {TEXTFILE_LINE_LIMIT} lines of textfiles shown. The full textfile may be "
-                      f"retrieved from the tarball containing data for this test in this project's repository, "
-                      f"in the appropriate textfiles tarball for this test case.)")
+MSG_TEXTFILE_LIMIT = f"...\n{MSG_LINE_LIMIT % (TEXTFILE_LINE_LIMIT, 'textfiles')}"
 
 logger = getLogger(__name__)
+
+
+class OutputFormat(Enum):
+    """Enum, specifying possible formats that the report is intended to ultimately be output in. When building for
+    online compiled display, `HTML` will result in better formatting, while `MD` will result in better formatting when
+    building for offline display.
+    """
+    MD = "markdown"
+    HTML = "html"
 
 
 class ValTestCaseMeta(NamedTuple):
@@ -101,7 +120,8 @@ class ValTestMeta(NamedTuple):
 BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]],
                                 str,
                                 Optional[str],
-                                Optional[str]], List[ValTestMeta]]
+                                Optional[str],
+                                OutputFormat], List[ValTestMeta]]
 
 
 class FileInfo(NamedTuple):
@@ -307,11 +327,15 @@ class ReportSummaryWriter:
     # Same as `has_figures`, but for textfiles
     has_textfiles: bool = True
 
+    # Instance attributes which are set when called
+    output_format: Optional[OutputFormat] = None
+
     @log_entry_exit(logger)
     def __init__(self, **kwargs):
         """Initializer for ReportSummaryWriter, which allows specifying any desired attributes via kwargs. The
         allowed attributes are listed as class attributes above
         """
+
         for key, value in kwargs.items():
             if not hasattr(self, key):
                 raise ValueError(
@@ -319,7 +343,7 @@ class ReportSummaryWriter:
             setattr(self, key, value)
 
     @log_entry_exit(logger)
-    def __call__(self, value, rootdir, reportdir=None, datadir=None):
+    def __call__(self, value, rootdir, reportdir=None, datadir=None, output_format=OutputFormat.HTML):
         """Template method which implements basic writing the summary of output for the test as a whole. Portions of
         this method which call protected methods can be overridden by child classes for customization.
 
@@ -332,12 +356,16 @@ class ReportSummaryWriter:
         rootdir : str
             The root directory of this project. All filenames provided should be relative to the "data" directory
             within `rootdir`.
-        reportdir : str or None
+        reportdir : str or None, default=None
             The directory to build reports in. Default: `rootdir`/public
-        datadir : str or None
+        datadir : str or None, default=None
             If results data products are provided directly instead of as a tarball, this specifies the directory
             where the data files they point to can be found. Default: The directory containing the results data
             products.
+        output_format : OutputFormat, default=OutputFormat.HTML
+            The format that the report is intended to ultimately be output in. When building for online compiled
+            display, `HTML` will result in better formatting, while `MD` will result in better formatting when
+            building for offline display.
 
         Returns
         -------
@@ -346,6 +374,8 @@ class ReportSummaryWriter:
             tests. If the input `value` is a filename, this will be a single-element list. If the input `value` is
             instead a dict, this will have multiple elements, depending on the number of elements in the dict.
         """
+
+        self.output_format = output_format
 
         if reportdir is None:
             reportdir = os.path.join(rootdir, PUBLIC_DIR)
@@ -1083,22 +1113,151 @@ class ReportSummaryWriter:
 
             writer.add_heading(label, depth=1)
 
-            # Read in the textfile in and write out its contents in a math section to avoid formatting issues
-            writer.add_line("```\n")
+            qualified_filename = os.path.join(ana_files_tmpdir, file_info.filename)
 
-            for line_index, line in enumerate(open(os.path.join(ana_files_tmpdir, file_info.filename), "r")):
-                if line_index >= TEXTFILE_LINE_LIMIT:
-                    writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n")
-                    break
-                # Lines read in this way already include a linebreak at the end, so we don't need to add one in
-                writer.add_line(line)
-
-            writer.add_line("```\n\n")
+            # Check if the file contains a table, and print it neatly if so
+            try:
+                table = Table.read(qualified_filename)
+                self._add_table_contents(writer=writer, table=table)
+            except IORegistryError:
+                # Fall back to printing raw contents of the file
+                self._add_raw_textfile_contents(writer=writer, qualified_filename=qualified_filename)
 
         # Check if we output any textfiles, and output N/A if not
         if not some_textfiles_added:
             writer.add_line(f"{MSG_NA}\n\n")
             return
+
+    @log_entry_exit(logger)
+    def _add_table_contents(self, writer, table):
+        """Adds the contents of an astropy table to a markdown writer. The formatting depends on the current
+        execution mode - will be markdown-formatted if called via standalone `build_report.py` script,
+        or html-formatted if called via the `build_all_report_pages.py` script.
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        table : Table
+            An astropy table, which is to be printed out cleanly in the markdown writer
+        """
+
+        if self.output_format == OutputFormat.HTML:
+            self._add_table_contents_html(writer, table)
+        elif self.output_format == OutputFormat.MD:
+            self._add_table_contents_md(writer, table)
+        else:
+            raise ValueError(f"Unrecognized output format: {self.output_format=}")
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_table_contents_html(writer, table):
+        """Adds the contents of an astropy table to a markdown writer, formatted as an html table
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        table : Table
+        """
+
+        # Put the table in a scrollable div container
+        writer.add_line("<div class=\"tableContainer\">\n<table>\n")
+
+        # Add the table header
+
+        writer.add_line("<tr>\n")
+        for colname in table.colnames:
+            writer.add_line(f"<th><strong>{colname}</strong></th>\n")
+        writer.add_line("</tr>\n")
+
+        # Start the table body
+        writer.add_line("<tbody>\n")
+
+        # Add data for each row
+        hit_row_limit = False
+        for row_index, row in enumerate(table):
+
+            if row_index >= HTML_TABLE_LINE_LIMIT:
+                hit_row_limit = True
+                break
+
+            writer.add_line("<tr>\n")
+
+            # Add each item in the row
+            for item in row:
+                # Convert each item into a string, and remove any linebreaks in that string
+                cleaned_item = str(item).replace("\n", "")
+                writer.add_line(f"<td>{cleaned_item}</td>\n")
+
+            writer.add_line("</tr>\n")
+
+        # Close the table body, table, and div
+        writer.add_line("</tbody>\n</table>\n</div>\n\n")
+
+        # If we hit the row limit, make a note of this
+        if hit_row_limit:
+            writer.add_line(f"{MSG_HTML_TABLE_LIMIT}\n\n")
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_table_contents_md(writer, table):
+        """Adds the contents of an astropy table to a markdown writer, formatted as a markdown table
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        table : Table
+        """
+
+        # Add a header row with the column names, then a separator line below it
+
+        num_columns = len(table.colnames)
+
+        writer.add_line((("| **%s** " * num_columns) + "|\n") % tuple(table.colnames))
+        writer.add_line("|:--" * num_columns + "|\n")
+
+        # Add data for each row
+
+        row_line_template = ("| %s " * num_columns) + "|"
+        hit_row_limit = False
+
+        for row_index, row in enumerate(table):
+
+            if row_index >= MD_TABLE_LINE_LIMIT:
+                hit_row_limit = True
+                break
+            row_line = row_line_template % tuple(map(str, row))
+
+            # Clean the line of any newlines and add it to the writer
+            row_line_cleaned = row_line.replace("\n", "")
+            writer.add_line(f"{row_line_cleaned}\n")
+
+        # Add an extra linebreak after the table
+        writer.add_line("\n")
+
+        # If we hit the row limit, make a note of this
+        if hit_row_limit:
+            writer.add_line(f"{MSG_MD_TABLE_LIMIT}\n\n")
+
+    @staticmethod
+    @log_entry_exit(logger)
+    def _add_raw_textfile_contents(writer, qualified_filename):
+        """Adds the contents of a textfile directly to a maths section, without any modification.
+
+        Parameters
+        ----------
+        writer : TocMarkdownWriter
+        qualified_filename : str
+            The fully-qualified filename of the textfile
+        """
+        # Read in the textfile in and write out its contents in a math section to avoid formatting issues
+        writer.add_line("```\n")
+        for line_index, line in enumerate(open(qualified_filename, "r")):
+            if line_index >= TEXTFILE_LINE_LIMIT:
+                writer.add_line(f"{MSG_TEXTFILE_LIMIT}\n")
+                break
+            # Lines read in this way already include a linebreak at the end, so we don't need to add one in
+            writer.add_line(line)
+        writer.add_line("```\n\n")
 
     @staticmethod
     @log_entry_exit(logger)

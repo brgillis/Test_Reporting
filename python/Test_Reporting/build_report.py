@@ -33,6 +33,7 @@ from typing import TYPE_CHECKING
 
 from Test_Reporting.specialization_keys import determine_build_callable
 from Test_Reporting.utility.misc import get_qualified_path, log_entry_exit
+from Test_Reporting.utility.report_writing import OutputFormat
 
 if TYPE_CHECKING:
     import Namespace  # noqa F401
@@ -130,7 +131,7 @@ def run_build_from_args(args):
 
     # Get the proper build callable for the provided key and call it
     build_callable = determine_build_callable(args.key, args.target, raise_on_error=True)
-    build_callable(args.target, os.path.split(args.target)[0], args.reportdir, args.datadir)
+    build_callable(args.target, os.path.split(args.target)[0], args.reportdir, args.datadir, OutputFormat.MD)
 
 
 if __name__ == "__main__":

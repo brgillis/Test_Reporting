@@ -1,0 +1,22 @@
+
+/* Table container div which can be used to contain tables we want to be scrollable */
+.tableContainer {
+  overflow: auto;
+  overflow-y: auto;
+  white-space: nowrap;
+  height: 750px;
+}
+
+/* In tables, align all text to the left by default */
+td,
+th {
+  text-align: left;
+}
+
+/* Make the header row of tables fixed */
+th {
+  position: sticky;
+  z-index: 2;
+  top: 0;
+  background-color: white;
+}

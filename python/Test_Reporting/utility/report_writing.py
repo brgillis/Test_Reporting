@@ -327,6 +327,9 @@ class ReportSummaryWriter:
     # Same as `has_figures`, but for textfiles
     has_textfiles: bool = True
 
+    # Instance attributes which are set when called
+    output_format: Optional[OutputFormat] = None
+
     @log_entry_exit(logger)
     def __init__(self, **kwargs):
         """Initializer for ReportSummaryWriter, which allows specifying any desired attributes via kwargs. The

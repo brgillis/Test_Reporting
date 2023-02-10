@@ -262,9 +262,7 @@ class ReportSummaryWriter:
     def _add_test_case_details_and_figures_with_tmpdir(self,
                                                        writer,
                                                        test_case_results,
-                                                       reportdir,
-                                                       datadir,
-                                                       figures_tmpdir):
+                                                       ana_files_tmpdir):
         writer.add_heading("Results and Figures", depth=0)
 
         # Dig out the data for each bin from the SupplementaryInfo
@@ -273,8 +271,7 @@ class ReportSummaryWriter:
         bin_1_str, bin_2_str = supp_info_str.split("\n\n")
 
         # Get the figure label and filename for each bin
-        l_figure_labels_and_filenames = self._prepare_figures(test_case_results.analysis_result, reportdir, datadir,
-                                                              figures_tmpdir)
+        l_figure_labels_and_filenames = self._prepare_figures(test_case_results.analysis_result, ana_files_tmpdir)
 
         # The object `l_figure_labels_and_filenames` is a list of (label, filename) tuples. In general, there's no
         # guarantee that the labels will be present (non-None) or unique. But in this example, we'll assume that we
@@ -290,7 +287,7 @@ class ReportSummaryWriter:
 
             # Copy the figure to the appropriate directory and get the relative filename for it using the provided
             # method
-            relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
+            relative_figure_filename = self._move_figure_to_public(filename, ana_files_tmpdir)
 
             # Add a heading for this bin's subsection, at a depth 1 greater than that of this section
             bin_label = f"Bin {bin_i}"
@@ -327,8 +324,14 @@ class ReportSummaryWriter:
     # Same as `has_figures`, but for textfiles
     has_textfiles: bool = True
 
-    # Instance attributes which are set when called
-    output_format: Optional[OutputFormat] = None
+    # Instance attributes. These are set from arguments supplied to a public method, and are kept unchanged during
+    # the execution of that method
+
+    # Instance attributes used by the `__call__` method
+    _rootdir: Optional[str] = None
+    _reportdir: Optional[str] = None
+    _datadir: Optional[str] = None
+    _output_format: Optional[OutputFormat] = None
 
     @log_entry_exit(logger)
     def __init__(self, **kwargs):
@@ -375,27 +378,26 @@ class ReportSummaryWriter:
             instead a dict, this will have multiple elements, depending on the number of elements in the dict.
         """
 
-        self.output_format = output_format
+        # Set instance attributes used during execution of this method based on arguments
+        self._rootdir = rootdir
+        self._datadir = datadir
+        self._output_format = output_format
 
-        if reportdir is None:
-            reportdir = os.path.join(rootdir, PUBLIC_DIR)
+        if reportdir is not None:
+            self._reportdir = reportdir
+        else:
+            self._reportdir = os.path.join(rootdir, PUBLIC_DIR)
 
         # Figure out how to interpret `value` by checking if it's a str or dict, and then iterate over call to
         # process each individual tarball
         l_test_meta: List[ValTestMeta]
         if isinstance(value, str):
             l_test_meta = self._summarize_results_file(value,
-                                                       rootdir=rootdir,
-                                                       reportdir=reportdir,
-                                                       datadir=datadir,
                                                        tag=None)
         elif isinstance(value, dict):
             l_test_meta = []
             for sub_key, sub_value in value.items():
                 l_test_meta += self._summarize_results_file(sub_value,
-                                                            rootdir=rootdir,
-                                                            reportdir=reportdir,
-                                                            datadir=datadir,
                                                             tag=sub_key)
         else:
             raise ValueError("Value in manifest is of unrecognized type.\n"
@@ -405,18 +407,14 @@ class ReportSummaryWriter:
         return l_test_meta
 
     @log_entry_exit(logger)
-    def _summarize_results_file(self, results_filename, rootdir, reportdir, datadir=None, tag=None):
+    def _summarize_results_file(self, results_filename, tag=None):
         """Writes summary markdown files for the test results either contained in a tarball of the test results
-        product and associated data or in a data product, with its data found relative to `datadir`.
+        product and associated data or in a data product, with its data found relative to `self._datadir`.
 
         Parameters
         ----------
         results_filename : str
             The filename of a tarball containing the test results product and associated datafiles.
-        rootdir : str
-        reportdir : str
-            The directory to build reports in.
-        datadir : str or None
         tag : str or None
             If provided, this tag will be appended to the names of all test cases in the returned data, for purposes of
             separately labelling different instances of the same test.
@@ -432,28 +430,28 @@ class ReportSummaryWriter:
             return []
 
         # Make sure the results_filename is fully-qualified
-        results_filename = get_qualified_path(results_filename, base=os.path.join(rootdir, DATA_DIR))
+        results_filename = get_qualified_path(results_filename, base=os.path.join(self._rootdir, DATA_DIR))
 
         # Split execution depending on if we're passed a tarball or an XML data product
 
         if is_valid_tarball_filename(results_filename):
-            qualified_tmpdir = self._make_tmpdir(results_filename, rootdir)
+            qualified_tmp_datadir = self._make_tmpdir(results_filename)
 
             # We use a try-finally block here to ensure the created datadir is removed after use
             try:
-                qualified_results_tarball_filename = os.path.join(rootdir, DATA_DIR, results_filename)
+                qualified_results_tarball_filename = os.path.join(self._rootdir, DATA_DIR, results_filename)
                 l_test_meta = self._summarize_results_tarball_with_tmpdir(qualified_results_tarball_filename,
-                                                                          qualified_tmpdir,
-                                                                          reportdir=reportdir,
+                                                                          qualified_tmp_datadir,
                                                                           tag=tag)
             finally:
-                shutil.rmtree(qualified_tmpdir)
+                shutil.rmtree(qualified_tmp_datadir)
         elif is_valid_xml_filename(results_filename):
-            if datadir is None:
-                datadir = os.path.split(results_filename)[0]
+            if self._datadir is not None:
+                qualified_tmp_datadir = self._datadir
+            else:
+                qualified_tmp_datadir = os.path.split(results_filename)[0]
             l_test_meta = self._summarize_results_product(l_product_filenames=[results_filename],
-                                                          reportdir=reportdir,
-                                                          datadir=datadir,
+                                                          qualified_tmp_datadir=qualified_tmp_datadir,
                                                           tag=tag)
         else:
             raise ValueError(f"Filename {results_filename} is neither a valid and safe tarball filename nor a valid "
@@ -461,16 +459,16 @@ class ReportSummaryWriter:
 
         return l_test_meta
 
-    @staticmethod
     @log_entry_exit(logger)
-    def _make_tmpdir(hashable, rootdir):
+    def _make_tmpdir(self, hashable, qualified_enclosing_dir=None):
         """We'll need a temporary directory to extract files into, so create one. Some unique hashable object must be
         provided, whose hash will be used to generate a presumably-unique directory name.
 
         Parameters
         ----------
         hashable : Any
-        rootdir : str
+        qualified_enclosing_dir : Optional[str], default=self._rootdir
+            The fully-qualified path to the directory in which the new tmpdir is to be created
 
         Returns
         -------
@@ -478,11 +476,14 @@ class ReportSummaryWriter:
             The fully-qualified path to a tmpdir created for use by this object
         """
 
+        if qualified_enclosing_dir is None:
+            qualified_enclosing_dir = self._rootdir
+
         tmpdir = "tmp_" + hash_any(hashable, max_length=TMPDIR_MAXLEN)
 
         # If this already exists, raise an exception - better to fail then to run into unexpected results from thread
         # clashes
-        qualified_tmpdir = os.path.join(rootdir, tmpdir)
+        qualified_tmpdir = os.path.join(qualified_enclosing_dir, tmpdir)
         os.makedirs(qualified_tmpdir, exist_ok=False)
 
         return qualified_tmpdir
@@ -490,8 +491,7 @@ class ReportSummaryWriter:
     @log_entry_exit(logger)
     def _summarize_results_tarball_with_tmpdir(self,
                                                qualified_results_tarball_filename,
-                                               qualified_tmpdir,
-                                               reportdir,
+                                               qualified_tmp_datadir,
                                                tag=None):
         """Writes summary markdown files for the test results contained in a tarball of the test results product and
         associated data, using a provided tmpdir for work.
@@ -500,9 +500,8 @@ class ReportSummaryWriter:
         ----------
         qualified_results_tarball_filename : str
             The fully-qualified filename of a tarball containing the test results product and associated datafiles
-        qualified_tmpdir : str
-            The fully-qualified path to a temporary directory which can be used for this function.
-        reportdir : str
+        qualified_tmp_datadir : str
+            The fully-qualified path to a directory containing all data for this test
         tag : str or None
 
         Returns
@@ -510,21 +509,21 @@ class ReportSummaryWriter:
         l_test_meta : List[ValTestMeta]
         """
 
-        extract_tarball(qualified_results_tarball_filename, qualified_tmpdir)
+        extract_tarball(qualified_results_tarball_filename, qualified_tmp_datadir)
 
-        l_product_filenames = self._find_product_filenames(qualified_tmpdir)
-        l_qualified_product_filenames = [os.path.join(qualified_tmpdir, product_filename)
+        l_product_filenames = self._find_product_filenames(qualified_tmp_datadir)
+        l_qualified_product_filenames = [os.path.join(qualified_tmp_datadir, product_filename)
                                          for product_filename in l_product_filenames]
 
         # Make sure the required subdir exists before we start writing anything
-        os.makedirs(os.path.join(reportdir, TEST_REPORTS_SUBDIR), exist_ok=True)
+        os.makedirs(os.path.join(self._reportdir, TEST_REPORTS_SUBDIR), exist_ok=True)
 
-        l_test_meta = self._summarize_results_product(l_qualified_product_filenames, reportdir, qualified_tmpdir, tag)
+        l_test_meta = self._summarize_results_product(l_qualified_product_filenames, qualified_tmp_datadir, tag)
 
         return l_test_meta
 
     @log_entry_exit(logger)
-    def _summarize_results_product(self, l_product_filenames, reportdir, datadir, tag):
+    def _summarize_results_product(self, l_product_filenames, qualified_tmp_datadir, tag):
         """Writes summary markdown files for the test results contained in each of a list of data products. The
         output will be sorted based on PointingId, and so may not be in the same order as the input list
         `l_product_filenames`.
@@ -533,9 +532,7 @@ class ReportSummaryWriter:
         ----------
         l_product_filenames : List[str]
             List of fully-qualified filenames of data products to generate reports for.
-        reportdir : str
-        datadir : str
-            The directory where files referenced in the data products can be found.
+        qualified_tmp_datadir : str
         tag : str or None
 
         Returns
@@ -570,13 +567,11 @@ class ReportSummaryWriter:
             # summary page
             l_test_case_meta = self._write_all_test_case_results(test_results=test_results,
                                                                  test_name_tail=test_name_tail,
-                                                                 reportdir=reportdir,
-                                                                 datadir=datadir)
+                                                                 qualified_tmp_datadir=qualified_tmp_datadir)
 
             test_filename = self._write_test_results_summary(test_results=test_results,
                                                              test_name=test_name,
-                                                             l_test_case_meta=l_test_case_meta,
-                                                             reportdir=reportdir)
+                                                             l_test_case_meta=l_test_case_meta)
 
             num_passed, num_failed = self._calc_num_passed_failed(l_test_case_meta)
             l_test_meta.append(ValTestMeta(name=test_name,
@@ -664,7 +659,7 @@ class ReportSummaryWriter:
         return filename.endswith(".xml")
 
     @log_entry_exit(logger)
-    def _write_all_test_case_results(self, test_results, test_name_tail, reportdir, datadir):
+    def _write_all_test_case_results(self, test_results, test_name_tail, qualified_tmp_datadir):
         """Writes out the results of all test cases to a .md-format file.
 
         Parameters
@@ -674,8 +669,7 @@ class ReportSummaryWriter:
         test_name_tail : str
             The extra "tail" added to the end of the test name, which will also be added to the end of all test case
             names.
-        reportdir : str
-        datadir : str
+        qualified_tmp_datadir : str
 
         Returns
         -------
@@ -698,8 +692,7 @@ class ReportSummaryWriter:
             self._write_individual_test_case_results(test_case_results=test_case_results,
                                                      test_case_name=test_case_name,
                                                      test_case_filename=test_case_filename,
-                                                     reportdir=reportdir,
-                                                     datadir=datadir)
+                                                     qualified_tmp_datadir=qualified_tmp_datadir)
 
         return l_test_case_names_and_filenames
 
@@ -733,8 +726,7 @@ class ReportSummaryWriter:
                                             test_case_results,
                                             test_case_name,
                                             test_case_filename,
-                                            reportdir,
-                                            datadir):
+                                            qualified_tmp_datadir):
         """Writes out the results of all test cases to a .md-format file. If special formatting is desired for an
         individual test case, this method can be overridden.
 
@@ -748,11 +740,10 @@ class ReportSummaryWriter:
         test_case_filename : str
             The desired filename for the report on this test case. This should be relative to the "public" directory
             in the rootdir and unique for each test case.
-        reportdir : str
-        datadir : str
+        qualified_tmp_datadir : str
         """
 
-        qualified_test_case_filename = os.path.join(reportdir, test_case_filename)
+        qualified_test_case_filename = os.path.join(self._reportdir, test_case_filename)
 
         logger.info("Writing results for test case %s from %s.", test_case_name, qualified_test_case_filename)
 
@@ -763,7 +754,7 @@ class ReportSummaryWriter:
 
         self._add_test_case_meta(writer, test_case_results)
 
-        self._add_test_case_details_and_figures(test_case_results, writer, reportdir, datadir)
+        self._add_test_case_details_and_figures(test_case_results, writer, qualified_tmp_datadir)
 
         with open(qualified_test_case_filename, "w") as fo:
             writer.write(fo)
@@ -788,7 +779,7 @@ class ReportSummaryWriter:
             writer.add_line(f"**Comments:** {test_case_results.analysis_result.ana_comment}\n\n")
 
     @log_entry_exit(logger)
-    def _add_test_case_details_and_figures(self, test_case_results, writer, reportdir, datadir):
+    def _add_test_case_details_and_figures(self, test_case_results, writer, qualified_tmp_datadir):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
         prepares figures and textfiles, and also adds lines for them.
 
@@ -796,23 +787,20 @@ class ReportSummaryWriter:
         ----------
         writer : TocMarkdownWriter
         test_case_results : SingleTestResult
-        reportdir : str
-        datadir : str
+        qualified_tmp_datadir : str
         """
 
-        # Make a new datadir within the existing datadir for this batch of figures and textfiles (to avoid name clashes
+        # Make a new dir within the existing datadir for this batch of figures and textfiles (to avoid name clashes
         # with other test cases)
-        figures_tmpdir = self._make_tmpdir(test_case_results, datadir)
+        ana_files_tmpdir = self._make_tmpdir(test_case_results, qualified_tmp_datadir)
 
         try:
-            self._add_test_case_details_and_figures_with_tmpdir(writer, test_case_results, reportdir, datadir,
-                                                                figures_tmpdir)
+            self._add_test_case_details_and_figures_with_tmpdir(writer, test_case_results, ana_files_tmpdir)
         finally:
-            shutil.rmtree(figures_tmpdir)
+            shutil.rmtree(ana_files_tmpdir)
 
     @log_entry_exit(logger)
-    def _add_test_case_details_and_figures_with_tmpdir(self, writer, test_case_results, reportdir, datadir,
-                                                       ana_files_tmpdir):
+    def _add_test_case_details_and_figures_with_tmpdir(self, writer, test_case_results, ana_files_tmpdir):
         """Adds lines for the supplementary info associated with an individual test case to a MarkdownWriter,
         prepares figures and textfiles, and also adds lines for them, after a temporary directory has been created to
         store figures data.
@@ -825,8 +813,6 @@ class ReportSummaryWriter:
         ----------
         writer : TocMarkdownWriter
         test_case_results : SingleTestResult
-        reportdir : str
-        datadir : str
         ana_files_tmpdir : str
             The fully-qualified path to the temporary directory set up to contain extracted analysis files for this
             test case.
@@ -840,12 +826,9 @@ class ReportSummaryWriter:
         ana_result = test_case_results.analysis_result
 
         l_ana_files_labels_and_filenames = self._prepare_ana_files(ana_result=ana_result,
-                                                                   reportdir=reportdir,
-                                                                   datadir=datadir,
                                                                    ana_files_tmpdir=ana_files_tmpdir)
 
         self._add_test_case_figures(writer=writer,
-                                    reportdir=reportdir,
                                     ana_files_tmpdir=ana_files_tmpdir,
                                     l_ana_files_labels_and_filenames=l_ana_files_labels_and_filenames)
         self._add_test_case_textfiles(writer=writer,
@@ -923,7 +906,7 @@ class ReportSummaryWriter:
             writer.add_line("\n```\n\n")
 
     @log_entry_exit(logger)
-    def _prepare_ana_files(self, ana_result, reportdir, datadir, ana_files_tmpdir):
+    def _prepare_ana_files(self, ana_result, ana_files_tmpdir):
         """Performs standard steps to prepare figures and textfiles - unpacking them, reading the directory file,
         and setting up expected output directory.
 
@@ -931,8 +914,6 @@ class ReportSummaryWriter:
         ----------
         ana_result : AnalysisResult
             Object containing information about the textfiles and figures for a given test case.
-        reportdir : str
-        datadir : str
         ana_files_tmpdir : str
             The tmpdir to be used to extract the textfiles and figures in their respective tarballs.
 
@@ -950,8 +931,8 @@ class ReportSummaryWriter:
             return None
 
         # Extract the textfiles and figures tarballs
-        qualified_textfiles_tarball_filename = get_data_filename(ana_result.textfiles_tarball, datadir)
-        qualified_figures_tarball_filename = get_data_filename(ana_result.figures_tarball, datadir)
+        qualified_textfiles_tarball_filename = get_data_filename(ana_result.textfiles_tarball, ana_files_tmpdir)
+        qualified_figures_tarball_filename = get_data_filename(ana_result.figures_tarball, ana_files_tmpdir)
 
         # Return None if either expected tarball doesn't exist
         if qualified_textfiles_tarball_filename is None or qualified_figures_tarball_filename is None:
@@ -979,19 +960,18 @@ class ReportSummaryWriter:
         l_ana_files_labels_and_filenames = self.read_ana_files_labels_and_filenames(qualified_directory_filename)
 
         # Make sure a data subdir exists in the images dir
-        os.makedirs(os.path.join(reportdir, IMAGES_SUBDIR, DATA_DIR), exist_ok=True)
+        os.makedirs(os.path.join(self._reportdir, IMAGES_SUBDIR, DATA_DIR), exist_ok=True)
 
         return l_ana_files_labels_and_filenames
 
     @log_entry_exit(logger)
-    def _add_test_case_figures(self, writer, reportdir, ana_files_tmpdir, l_ana_files_labels_and_filenames):
+    def _add_test_case_figures(self, writer, ana_files_tmpdir, l_ana_files_labels_and_filenames):
         """Prepares figures and adds lines for them to a MarkdownWriter, after a new temporary directory has been
         created to store extracted files in.
 
         Parameters
         ----------
         writer : TocMarkdownWriter
-        reportdir : str
         ana_files_tmpdir : str
             The fully-qualified path to the temporary directory set up to contain figures data for this test case.
         l_ana_files_labels_and_filenames : List[FileInfo] or None
@@ -1025,7 +1005,7 @@ class ReportSummaryWriter:
             if label is None:
                 label = HEADING_FIGURE_N % i
 
-            relative_figure_filename = self._move_figure_to_public(file_info.filename, reportdir, ana_files_tmpdir)
+            relative_figure_filename = self._move_figure_to_public(file_info.filename, ana_files_tmpdir)
 
             writer.add_heading(label, depth=1)
             writer.add_line(f"![{label}]({relative_figure_filename})\n\n")
@@ -1035,16 +1015,14 @@ class ReportSummaryWriter:
             writer.add_line(f"{MSG_NA}\n\n")
             return
 
-    @staticmethod
     @log_entry_exit(logger)
-    def _move_figure_to_public(filename, reportdir, ana_files_tmpdir):
+    def _move_figure_to_public(self, filename, ana_files_tmpdir):
         """Move a figure to the appropriate directory and return the relative filename for it.
 
         Parameters
         ----------
         filename : str
-            The filename of the figure relative to the `figures_tmpdir`
-        reportdir : str
+            The filename of the figure relative to the `ana_files_tmpdir`
         ana_files_tmpdir : str
             The fully-qualified path to the tmpdir created to store unpacked figures.
 
@@ -1056,7 +1034,7 @@ class ReportSummaryWriter:
         """
 
         qualified_src_filename = os.path.join(ana_files_tmpdir, filename)
-        qualified_dest_filename = os.path.join(reportdir, IMAGES_SUBDIR, filename)
+        qualified_dest_filename = os.path.join(self._reportdir, IMAGES_SUBDIR, filename)
 
         # Check for file existence
         if not os.path.isfile(qualified_src_filename):
@@ -1141,12 +1119,12 @@ class ReportSummaryWriter:
             An astropy table, which is to be printed out cleanly in the markdown writer
         """
 
-        if self.output_format == OutputFormat.HTML:
+        if self._output_format == OutputFormat.HTML:
             self._add_table_contents_html(writer, table)
-        elif self.output_format == OutputFormat.MD:
+        elif self._output_format == OutputFormat.MD:
             self._add_table_contents_md(writer, table)
         else:
-            raise ValueError(f"Unrecognized output format: {self.output_format=}")
+            raise ValueError(f"Unrecognized output format: {self._output_format=}")
 
     @staticmethod
     @log_entry_exit(logger)
@@ -1200,7 +1178,7 @@ class ReportSummaryWriter:
     @staticmethod
     @log_entry_exit(logger)
     def _add_table_contents_md(writer, table):
-        """Adds the contents of an astropy table to a markdown writer, formatted as a markdown table
+        """Adds the contents of an astropy table to a markdown writer, formatted as a Markdown table
 
         Parameters
         ----------
@@ -1261,20 +1239,20 @@ class ReportSummaryWriter:
 
     @staticmethod
     @log_entry_exit(logger)
-    def find_directory_filename(figures_tmpdir):
+    def find_directory_filename(ana_files_tmpdir):
         """Searches through a directory to find a possible directory file (which contains labels and filenames of
         figures).
 
         Parameters
         ----------
-        figures_tmpdir : str
+        ana_files_tmpdir : str
 
         Returns
         -------
         qualified_directory_filename : str
         """
 
-        l_filenames = os.listdir(figures_tmpdir)
+        l_filenames = os.listdir(ana_files_tmpdir)
 
         l_possible_directory_filenames: List[str] = []
         for filename in l_filenames:
@@ -1283,13 +1261,13 @@ class ReportSummaryWriter:
 
         # Check we have exactly one possibility, otherwise raise an exception
         if len(l_possible_directory_filenames) == 1:
-            qualified_directory_filename = os.path.join(figures_tmpdir, l_possible_directory_filenames[0])
+            qualified_directory_filename = os.path.join(ana_files_tmpdir, l_possible_directory_filenames[0])
             logger.info("Found directory file for this test case: %s", qualified_directory_filename)
             return qualified_directory_filename
         elif len(l_possible_directory_filenames) == 0:
-            raise FileNotFoundError(f"No identifiable directory file found in directory {figures_tmpdir}.")
+            raise FileNotFoundError(f"No identifiable directory file found in directory {ana_files_tmpdir}.")
         else:
-            raise ValueError(f"Multiple possible directory files found in directory {figures_tmpdir}: "
+            raise ValueError(f"Multiple possible directory files found in directory {ana_files_tmpdir}: "
                              f"{l_possible_directory_filenames}")
 
     @staticmethod
@@ -1346,7 +1324,7 @@ class ReportSummaryWriter:
         return l_ana_files_labels_and_filenames
 
     @log_entry_exit(logger)
-    def _write_test_results_summary(self, test_results, test_name, l_test_case_meta, reportdir):
+    def _write_test_results_summary(self, test_results, test_name, l_test_case_meta):
         """Writes out the summary of the test to a .md-format file. If special formatting is desired for an
         individual test, this method or the methods it calls can be overridden by child classes.
 
@@ -1357,7 +1335,6 @@ class ReportSummaryWriter:
             The name of this test.
         l_test_case_meta : Sequence[ValTestCaseMeta]
             The names and file names of each test case associated with this test.
-        reportdir : str
 
         Returns
         -------
@@ -1368,7 +1345,7 @@ class ReportSummaryWriter:
 
         test_filename = os.path.join(TEST_REPORTS_SUBDIR, f"{test_name}.md")
 
-        qualified_test_filename = os.path.join(reportdir, test_filename)
+        qualified_test_filename = os.path.join(self._reportdir, test_filename)
 
         logger.info("Writing test results summary to %s", qualified_test_filename)
 

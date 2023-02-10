@@ -104,8 +104,7 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
                                     writer: TocMarkdownWriter,
                                     d_bin_figure_filenames: Dict[Any, Optional[str]],
                                     label: str,
-                                    reportdir: str,
-                                    figures_tmpdir: str,
+                                    ana_files_tmpdir: str,
                                     info: BiasInfo,
                                     is_global: bool):
         """Parses strings containing g1 and g2 bias info for a given bin and writes out the relevant info to a
@@ -138,7 +137,7 @@ class ShearBiasReportSummaryWriter(BinnedReportSummaryWriter):
                 for key, filename in d_bin_figure_filenames.items():
                     if str(key) != str(comp_index):
                         continue
-                    relative_figure_filename = self._move_figure_to_public(filename, reportdir, figures_tmpdir)
+                    relative_figure_filename = self._move_figure_to_public(filename, ana_files_tmpdir)
                     writer.add_line(f"![{label} {info.bias}{comp_index} Figure]({relative_figure_filename})\n\n")
                     figure_drawn = True
             if not figure_drawn:

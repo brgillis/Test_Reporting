@@ -120,7 +120,8 @@ class ValTestMeta(NamedTuple):
 BUILD_CALLABLE_TYPE = Callable[[Union[str, Dict[str, str]],
                                 str,
                                 Optional[str],
-                                Optional[str]], List[ValTestMeta]]
+                                Optional[str],
+                                OutputFormat], List[ValTestMeta]]
 
 
 class FileInfo(NamedTuple):
@@ -327,19 +328,10 @@ class ReportSummaryWriter:
     has_textfiles: bool = True
 
     @log_entry_exit(logger)
-    def __init__(self, output_format=OutputFormat.HTML, **kwargs):
+    def __init__(self, **kwargs):
         """Initializer for ReportSummaryWriter, which allows specifying any desired attributes via kwargs. The
         allowed attributes are listed as class attributes above
-
-        Parameters
-        ----------
-        output_format : OutputFormat, default=OutputFormat.HTML
-            The format that the report is intended to ultimately be output in. When building for online compiled
-            display, `HTML` will result in better formatting, while `MD` will result in better formatting when
-            building for offline display.
         """
-
-        self.output_format = output_format
 
         for key, value in kwargs.items():
             if not hasattr(self, key):
@@ -348,7 +340,7 @@ class ReportSummaryWriter:
             setattr(self, key, value)
 
     @log_entry_exit(logger)
-    def __call__(self, value, rootdir, reportdir=None, datadir=None):
+    def __call__(self, value, rootdir, reportdir=None, datadir=None, output_format=OutputFormat.HTML):
         """Template method which implements basic writing the summary of output for the test as a whole. Portions of
         this method which call protected methods can be overridden by child classes for customization.
 
@@ -361,12 +353,16 @@ class ReportSummaryWriter:
         rootdir : str
             The root directory of this project. All filenames provided should be relative to the "data" directory
             within `rootdir`.
-        reportdir : str or None
+        reportdir : str or None, default=None
             The directory to build reports in. Default: `rootdir`/public
-        datadir : str or None
+        datadir : str or None, default=None
             If results data products are provided directly instead of as a tarball, this specifies the directory
             where the data files they point to can be found. Default: The directory containing the results data
             products.
+        output_format : OutputFormat, default=OutputFormat.HTML
+            The format that the report is intended to ultimately be output in. When building for online compiled
+            display, `HTML` will result in better formatting, while `MD` will result in better formatting when
+            building for offline display.
 
         Returns
         -------
@@ -375,6 +371,8 @@ class ReportSummaryWriter:
             tests. If the input `value` is a filename, this will be a single-element list. If the input `value` is
             instead a dict, this will have multiple elements, depending on the number of elements in the dict.
         """
+
+        self.output_format = output_format
 
         if reportdir is None:
             reportdir = os.path.join(rootdir, PUBLIC_DIR)

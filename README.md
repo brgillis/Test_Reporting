@@ -278,6 +278,7 @@ PYTHONPATH=`pwd`/python pytest -v tests/
 * `public/` - Directory containing prepared Markdown and other files to be published
   * `public/images` - Directory containing images to be used in published files
   * `public/SPR` - Directory containing prepared Software Problem Report Markdown files to be published
+  * `public/styles` - Directory CSS to style the generated webpages
   * `public/TD` - Directory containing prepared Testing Dataset Markdown files to be published
   * `public/README.md` - Markdown file which will be compiled into the front page of the published site
   * `public/SUMMARY.md` - Markdown file which will be compiled into the sidebar of the published site, linking to all

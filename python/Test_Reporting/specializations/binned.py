@@ -88,7 +88,7 @@ class BinnedReportSummaryWriter(ReportSummaryWriter):
 
     @staticmethod
     def _check_valid_info(l_info_str):
-        """Method-specific check that info is valid. Should be overidden by child classes to implement any necessary
+        """Method-specific check that info is valid. Should be overridden by child classes to implement any necessary
         checks.
         """
         return True

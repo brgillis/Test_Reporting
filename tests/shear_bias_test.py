@@ -25,7 +25,7 @@ import re
 from typing import List, Set, TYPE_CHECKING
 
 from Test_Reporting.specializations.shear_bias import ShearBiasReportSummaryWriter
-from Test_Reporting.testing.common import TEST_SB_TARBALL_FILENAME, TEST_TARBALL_FILENAME
+from Test_Reporting.testing.common import TEST_SB_TARBALL_FILENAME
 from Test_Reporting.utility.constants import PUBLIC_DIR, TEST_REPORTS_SUBDIR
 
 if TYPE_CHECKING:

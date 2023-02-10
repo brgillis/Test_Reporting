@@ -1,7 +1,8 @@
 {
   "plugins": [
-    "expandable-chapters",
     "back-to-top-button",
+    "expandable-chapters",
+    "insert-logo",
     "-sharing"
   ],
   "author": "Bryan Gillis and Euclid OU-SHE Ground Segment",

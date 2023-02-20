@@ -1,7 +1,7 @@
 #/bin/bash
 
 # Maximum size in KB
-MAXSIZE=100000000
+MAXSIZE=100000
 DEFAULT_OUTPUT_LOC=test_output
 
 if [ "$#" -eq 1 ]; then

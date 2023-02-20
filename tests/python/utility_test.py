@@ -36,7 +36,7 @@ def test_get_qualified_path():
     """
 
     cwd = os.path.normpath(os.getcwd())
-    parent_dir = os.path.split(cwd)[0]
+    qualified_parent_dir, cur_dir = os.path.split(cwd)
 
     test_base = "/test/base"
     test_relative_path = "relpath/to/file.txt"
@@ -47,10 +47,10 @@ def test_get_qualified_path():
     assert get_qualified_path(test_relative_path) == os.path.join(cwd, test_relative_path)
 
     assert get_qualified_path(f"./{test_relative_path}") == os.path.join(cwd, test_relative_path)
-    assert get_qualified_path(f"../{test_relative_path}") == os.path.join(parent_dir, test_relative_path)
+    assert get_qualified_path(f"../{test_relative_path}") == os.path.join(qualified_parent_dir, test_relative_path)
 
-    assert get_qualified_path("../../tests/python") == cwd
-    assert get_qualified_path("../../tests") == parent_dir
+    assert get_qualified_path(f"../{cur_dir}") == cwd
+    assert get_qualified_path("../") == qualified_parent_dir
 
     assert get_qualified_path(test_relative_path, base=test_base) == os.path.join(test_base, test_relative_path)
 

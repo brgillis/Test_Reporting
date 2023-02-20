@@ -27,7 +27,7 @@ import logging
 
 import pytest
 
-from Test_Reporting.utility.constants import (DATA_DIR, MANIFEST_FILENAME, PUBLIC_DIR, README_FILENAME,
+from Test_Reporting.utility.constants import (DATA_DIR, MANIFEST_FILENAME, PUBLIC_DIR, PYTHON_DIR, README_FILENAME,
                                               SUMMARY_FILENAME, TESTS_DIR,
                                               TEST_DATA_DIR, )
 from Test_Reporting.utility.product_parsing import parse_xml_product
@@ -64,10 +64,12 @@ def rootdir():
 
     """
     cwd = os.getcwd()
+    qualified_parent_dir, cur_dir = os.path.split(cwd)
+    qualified_grandparent_dir, parent_dir = os.path.split(qualified_parent_dir)
 
-    # Check if we're in the tests directory, and if so, the rootdir will be one level up
-    if os.path.split(cwd)[-1] == TESTS_DIR:
-        rootdir = os.path.join(cwd, "..")
+    # Check if we're in the tests directory, and if so, the rootdir will be two levels up
+    if cur_dir == PYTHON_DIR and parent_dir == TESTS_DIR:
+        rootdir = qualified_grandparent_dir
     else:
         rootdir = cwd
 

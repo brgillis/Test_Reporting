@@ -299,7 +299,8 @@ PYTHONPATH=`pwd`/python pytest -v tests/
   * `python/Test_Reporting/specialization_keys.py` - Python module which details which specialized implementations of
     building test reports are to be used on which files in the `manifest.json` file
 * `test_data/` - Directory containing data used in unit tests of Python code
-* `tests/` - Directory containing unit tests of Python code
+* `tests/` - Directory files and utilities used to test this project
+  * `tests/python/` - Directory containing unit tests of Python code
 * `.gitignore` - Standard .gitignore file to list files excluded from version control
 * `manifest.json` - JSON-format manifest file, listing filenames of tarballs in the `data` directory (relative to that
   directory) for which test reports are to be generated

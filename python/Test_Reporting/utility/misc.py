@@ -91,27 +91,20 @@ def get_qualified_path(path, base=None):
     path = str(path)
 
     cwd = os.getcwd()
-    parent_dir = os.path.split(cwd)[0]
 
     # Check if it starts relative to the current directory - we need to replace this in case the current directory is
     # later changed
-    if path.startswith("../"):
-        path = os.path.join(parent_dir, path[3:])
-    elif path.startswith(".."):
-        path = os.path.join(parent_dir, path[2:])
-    elif path.startswith("./"):
-        path = os.path.join(cwd, path[2:])
-    elif path.startswith("."):
-        path = os.path.join(cwd, path[1:])
+    if path.startswith("."):
+        path = os.path.abspath(path)
 
     # Check if it's already absolute, and return if so
     if path.startswith("/") or path.startswith("~"):
-        return path
+        return os.path.normpath(path)
 
     if base is None:
         base = cwd
 
-    return os.path.join(base, path)
+    return os.path.normpath(os.path.join(base, path))
 
 
 @log_entry_exit(logger)

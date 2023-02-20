@@ -10,7 +10,7 @@ else
   OUTPUT_LOC=$DEFAULT_OUTPUT_LOC
 fi
 
-SIZE=`du -d0 data | gawk '{print $1}'`
+SIZE=`du -d0 data | awk '{print $1}'`
 
 if [ $SIZE -gt $MAXSIZE ]; then
   echo "Size of output data ($SIZE) exceeds maximum allowed size ($MAXSIZE)."

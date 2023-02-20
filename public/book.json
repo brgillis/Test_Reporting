@@ -4,8 +4,14 @@
   "plugins": [
     "back-to-top-button",
     "expandable-chapters-revised",
+    "insert-logo",
     "-sharing"
   ],
   "pluginsConfig": {
+    "insert-logo": {
+      "url": "http://bgilles.pages.euclid-sgs.uk/test_reporting/images/logo-transparent.png",
+      "style": "background: none;"
+    }
   }
+
 }

@@ -34,6 +34,7 @@ New Features
 - Added default formatting for any textfiles included with test results
 - Added PEP8-format-checking stage to CI pipeline (only for feature branches, not master)
 - Added Euclid logo in top-left corner of all pages
+- Added test to check total size of output files against (assumed) maximum deployable size
 
 New config features
 -------------------

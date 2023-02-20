@@ -42,6 +42,7 @@ pages-test:
     - mv test_output ../
     - cd ..
     - mv public test_input
+    - ./tests/test_output_size.sh test_output
   artifacts:
     paths:
       - test_input
@@ -73,6 +74,8 @@ pages:
     - gitbook build . public # build to public path
     - cp -r public/* .
     - rm -r public
+    - cd ..
+    - ./tests/test_output_size.sh public
   artifacts:
     paths:
       - public

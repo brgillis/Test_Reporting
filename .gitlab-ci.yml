@@ -15,7 +15,7 @@ pytest:
   script:
     - pip install pytest --quiet
     - pip install astropy --quiet
-    - PYTHONPATH=`pwd`/python pytest -v tests/
+    - PYTHONPATH=`pwd`/python pytest -v tests/python/
     - python setup.py install --user
 
 build:

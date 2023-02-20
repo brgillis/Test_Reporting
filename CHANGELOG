@@ -47,6 +47,7 @@ Miscellaneous
 - Added requirements.txt
 - Improved logging/exception raising for if a provided specialization key isn't recognized
 - Both jobs in the "pretest" stage of the CI pipeline have been combined into a single job to reduce overhead costs
+- Python unit tests have been moved into the tests/python directory
 
 
 Changes in v1.0

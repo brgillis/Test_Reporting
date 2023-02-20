@@ -1,5 +1,6 @@
 #/bin/bash
 
+# Maximum size in KB
 MAXSIZE=100000000
 DEFAULT_OUTPUT_LOC=test_output
 

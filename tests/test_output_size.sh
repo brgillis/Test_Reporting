@@ -10,7 +10,7 @@ else
   OUTPUT_LOC=$DEFAULT_OUTPUT_LOC
 fi
 
-SIZE=`du -d0 data | awk '{print $1}'`
+SIZE=`du -d0 $OUTPUT_LOC | awk '{print $1}'`
 
 if [ $? -ne 0 ]; then
   echo "ERROR: Could not check size of output files against size limit."
